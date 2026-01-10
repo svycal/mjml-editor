@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"pnpm --filter @savvycal/mjml-editor dev\" \"pnpm --filter playground dev\"",
-    "dev:playground": "pnpm --filter playground dev",
+    "dev": "pnpm --filter playground dev",
+    "dev:lib": "pnpm --filter @savvycal/mjml-editor dev",
+    "dev:concurrent": "concurrently \"pnpm --filter @savvycal/mjml-editor dev\" \"pnpm --filter playground dev\"",
     "build": "pnpm --filter @savvycal/mjml-editor build && pnpm --filter playground build",
     "build:lib": "pnpm --filter @savvycal/mjml-editor build",
     "lint": "eslint .",

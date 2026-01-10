@@ -1,1 +1,5 @@
-@import "tailwindcss";
+/* Import library styles (includes Tailwind, theme, and utilities) */
+@import "../../packages/mjml-editor/src/index.css";
+
+/* Scan library source for Tailwind classes */
+@source "../../packages/mjml-editor/src/**/*.{ts,tsx}";
