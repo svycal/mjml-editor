@@ -1,74 +1,282 @@
+import { useState, useRef } from "react";
+import { Tree, type NodeRendererProps, type TreeApi } from "react-arborist";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Undo2, Redo2, Plus } from 'lucide-react';
-import { useEditor } from '@/context/EditorContext';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { OutlineTreeNode } from './OutlineTreeNode';
-import { findParentNode } from '@/lib/mjml/parser';
+  Undo2,
+  Redo2,
+  Plus,
+  Columns,
+  Type,
+  Image,
+  MousePointerClick,
+  Minus,
+  MoveVertical,
+  ChevronRight,
+  ChevronDown,
+  GripVertical,
+  Trash2,
+} from "lucide-react";
+import { useEditor } from "@/context/EditorContext";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { contentBlockTypes } from "@/lib/mjml/schema";
+import type { MjmlNode, ContentBlockType } from "@/types/mjml";
+import { cn } from "@/lib/utils";
+
+const blockIcons: Record<string, React.ReactNode> = {
+  "mj-section": <div className="w-4 h-4 border border-current rounded-sm" />,
+  "mj-column": <Columns className="h-4 w-4" />,
+  "mj-text": <Type className="h-4 w-4" />,
+  "mj-image": <Image className="h-4 w-4" />,
+  "mj-button": <MousePointerClick className="h-4 w-4" />,
+  "mj-divider": <Minus className="h-4 w-4" />,
+  "mj-spacer": <MoveVertical className="h-4 w-4" />,
+};
+
+const contentBlockIcons: Record<ContentBlockType, React.ReactNode> = {
+  "mj-text": <Type className="h-4 w-4" />,
+  "mj-image": <Image className="h-4 w-4" />,
+  "mj-button": <MousePointerClick className="h-4 w-4" />,
+  "mj-divider": <Minus className="h-4 w-4" />,
+  "mj-spacer": <MoveVertical className="h-4 w-4" />,
+};
+
+function getDisplayName(tagName: string): string {
+  const names: Record<string, string> = {
+    "mj-section": "Section",
+    "mj-column": "Column",
+    "mj-text": "Text",
+    "mj-image": "Image",
+    "mj-button": "Button",
+    "mj-divider": "Divider",
+    "mj-spacer": "Spacer",
+    "mj-wrapper": "Wrapper",
+    "mj-group": "Group",
+    "mj-hero": "Hero",
+    "mj-navbar": "Navbar",
+    "mj-social": "Social",
+    "mj-raw": "Raw HTML",
+  };
+  return names[tagName] || tagName.replace("mj-", "").replace(/-/g, " ");
+}
+
+function canHaveChildren(tagName: string): boolean {
+  return [
+    "mj-section",
+    "mj-column",
+    "mj-wrapper",
+    "mj-group",
+    "mj-hero",
+  ].includes(tagName);
+}
+
+function canAddContentBlocks(tagName: string): boolean {
+  return tagName === "mj-column";
+}
+
+function canAddColumns(tagName: string): boolean {
+  return tagName === "mj-section" || tagName === "mj-group";
+}
+
+// Custom node renderer for the tree
+function TreeNode({
+  node,
+  style,
+  dragHandle,
+}: NodeRendererProps<MjmlNode>) {
+  const { state, selectBlock, deleteBlock, addBlock, addColumn } = useEditor();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
+  const data = node.data;
+  const isSelected = state.selectedBlockId === data._id;
+  const hasChildren = node.children && node.children.length > 0;
+  const showExpandButton = canHaveChildren(data.tagName);
+
+  const handleSelect = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    node.select();
+    selectBlock(data._id!);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    deleteBlock(data._id!);
+  };
+
+  const handleToggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    node.toggle();
+  };
+
+  const handleAddBlock = (type: ContentBlockType) => {
+    const insertIndex = data.children?.length || 0;
+    addBlock(data._id!, insertIndex, type);
+    setIsAddOpen(false);
+  };
+
+  const handleAddColumn = () => {
+    addColumn(data._id!);
+    setIsAddOpen(false);
+  };
+
+  return (
+    <div
+      style={style}
+      className={cn(
+        "group flex items-center h-8 pr-2 cursor-pointer",
+        "hover:bg-accent/50 transition-colors",
+        isSelected && "bg-accent",
+        node.state.isDragging && "opacity-50"
+      )}
+      onClick={handleSelect}
+    >
+      {/* Expand/collapse button */}
+      {showExpandButton ? (
+        <button
+          className={cn(
+            "flex items-center justify-center w-5 h-5",
+            "text-foreground-muted hover:text-foreground transition-colors"
+          )}
+          onClick={handleToggleExpand}
+        >
+          {hasChildren ? (
+            node.isOpen ? (
+              <ChevronDown className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronRight className="h-3.5 w-3.5" />
+            )
+          ) : (
+            <ChevronRight className="h-3.5 w-3.5 opacity-30" />
+          )}
+        </button>
+      ) : (
+        <div className="w-5" />
+      )}
+
+      {/* Icon */}
+      <div className="flex items-center justify-center w-5 h-5 text-foreground-muted">
+        {blockIcons[data.tagName] || (
+          <div className="w-3 h-3 bg-foreground-muted rounded-sm" />
+        )}
+      </div>
+
+      {/* Label */}
+      <span className="flex-1 ml-2 text-sm truncate text-foreground">
+        {getDisplayName(data.tagName)}
+      </span>
+
+      {/* Action buttons - visible on hover */}
+      <div
+        className={cn(
+          "flex items-center gap-0.5",
+          "opacity-0 group-hover:opacity-100 transition-opacity"
+        )}
+      >
+        {/* Drag handle */}
+        <div
+          ref={dragHandle}
+          className={cn(
+            "flex items-center justify-center w-6 h-6 cursor-grab rounded-md",
+            "text-foreground-muted hover:text-foreground hover:bg-accent/50"
+          )}
+        >
+          <GripVertical className="h-3.5 w-3.5" />
+        </div>
+
+        {/* Add button */}
+        {(canAddContentBlocks(data.tagName) ||
+          canAddColumns(data.tagName)) && (
+          <Popover open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="h-6 w-6 text-foreground-muted hover:text-foreground"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-48 p-1.5 shadow-framer-lg"
+              align="start"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {canAddColumns(data.tagName) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
+                  onClick={handleAddColumn}
+                >
+                  <Columns className="h-4 w-4 text-foreground-muted" />
+                  Column
+                </Button>
+              )}
+              {canAddContentBlocks(data.tagName) && (
+                <>
+                  {contentBlockTypes.map((block) => (
+                    <Button
+                      key={block.type}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
+                      onClick={() => handleAddBlock(block.type)}
+                    >
+                      <span className="text-foreground-muted">
+                        {contentBlockIcons[block.type]}
+                      </span>
+                      {block.label}
+                    </Button>
+                  ))}
+                </>
+              )}
+            </PopoverContent>
+          </Popover>
+        )}
+
+        {/* Delete button */}
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="h-6 w-6 text-foreground-muted hover:text-destructive"
+          onClick={handleDelete}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 export function OutlineTree() {
-  const { state, undo, redo, canUndo, canRedo, moveBlock, addSection } = useEditor();
+  const { state, undo, redo, canUndo, canRedo, moveBlock, addSection } =
+    useEditor();
+  const treeRef = useRef<TreeApi<MjmlNode>>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  // Get the body node's children as the tree data
+  const body = state.document.children?.find((c) => c.tagName === "mj-body");
+  const treeData = body?.children || [];
 
-  // Get the body node
-  const body = state.document.children?.find((c) => c.tagName === 'mj-body');
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (!over || active.id === over.id) {
-      return;
-    }
-
-    const activeId = String(active.id);
-    const overId = String(over.id);
-
-    // Find the parent of the active item
-    const activeParent = findParentNode(state.document, activeId);
-    const overParent = findParentNode(state.document, overId);
-
-    if (!activeParent || !overParent) {
-      return;
-    }
-
-    // Get the index of the over item in its parent
-    const overIndex = overParent.children?.findIndex((c) => c._id === overId) ?? -1;
-
-    if (overIndex === -1) {
-      return;
-    }
-
-    // If moving within the same parent
-    if (activeParent._id === overParent._id) {
-      const activeIndex = activeParent.children?.findIndex((c) => c._id === activeId) ?? -1;
-      if (activeIndex === -1) return;
-
-      // Calculate the new index
-      const newIndex = activeIndex < overIndex ? overIndex : overIndex;
-      moveBlock(activeId, activeParent._id!, newIndex);
-    } else {
-      // Moving to a different parent
-      moveBlock(activeId, overParent._id!, overIndex);
+  // Handle node moves from drag-and-drop
+  const handleMove = ({
+    dragIds,
+    parentId,
+    index,
+  }: {
+    dragIds: string[];
+    parentId: string | null;
+    index: number;
+  }) => {
+    const nodeId = dragIds[0];
+    // If parentId is null, it means dropping at root level (into mj-body)
+    const targetParentId = parentId || body?._id;
+    if (nodeId && targetParentId) {
+      moveBlock(nodeId, targetParentId, index);
     }
   };
 
@@ -76,7 +284,9 @@ export function OutlineTree() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between h-11 px-3 border-b border-border bg-background">
-        <span className="text-sm font-semibold text-foreground">Email Structure</span>
+        <span className="text-sm font-semibold text-foreground">
+          Email Structure
+        </span>
         <div className="flex items-center gap-0.5">
           <ThemeToggle />
           <Button
@@ -116,37 +326,29 @@ export function OutlineTree() {
       </div>
 
       {/* Tree content */}
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="py-2">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
+      <div className="flex-1 min-h-0 overflow-auto">
+        {treeData.length > 0 ? (
+          <Tree<MjmlNode>
+            ref={treeRef}
+            data={treeData}
+            idAccessor={(node) => node._id!}
+            childrenAccessor={(node) => node.children || null}
+            openByDefault={true}
+            width="100%"
+            indent={16}
+            rowHeight={32}
+            paddingTop={8}
+            paddingBottom={8}
+            onMove={handleMove}
           >
-            <SortableContext
-              items={body?.children?.map((c) => c._id!) || []}
-              strategy={verticalListSortingStrategy}
-            >
-              {body?.children?.map((child, index) => (
-                <OutlineTreeNode
-                  key={child._id}
-                  node={child}
-                  depth={0}
-                  parentId={body._id}
-                  index={index}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-
-          {/* Empty state */}
-          {(!body?.children || body.children.length === 0) && (
-            <div className="px-3 py-8 text-center text-sm text-muted-foreground">
-              No content yet
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+            {TreeNode}
+          </Tree>
+        ) : (
+          <div className="px-3 py-8 text-center text-sm text-muted-foreground">
+            No content yet
+          </div>
+        )}
+      </div>
     </div>
   );
 }
