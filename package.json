@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter playground dev",
+    "dev": "concurrently \"pnpm --filter @savvycal/mjml-editor dev\" \"pnpm --filter playground dev\"",
+    "dev:playground": "pnpm --filter playground dev",
     "build": "pnpm --filter @savvycal/mjml-editor build && pnpm --filter playground build",
     "build:lib": "pnpm --filter @savvycal/mjml-editor build",
     "lint": "eslint .",
@@ -12,6 +13,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
