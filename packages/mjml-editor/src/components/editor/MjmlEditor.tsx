@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState } from "react";
 import { EditorProvider, useEditor } from "@/context/EditorContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { OutlineTree } from "./OutlineTree";
 import { EditorCanvas } from "./EditorCanvas";
 import { BlockInspector } from "./BlockInspector";
@@ -26,6 +27,7 @@ interface MjmlEditorProps {
   value: string;
   onChange: (mjml: string) => void;
   className?: string;
+  defaultTheme?: 'light' | 'dark' | 'system';
 }
 
 function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
@@ -112,7 +114,12 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   );
 }
 
-export function MjmlEditor({ value, onChange, className }: MjmlEditorProps) {
+export function MjmlEditor({
+  value,
+  onChange,
+  className,
+  defaultTheme = 'system',
+}: MjmlEditorProps) {
   // Parse initial value only once on mount using lazy initial state
   const [initialDocument] = useState(() => parseInitialValue(value));
 
@@ -125,10 +132,12 @@ export function MjmlEditor({ value, onChange, className }: MjmlEditorProps) {
   );
 
   return (
-    <div className={`h-full w-full bg-background ${className || ""}`}>
-      <EditorProvider initialDocument={initialDocument}>
-        <EditorContent onChange={handleChange} />
-      </EditorProvider>
-    </div>
+    <ThemeProvider defaultTheme={defaultTheme}>
+      <div className={`h-full w-full bg-background ${className || ""}`}>
+        <EditorProvider initialDocument={initialDocument}>
+          <EditorContent onChange={handleChange} />
+        </EditorProvider>
+      </div>
+    </ThemeProvider>
   );
 }

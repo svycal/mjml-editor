@@ -86,7 +86,7 @@ export function VisualSection({ node }: VisualSectionProps) {
 
         {/* Empty section state */}
         {columns.length === 0 && (
-          <div className="py-8 text-center text-gray-400 text-sm">
+          <div className="py-8 text-center text-muted-foreground text-sm">
             Empty section - add a column
           </div>
         )}
@@ -122,12 +122,12 @@ export function VisualSection({ node }: VisualSectionProps) {
   return (
     <div
       className={cn(
-        'p-4 bg-gray-100 border border-dashed border-gray-300 cursor-pointer',
+        'p-4 bg-muted border border-dashed border-border cursor-pointer',
         isSelected && 'ring-2 ring-indigo-500'
       )}
       onClick={handleClick}
     >
-      <span className="text-sm text-gray-500">Unknown: {node.tagName}</span>
+      <span className="text-sm text-muted-foreground">Unknown: {node.tagName}</span>
     </div>
   );
 }

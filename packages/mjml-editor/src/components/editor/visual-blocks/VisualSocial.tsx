@@ -75,7 +75,7 @@ export function VisualSocial({ node }: VisualSocialProps) {
         })}
 
         {socialElements.length === 0 && (
-          <span className="text-sm text-gray-400">Add social icons</span>
+          <span className="text-sm text-muted-foreground">Add social icons</span>
         )}
       </div>
     </div>

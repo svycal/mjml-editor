@@ -54,7 +54,7 @@ export function VisualImage({ node }: VisualImageProps) {
         />
       ) : (
         <div
-          className="bg-gray-200 flex items-center justify-center text-gray-400"
+          className="bg-muted flex items-center justify-center text-muted-foreground"
           style={{
             width: width === '100%' ? '100%' : width,
             height: height === 'auto' ? '150px' : height,

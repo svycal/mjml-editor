@@ -12,6 +12,7 @@ import { Undo2, Redo2, Plus } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { OutlineTreeNode } from './OutlineTreeNode';
 import { findParentNode } from '@/lib/mjml/parser';
 
@@ -77,6 +78,7 @@ export function OutlineTree() {
       <div className="flex items-center justify-between h-11 px-3 border-b border-border bg-background">
         <span className="text-sm font-semibold text-foreground">Email Structure</span>
         <div className="flex items-center gap-0.5">
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon-sm"

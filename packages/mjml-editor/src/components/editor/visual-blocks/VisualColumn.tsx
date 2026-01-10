@@ -55,7 +55,7 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
       {/* Empty column placeholder */}
       {contentBlocks.length === 0 && (
         <div
-          className="py-8 text-center text-gray-400 text-sm cursor-pointer hover:bg-gray-50 transition-colors"
+          className="py-8 text-center text-muted-foreground text-sm cursor-pointer hover:bg-muted transition-colors"
           onClick={handleClick}
         >
           Empty column

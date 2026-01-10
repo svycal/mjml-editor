@@ -29,7 +29,7 @@ export function VisualBlock({ node }: VisualBlockProps) {
       return <VisualRaw node={node} />;
     default:
       return (
-        <div className="p-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-sm">
+        <div className="p-2 bg-amber-50 border border-amber-200 text-amber-700 text-sm">
           Unsupported block: {node.tagName}
         </div>
       );
