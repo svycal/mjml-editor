@@ -25,7 +25,7 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all',
-          isSelected && 'ring-2 ring-indigo-500 ring-offset-2'
+          isSelected && 'ring-2 ring-indigo-500 ring-inset'
         )}
         style={{
           backgroundColor: bgColor,
@@ -55,7 +55,7 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all',
-          isSelected && 'ring-2 ring-indigo-500 ring-offset-2',
+          isSelected && 'ring-2 ring-indigo-500 ring-inset',
           !fullWidth && 'bg-white'
         )}
         style={{
@@ -103,7 +103,7 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all flex',
-          isSelected && 'ring-2 ring-indigo-500 ring-offset-2'
+          isSelected && 'ring-2 ring-indigo-500 ring-inset'
         )}
         onClick={handleClick}
       >
