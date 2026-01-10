@@ -1,73 +1,113 @@
-# React + TypeScript + Vite
+# MJML Visual Email Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based visual editor for MJML email templates. Built for embedding in applications that need a user-friendly way to edit email templates while keeping MJML markup as the source of truth.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Block-based editing** - Visual representation of MJML structure with sections, columns, and content blocks
+- **Live preview** - Side-by-side HTML preview rendered in real-time
+- **Property inspector** - Edit block attributes through a settings panel
+- **Drag and drop** - Reorder blocks within columns
+- **Undo/redo** - Full history support with keyboard shortcuts
+- **MJML in, MJML out** - Takes MJML markup as input, returns modified MJML on change
 
-## React Compiler
+## Supported Components
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Component | Description |
+|-----------|-------------|
+| `mj-section` | Row containers with background color/image |
+| `mj-column` | Responsive columns within sections |
+| `mj-text` | Text content with typography settings |
+| `mj-image` | Images with dimensions, alt text, and links |
+| `mj-button` | Call-to-action buttons with styling |
+| `mj-divider` | Horizontal separators |
+| `mj-spacer` | Vertical spacing |
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Opens the editor at http://localhost:5173
+
+## Build
+
+```bash
+npm run build
+```
+
+## Usage
+
+```tsx
+import { MjmlEditor } from '@/components/editor/MjmlEditor';
+
+function App() {
+  const [mjml, setMjml] = useState(initialMjml);
+
+  return (
+    <MjmlEditor
+      value={mjml}
+      onChange={setMjml}
+    />
+  );
+}
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `value` | `string` | MJML markup string |
+| `onChange` | `(mjml: string) => void` | Called when the document changes |
+| `className` | `string?` | Optional CSS class for the container |
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd/Ctrl + Z` | Undo |
+| `Cmd/Ctrl + Shift + Z` | Redo |
+| `Delete` / `Backspace` | Delete selected block |
+| `Escape` | Deselect block |
+
+## Architecture
+
+```
+src/
+├── components/
+│   ├── editor/           # Main editor components
+│   │   ├── MjmlEditor    # Root component
+│   │   ├── EditorPane    # Block tree with drag-and-drop
+│   │   ├── PreviewPane   # Live HTML preview
+│   │   └── BlockInspector # Property editor
+│   ├── blocks/           # Block type components
+│   └── ui/               # shadcn/ui components
+├── context/
+│   └── EditorContext     # State management
+├── lib/mjml/
+│   ├── parser           # MJML ↔ JSON conversion
+│   ├── renderer         # MJML → HTML rendering
+│   └── schema           # Component attribute definitions
+└── types/
+    └── mjml             # TypeScript types
+```
+
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS v4
+- shadcn/ui components
+- @dnd-kit for drag and drop
+- mjml-browser for HTML rendering
+
+## License
+
+Private - SavvyCal
