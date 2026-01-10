@@ -102,6 +102,19 @@ export function OutlineTree() {
         </div>
       </div>
 
+      {/* Add Section button */}
+      <div className="px-3 py-2 border-b border-border">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addSection}
+          className="w-full h-8 gap-1.5 text-xs font-medium"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Add Section
+        </Button>
+      </div>
+
       {/* Tree content */}
       <ScrollArea className="flex-1 min-h-0">
         <div className="py-2">
@@ -134,19 +147,6 @@ export function OutlineTree() {
           )}
         </div>
       </ScrollArea>
-
-      {/* Add Section button */}
-      <div className="px-3 py-2 border-t border-border">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={addSection}
-          className="w-full h-8 gap-1.5 text-xs font-medium"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add Section
-        </Button>
-      </div>
     </div>
   );
 }
