@@ -11,7 +11,8 @@ export function VisualButton({ node }: VisualButtonProps) {
   const { state, selectBlock, updateContent } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
   const [isEditing, setIsEditing] = useState(false);
-  const contentRef = useRef<HTMLSpanElement>(null);
+  const [editValue, setEditValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -22,37 +23,31 @@ export function VisualButton({ node }: VisualButtonProps) {
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    setEditValue(node.content || '');
     setIsEditing(true);
   };
 
   const handleBlur = () => {
     setIsEditing(false);
-    if (contentRef.current) {
-      const newContent = contentRef.current.textContent || '';
-      if (newContent !== node.content) {
-        updateContent(node._id!, newContent);
-      }
+    if (editValue !== node.content) {
+      updateContent(node._id!, editValue);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' || e.key === 'Enter') {
-      e.preventDefault();
+    if (e.key === 'Escape') {
       setIsEditing(false);
-      contentRef.current?.blur();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      inputRef.current?.blur();
     }
   };
 
-  // Focus content when entering edit mode
+  // Focus input when entering edit mode
   useEffect(() => {
-    if (isEditing && contentRef.current) {
-      contentRef.current.focus();
-      // Select all text
-      const range = document.createRange();
-      const sel = window.getSelection();
-      range.selectNodeContents(contentRef.current);
-      sel?.removeAllRanges();
-      sel?.addRange(range);
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
     }
   }, [isEditing]);
 
@@ -69,6 +64,16 @@ export function VisualButton({ node }: VisualButtonProps) {
   // Convert align to flexbox
   const justifyContent = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
+  const buttonStyle = {
+    backgroundColor: bgColor,
+    color: textColor,
+    fontSize,
+    fontWeight,
+    borderRadius,
+    padding: innerPadding,
+    textDecoration: 'none',
+  };
+
   return (
     <div
       className={cn(
@@ -84,27 +89,34 @@ export function VisualButton({ node }: VisualButtonProps) {
       onDoubleClick={handleDoubleClick}
     >
       <span
-        ref={contentRef}
-        contentEditable={isEditing}
-        suppressContentEditableWarning
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
         className={cn(
-          'inline-block cursor-pointer outline-none',
-          isEditing && 'cursor-text ring-2 ring-indigo-500'
+          'relative inline-block cursor-pointer',
+          isEditing && 'ring-2 ring-indigo-500'
         )}
-        style={{
-          backgroundColor: bgColor,
-          color: textColor,
-          fontSize,
-          fontWeight,
-          borderRadius,
-          padding: innerPadding,
-          textDecoration: 'none',
-          display: 'inline-block',
-        }}
+        style={buttonStyle}
       >
-        {node.content || 'Button'}
+        {/* Display text (invisible when editing to maintain size) */}
+        <span className={cn(isEditing && 'invisible')}>
+          {node.content || 'Button'}
+        </span>
+
+        {/* Input overlay for editing */}
+        {isEditing && (
+          <input
+            ref={inputRef}
+            type="text"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="absolute inset-0 w-full h-full text-center outline-none bg-transparent"
+            style={{
+              color: textColor,
+              fontSize,
+              fontWeight,
+            }}
+          />
+        )}
       </span>
 
       {/* Edit hint */}

@@ -7,11 +7,18 @@ interface VisualTextProps {
   node: MjmlNode;
 }
 
+// Strip HTML tags to get plain text
+function stripHtml(html: string): string {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+}
+
 export function VisualText({ node }: VisualTextProps) {
   const { state, selectBlock, updateContent } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
   const [isEditing, setIsEditing] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [editValue, setEditValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -20,37 +27,29 @@ export function VisualText({ node }: VisualTextProps) {
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    // Initialize edit value with plain text content
+    setEditValue(stripHtml(node.content || ''));
     setIsEditing(true);
   };
 
   const handleBlur = () => {
     setIsEditing(false);
-    if (contentRef.current) {
-      const newContent = contentRef.current.innerHTML;
-      if (newContent !== node.content) {
-        updateContent(node._id!, newContent);
-      }
+    if (editValue !== stripHtml(node.content || '')) {
+      updateContent(node._id!, editValue);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       setIsEditing(false);
-      contentRef.current?.blur();
     }
   };
 
-  // Focus content when entering edit mode
+  // Focus textarea when entering edit mode
   useEffect(() => {
-    if (isEditing && contentRef.current) {
-      contentRef.current.focus();
-      // Place cursor at end
-      const range = document.createRange();
-      const sel = window.getSelection();
-      range.selectNodeContents(contentRef.current);
-      range.collapse(false);
-      sel?.removeAllRanges();
-      sel?.addRange(range);
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.select();
     }
   }, [isEditing]);
 
@@ -63,6 +62,18 @@ export function VisualText({ node }: VisualTextProps) {
   const lineHeight = node.attributes['line-height'] || '1.5';
   const padding = node.attributes['padding'] || '10px 25px';
 
+  const textStyle = {
+    color,
+    fontSize,
+    fontFamily,
+    fontWeight,
+    textAlign,
+    lineHeight,
+  };
+
+  // Get display content (strip HTML for plain text display)
+  const displayContent = stripHtml(node.content || '');
+
   return (
     <div
       className={cn(
@@ -74,26 +85,26 @@ export function VisualText({ node }: VisualTextProps) {
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
     >
+      {/* Display text (hidden when editing) */}
       <div
-        ref={contentRef}
-        contentEditable={isEditing}
-        suppressContentEditableWarning
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        className={cn(
-          'outline-none',
-          isEditing && 'cursor-text'
-        )}
-        style={{
-          color,
-          fontSize,
-          fontFamily,
-          fontWeight,
-          textAlign,
-          lineHeight,
-        }}
-        dangerouslySetInnerHTML={{ __html: node.content || '' }}
-      />
+        className={cn('whitespace-pre-wrap', isEditing && 'invisible')}
+        style={textStyle}
+      >
+        {displayContent || '\u00A0'}
+      </div>
+
+      {/* Textarea overlay for editing */}
+      {isEditing && (
+        <textarea
+          ref={textareaRef}
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          className="absolute inset-0 w-full h-full resize-none outline-none bg-transparent"
+          style={{ ...textStyle, padding }}
+        />
+      )}
 
       {/* Edit hint */}
       {isSelected && !isEditing && (
