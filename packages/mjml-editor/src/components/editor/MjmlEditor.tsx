@@ -1,10 +1,14 @@
-import { useEffect, useCallback, useMemo } from 'react';
-import { EditorProvider, useEditor } from '@/context/EditorContext';
-import { EditorPane } from './EditorPane';
-import { PreviewPane } from './PreviewPane';
-import { BlockInspector } from './BlockInspector';
-import { parseMjml, serializeMjml, createEmptyDocument } from '@/lib/mjml/parser';
-import type { MjmlNode } from '@/types/mjml';
+import { useEffect, useCallback, useMemo } from "react";
+import { EditorProvider, useEditor } from "@/context/EditorContext";
+import { EditorPane } from "./EditorPane";
+import { PreviewPane } from "./PreviewPane";
+import { BlockInspector } from "./BlockInspector";
+import {
+  parseMjml,
+  serializeMjml,
+  createEmptyDocument,
+} from "@/lib/mjml/parser";
+import type { MjmlNode } from "@/types/mjml";
 
 interface MjmlEditorProps {
   value: string;
@@ -13,7 +17,8 @@ interface MjmlEditorProps {
 }
 
 function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
-  const { state, undo, redo, canUndo, canRedo, deleteBlock, selectBlock } = useEditor();
+  const { state, undo, redo, canUndo, canRedo, deleteBlock, selectBlock } =
+    useEditor();
 
   // Notify parent of changes
   useEffect(() => {
@@ -34,7 +39,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
       }
 
       // Undo/Redo
-      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+      if ((e.metaKey || e.ctrlKey) && e.key === "z") {
         e.preventDefault();
         if (e.shiftKey) {
           if (canRedo) redo();
@@ -45,23 +50,34 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
       }
 
       // Delete selected block
-      if ((e.key === 'Delete' || e.key === 'Backspace') && state.selectedBlockId) {
+      if (
+        (e.key === "Delete" || e.key === "Backspace") &&
+        state.selectedBlockId
+      ) {
         e.preventDefault();
         deleteBlock(state.selectedBlockId);
         return;
       }
 
       // Escape to deselect
-      if (e.key === 'Escape' && state.selectedBlockId) {
+      if (e.key === "Escape" && state.selectedBlockId) {
         e.preventDefault();
         selectBlock(null);
         return;
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, canUndo, canRedo, deleteBlock, selectBlock, state.selectedBlockId]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    deleteBlock,
+    selectBlock,
+    state.selectedBlockId,
+  ]);
 
   return (
     <div className="flex h-full w-full">
@@ -86,13 +102,13 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
 export function MjmlEditor({ value, onChange, className }: MjmlEditorProps) {
   // Parse initial value or create empty document
   const initialDocument = useMemo((): MjmlNode => {
-    if (!value || value.trim() === '') {
+    if (!value || value.trim() === "") {
       return createEmptyDocument();
     }
     try {
       return parseMjml(value);
     } catch (error) {
-      console.error('Failed to parse MJML:', error);
+      console.error("Failed to parse MJML:", error);
       return createEmptyDocument();
     }
   }, []);
@@ -102,11 +118,11 @@ export function MjmlEditor({ value, onChange, className }: MjmlEditorProps) {
     (mjml: string) => {
       onChange(mjml);
     },
-    [onChange]
+    [onChange],
   );
 
   return (
-    <div className={`h-full w-full bg-background ${className || ''}`}>
+    <div className={`h-full w-full bg-background ${className || ""}`}>
       <EditorProvider initialDocument={initialDocument}>
         <EditorContent onChange={handleChange} />
       </EditorProvider>
