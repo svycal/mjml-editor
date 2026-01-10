@@ -190,54 +190,54 @@ function TreeNode({
         {/* Add button */}
         {(canAddContentBlocks(data.tagName) ||
           canAddColumns(data.tagName)) && (
-          <Popover open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="h-6 w-6 text-foreground-muted hover:text-foreground"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-48 p-1.5 shadow-framer-lg"
-              align="start"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {canAddColumns(data.tagName) && (
+            <Popover open={isAddOpen} onOpenChange={setIsAddOpen}>
+              <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
-                  size="sm"
-                  className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
-                  onClick={handleAddColumn}
+                  size="icon-sm"
+                  className="h-6 w-6 text-foreground-muted hover:text-foreground"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Columns className="h-4 w-4 text-foreground-muted" />
-                  Column
+                  <Plus className="h-3.5 w-3.5" />
                 </Button>
-              )}
-              {canAddContentBlocks(data.tagName) && (
-                <>
-                  {contentBlockTypes.map((block) => (
-                    <Button
-                      key={block.type}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
-                      onClick={() => handleAddBlock(block.type)}
-                    >
-                      <span className="text-foreground-muted">
-                        {contentBlockIcons[block.type]}
-                      </span>
-                      {block.label}
-                    </Button>
-                  ))}
-                </>
-              )}
-            </PopoverContent>
-          </Popover>
-        )}
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-48 p-1.5 shadow-framer-lg"
+                align="start"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {canAddColumns(data.tagName) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
+                    onClick={handleAddColumn}
+                  >
+                    <Columns className="h-4 w-4 text-foreground-muted" />
+                    Column
+                  </Button>
+                )}
+                {canAddContentBlocks(data.tagName) && (
+                  <>
+                    {contentBlockTypes.map((block) => (
+                      <Button
+                        key={block.type}
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
+                        onClick={() => handleAddBlock(block.type)}
+                      >
+                        <span className="text-foreground-muted">
+                          {contentBlockIcons[block.type]}
+                        </span>
+                        {block.label}
+                      </Button>
+                    ))}
+                  </>
+                )}
+              </PopoverContent>
+            </Popover>
+          )}
 
         {/* Delete button */}
         <Button
