@@ -15,7 +15,11 @@ export function ThemeToggle() {
           className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
           title="Toggle theme"
         >
-          {resolvedTheme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          {resolvedTheme === 'dark' ? (
+            <Moon className="h-4 w-4" />
+          ) : (
+            <Sun className="h-4 w-4" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-36 p-1">

@@ -2,7 +2,13 @@ import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { getSchemaForTag } from '@/lib/mjml/schema';
 import type { AttributeSchema } from '@/types/mjml';
 
@@ -17,7 +23,9 @@ export function BlockInspector() {
         </div>
         <div className="flex-1 flex items-center justify-center p-6">
           <p className="text-sm text-foreground-muted text-center leading-relaxed">
-            Select a block to<br />edit its properties
+            Select a block to
+            <br />
+            edit its properties
           </p>
         </div>
       </div>
@@ -25,7 +33,8 @@ export function BlockInspector() {
   }
 
   const schema = getSchemaForTag(selectedBlock.tagName);
-  const tagLabel = selectedBlock.tagName.replace('mj-', '').charAt(0).toUpperCase() +
+  const tagLabel =
+    selectedBlock.tagName.replace('mj-', '').charAt(0).toUpperCase() +
     selectedBlock.tagName.replace('mj-', '').slice(1);
 
   const handleAttributeChange = (key: string, value: string) => {
@@ -70,29 +79,44 @@ interface AttributeEditorProps {
   onChange: (value: string) => void;
 }
 
-function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEditorProps) {
+function AttributeEditor({
+  attributeKey,
+  schema,
+  value,
+  onChange,
+}: AttributeEditorProps) {
   const id = `attr-${attributeKey}`;
 
   switch (schema.type) {
     case 'select': {
       // Ensure we always have a valid non-empty value for Select
-      const selectValue = value || schema.default || schema.options?.[0]?.value || 'default';
+      const selectValue =
+        value || schema.default || schema.options?.[0]?.value || 'default';
       const handleSelectChange = (newValue: string) => {
         // Convert 'false' placeholder back to empty string for MJML attributes
         onChange(newValue === 'false' ? '' : newValue);
       };
       return (
         <div className="space-y-2">
-          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
+          <Label
+            htmlFor={id}
+            className="text-xs font-medium text-foreground-muted"
+          >
             {schema.label}
           </Label>
           <Select value={selectValue} onValueChange={handleSelectChange}>
             <SelectTrigger id={id} className="h-8 text-xs border-border-subtle">
-              <SelectValue placeholder={`Select ${schema.label.toLowerCase()}`} />
+              <SelectValue
+                placeholder={`Select ${schema.label.toLowerCase()}`}
+              />
             </SelectTrigger>
             <SelectContent>
               {schema.options?.map((option) => (
-                <SelectItem key={option.value} value={option.value} className="text-xs">
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className="text-xs"
+                >
                   {option.label}
                 </SelectItem>
               ))}
@@ -105,7 +129,10 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
     case 'color':
       return (
         <div className="space-y-2">
-          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
+          <Label
+            htmlFor={id}
+            className="text-xs font-medium text-foreground-muted"
+          >
             {schema.label}
           </Label>
           <div className="flex gap-2">
@@ -130,7 +157,10 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
     case 'padding':
       return (
         <div className="space-y-2">
-          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
+          <Label
+            htmlFor={id}
+            className="text-xs font-medium text-foreground-muted"
+          >
             {schema.label}
           </Label>
           <Input
@@ -150,7 +180,10 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
     case 'dimension':
       return (
         <div className="space-y-2">
-          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
+          <Label
+            htmlFor={id}
+            className="text-xs font-medium text-foreground-muted"
+          >
             {schema.label}
           </Label>
           <Input
@@ -167,7 +200,10 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
     case 'url':
       return (
         <div className="space-y-2">
-          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
+          <Label
+            htmlFor={id}
+            className="text-xs font-medium text-foreground-muted"
+          >
             {schema.label}
           </Label>
           <Input
@@ -185,7 +221,10 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
     default:
       return (
         <div className="space-y-2">
-          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
+          <Label
+            htmlFor={id}
+            className="text-xs font-medium text-foreground-muted"
+          >
             {schema.label}
           </Label>
           <Input

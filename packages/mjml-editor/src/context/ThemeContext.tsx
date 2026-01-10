@@ -24,7 +24,9 @@ const STORAGE_KEY = 'mjml-editor-theme';
 
 function getSystemTheme(): ResolvedTheme {
   if (typeof window === 'undefined') return 'light';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
 }
 
 function getStoredTheme(): Theme {
@@ -47,7 +49,9 @@ export function ThemeProvider({
   defaultTheme,
   storageKey = STORAGE_KEY,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => defaultTheme ?? getStoredTheme());
+  const [theme, setThemeState] = useState<Theme>(
+    () => defaultTheme ?? getStoredTheme()
+  );
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(getSystemTheme);
 
   useEffect(() => {
@@ -86,7 +90,9 @@ export function ThemeProvider({
     [theme, resolvedTheme, setTheme, toggleTheme]
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

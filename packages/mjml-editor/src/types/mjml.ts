@@ -27,11 +27,23 @@ export type MjmlTagName =
   | 'mj-style';
 
 // Block types that can be added inside a column
-export type ContentBlockType = 'mj-text' | 'mj-image' | 'mj-button' | 'mj-divider' | 'mj-spacer';
+export type ContentBlockType =
+  | 'mj-text'
+  | 'mj-image'
+  | 'mj-button'
+  | 'mj-divider'
+  | 'mj-spacer';
 
 // Attribute schema for validation and UI rendering
 export interface AttributeSchema {
-  type: 'color' | 'dimension' | 'text' | 'url' | 'select' | 'padding' | 'number';
+  type:
+    | 'color'
+    | 'dimension'
+    | 'text'
+    | 'url'
+    | 'select'
+    | 'padding'
+    | 'number';
   label: string;
   default?: string;
   options?: { value: string; label: string }[]; // For select type
@@ -51,11 +63,20 @@ export interface EditorState {
 // Editor actions
 export type EditorAction =
   | { type: 'SELECT_BLOCK'; payload: string | null }
-  | { type: 'UPDATE_ATTRIBUTES'; payload: { id: string; attributes: Record<string, string> } }
+  | {
+      type: 'UPDATE_ATTRIBUTES';
+      payload: { id: string; attributes: Record<string, string> };
+    }
   | { type: 'UPDATE_CONTENT'; payload: { id: string; content: string } }
-  | { type: 'ADD_BLOCK'; payload: { parentId: string; index: number; block: MjmlNode } }
+  | {
+      type: 'ADD_BLOCK';
+      payload: { parentId: string; index: number; block: MjmlNode };
+    }
   | { type: 'DELETE_BLOCK'; payload: string }
-  | { type: 'MOVE_BLOCK'; payload: { id: string; newParentId: string; newIndex: number } }
+  | {
+      type: 'MOVE_BLOCK';
+      payload: { id: string; newParentId: string; newIndex: number };
+    }
   | { type: 'SET_DOCUMENT'; payload: MjmlNode }
   | { type: 'UNDO' }
   | { type: 'REDO' };

@@ -1,9 +1,9 @@
 // Main editor component
-export { MjmlEditor } from './components/editor/MjmlEditor'
+export { MjmlEditor } from './components/editor/MjmlEditor';
 
 // Theme utilities
-export { ThemeProvider, useTheme } from './context/ThemeContext'
-export { ThemeToggle } from './components/ui/theme-toggle'
+export { ThemeProvider, useTheme } from './context/ThemeContext';
+export { ThemeToggle } from './components/ui/theme-toggle';
 
 // Types
 export type {
@@ -12,7 +12,7 @@ export type {
   ContentBlockType,
   EditorState,
   EditorAction,
-} from './types/mjml'
+} from './types/mjml';
 
 // Styles - consumers should import '@savvycal/mjml-editor/styles.css'
-import './index.css'
+import './index.css';

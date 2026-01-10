@@ -83,9 +83,14 @@ export function VisualText({ node }: VisualTextProps) {
   // Parse styles from attributes
   const color = node.attributes['color'] || '#000000';
   const fontSize = node.attributes['font-size'] || '13px';
-  const fontFamily = node.attributes['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
+  const fontFamily =
+    node.attributes['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
   const fontWeight = node.attributes['font-weight'] || 'normal';
-  const textAlign = (node.attributes['align'] || 'left') as 'left' | 'center' | 'right' | 'justify';
+  const textAlign = (node.attributes['align'] || 'left') as
+    | 'left'
+    | 'center'
+    | 'right'
+    | 'justify';
   const lineHeight = node.attributes['line-height'] || '1.5';
   const padding = node.attributes['padding'] || '10px 25px';
 

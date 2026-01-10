@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { MjmlEditor } from "@savvycal/mjml-editor";
+import { useState } from 'react';
+import { MjmlEditor } from '@savvycal/mjml-editor';
 
 const initialMjml = `<mjml>
   <mj-body>

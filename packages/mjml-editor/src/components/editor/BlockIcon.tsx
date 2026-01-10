@@ -1,12 +1,12 @@
-import { 
-  Type, 
-  Image as ImageIcon, 
-  MousePointerClick, 
-  Minus, 
-  ArrowUpDown, 
-  Columns, 
+import {
+  Type,
+  Image as ImageIcon,
+  MousePointerClick,
+  Minus,
+  ArrowUpDown,
+  Columns,
   Square,
-  BoxSelect
+  BoxSelect,
 } from 'lucide-react';
 
 interface BlockIconProps {

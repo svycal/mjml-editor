@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Tree, type NodeRendererProps, type TreeApi } from "react-arborist";
+import { useState, useRef } from 'react';
+import { Tree, type NodeRendererProps, type TreeApi } from 'react-arborist';
 import {
   Undo2,
   Redo2,
@@ -14,80 +14,76 @@ import {
   ChevronDown,
   GripVertical,
   Trash2,
-} from "lucide-react";
-import { useEditor } from "@/context/EditorContext";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+} from 'lucide-react';
+import { useEditor } from '@/context/EditorContext';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { contentBlockTypes } from "@/lib/mjml/schema";
-import type { MjmlNode, ContentBlockType } from "@/types/mjml";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/popover';
+import { contentBlockTypes } from '@/lib/mjml/schema';
+import type { MjmlNode, ContentBlockType } from '@/types/mjml';
+import { cn } from '@/lib/utils';
 
 const blockIcons: Record<string, React.ReactNode> = {
-  "mj-section": <div className="w-4 h-4 border border-current rounded-sm" />,
-  "mj-column": <Columns className="h-4 w-4" />,
-  "mj-text": <Type className="h-4 w-4" />,
-  "mj-image": <Image className="h-4 w-4" />,
-  "mj-button": <MousePointerClick className="h-4 w-4" />,
-  "mj-divider": <Minus className="h-4 w-4" />,
-  "mj-spacer": <MoveVertical className="h-4 w-4" />,
+  'mj-section': <div className="w-4 h-4 border border-current rounded-sm" />,
+  'mj-column': <Columns className="h-4 w-4" />,
+  'mj-text': <Type className="h-4 w-4" />,
+  'mj-image': <Image className="h-4 w-4" />,
+  'mj-button': <MousePointerClick className="h-4 w-4" />,
+  'mj-divider': <Minus className="h-4 w-4" />,
+  'mj-spacer': <MoveVertical className="h-4 w-4" />,
 };
 
 const contentBlockIcons: Record<ContentBlockType, React.ReactNode> = {
-  "mj-text": <Type className="h-4 w-4" />,
-  "mj-image": <Image className="h-4 w-4" />,
-  "mj-button": <MousePointerClick className="h-4 w-4" />,
-  "mj-divider": <Minus className="h-4 w-4" />,
-  "mj-spacer": <MoveVertical className="h-4 w-4" />,
+  'mj-text': <Type className="h-4 w-4" />,
+  'mj-image': <Image className="h-4 w-4" />,
+  'mj-button': <MousePointerClick className="h-4 w-4" />,
+  'mj-divider': <Minus className="h-4 w-4" />,
+  'mj-spacer': <MoveVertical className="h-4 w-4" />,
 };
 
 function getDisplayName(tagName: string): string {
   const names: Record<string, string> = {
-    "mj-section": "Section",
-    "mj-column": "Column",
-    "mj-text": "Text",
-    "mj-image": "Image",
-    "mj-button": "Button",
-    "mj-divider": "Divider",
-    "mj-spacer": "Spacer",
-    "mj-wrapper": "Wrapper",
-    "mj-group": "Group",
-    "mj-hero": "Hero",
-    "mj-navbar": "Navbar",
-    "mj-social": "Social",
-    "mj-raw": "Raw HTML",
+    'mj-section': 'Section',
+    'mj-column': 'Column',
+    'mj-text': 'Text',
+    'mj-image': 'Image',
+    'mj-button': 'Button',
+    'mj-divider': 'Divider',
+    'mj-spacer': 'Spacer',
+    'mj-wrapper': 'Wrapper',
+    'mj-group': 'Group',
+    'mj-hero': 'Hero',
+    'mj-navbar': 'Navbar',
+    'mj-social': 'Social',
+    'mj-raw': 'Raw HTML',
   };
-  return names[tagName] || tagName.replace("mj-", "").replace(/-/g, " ");
+  return names[tagName] || tagName.replace('mj-', '').replace(/-/g, ' ');
 }
 
 function canHaveChildren(tagName: string): boolean {
   return [
-    "mj-section",
-    "mj-column",
-    "mj-wrapper",
-    "mj-group",
-    "mj-hero",
+    'mj-section',
+    'mj-column',
+    'mj-wrapper',
+    'mj-group',
+    'mj-hero',
   ].includes(tagName);
 }
 
 function canAddContentBlocks(tagName: string): boolean {
-  return tagName === "mj-column";
+  return tagName === 'mj-column';
 }
 
 function canAddColumns(tagName: string): boolean {
-  return tagName === "mj-section" || tagName === "mj-group";
+  return tagName === 'mj-section' || tagName === 'mj-group';
 }
 
 // Custom node renderer for the tree
-function TreeNode({
-  node,
-  style,
-  dragHandle,
-}: NodeRendererProps<MjmlNode>) {
+function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
   const { state, selectBlock, deleteBlock, addBlock, addColumn } = useEditor();
   const [isAddOpen, setIsAddOpen] = useState(false);
 
@@ -127,10 +123,10 @@ function TreeNode({
     <div
       style={style}
       className={cn(
-        "group flex items-center h-8 pr-2 cursor-pointer",
-        "hover:bg-accent/50 transition-colors",
-        isSelected && "bg-accent",
-        node.state.isDragging && "opacity-50"
+        'group flex items-center h-8 pr-2 cursor-pointer',
+        'hover:bg-accent/50 transition-colors',
+        isSelected && 'bg-accent',
+        node.state.isDragging && 'opacity-50'
       )}
       onClick={handleSelect}
     >
@@ -138,8 +134,8 @@ function TreeNode({
       {showExpandButton ? (
         <button
           className={cn(
-            "flex items-center justify-center w-5 h-5",
-            "text-foreground-muted hover:text-foreground transition-colors"
+            'flex items-center justify-center w-5 h-5',
+            'text-foreground-muted hover:text-foreground transition-colors'
           )}
           onClick={handleToggleExpand}
         >
@@ -172,72 +168,71 @@ function TreeNode({
       {/* Action buttons - visible on hover */}
       <div
         className={cn(
-          "flex items-center gap-0.5",
-          "opacity-0 group-hover:opacity-100 transition-opacity"
+          'flex items-center gap-0.5',
+          'opacity-0 group-hover:opacity-100 transition-opacity'
         )}
       >
         {/* Drag handle */}
         <div
           ref={dragHandle}
           className={cn(
-            "flex items-center justify-center w-6 h-6 cursor-grab rounded-md",
-            "text-foreground-muted hover:text-foreground hover:bg-accent/50"
+            'flex items-center justify-center w-6 h-6 cursor-grab rounded-md',
+            'text-foreground-muted hover:text-foreground hover:bg-accent/50'
           )}
         >
           <GripVertical className="h-3.5 w-3.5" />
         </div>
 
         {/* Add button */}
-        {(canAddContentBlocks(data.tagName) ||
-          canAddColumns(data.tagName)) && (
-            <Popover open={isAddOpen} onOpenChange={setIsAddOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="h-6 w-6 text-foreground-muted hover:text-foreground"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-48 p-1.5 shadow-framer-lg"
-                align="start"
+        {(canAddContentBlocks(data.tagName) || canAddColumns(data.tagName)) && (
+          <Popover open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="h-6 w-6 text-foreground-muted hover:text-foreground"
                 onClick={(e) => e.stopPropagation()}
               >
-                {canAddColumns(data.tagName) && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
-                    onClick={handleAddColumn}
-                  >
-                    <Columns className="h-4 w-4 text-foreground-muted" />
-                    Column
-                  </Button>
-                )}
-                {canAddContentBlocks(data.tagName) && (
-                  <>
-                    {contentBlockTypes.map((block) => (
-                      <Button
-                        key={block.type}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
-                        onClick={() => handleAddBlock(block.type)}
-                      >
-                        <span className="text-foreground-muted">
-                          {contentBlockIcons[block.type]}
-                        </span>
-                        {block.label}
-                      </Button>
-                    ))}
-                  </>
-                )}
-              </PopoverContent>
-            </Popover>
-          )}
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-48 p-1.5 shadow-framer-lg"
+              align="start"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {canAddColumns(data.tagName) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
+                  onClick={handleAddColumn}
+                >
+                  <Columns className="h-4 w-4 text-foreground-muted" />
+                  Column
+                </Button>
+              )}
+              {canAddContentBlocks(data.tagName) && (
+                <>
+                  {contentBlockTypes.map((block) => (
+                    <Button
+                      key={block.type}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start gap-3 h-8 px-3 text-sm font-normal hover:bg-accent"
+                      onClick={() => handleAddBlock(block.type)}
+                    >
+                      <span className="text-foreground-muted">
+                        {contentBlockIcons[block.type]}
+                      </span>
+                      {block.label}
+                    </Button>
+                  ))}
+                </>
+              )}
+            </PopoverContent>
+          </Popover>
+        )}
 
         {/* Delete button */}
         <Button
@@ -259,7 +254,7 @@ export function OutlineTree() {
   const treeRef = useRef<TreeApi<MjmlNode>>(null);
 
   // Get the body node's children as the tree data
-  const body = state.document.children?.find((c) => c.tagName === "mj-body");
+  const body = state.document.children?.find((c) => c.tagName === 'mj-body');
   const treeData = body?.children || [];
 
   // Handle node moves from drag-and-drop

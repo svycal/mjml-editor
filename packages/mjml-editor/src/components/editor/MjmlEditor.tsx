@@ -1,24 +1,24 @@
-import { useEffect, useCallback, useState } from "react";
-import { EditorProvider, useEditor } from "@/context/EditorContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { OutlineTree } from "./OutlineTree";
-import { EditorCanvas } from "./EditorCanvas";
-import { BlockInspector } from "./BlockInspector";
+import { useEffect, useCallback, useState } from 'react';
+import { EditorProvider, useEditor } from '@/context/EditorContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { OutlineTree } from './OutlineTree';
+import { EditorCanvas } from './EditorCanvas';
+import { BlockInspector } from './BlockInspector';
 import {
   parseMjml,
   serializeMjml,
   createEmptyDocument,
-} from "@/lib/mjml/parser";
-import type { MjmlNode } from "@/types/mjml";
+} from '@/lib/mjml/parser';
+import type { MjmlNode } from '@/types/mjml';
 
 function parseInitialValue(value: string): MjmlNode {
-  if (!value || value.trim() === "") {
+  if (!value || value.trim() === '') {
     return createEmptyDocument();
   }
   try {
     return parseMjml(value);
   } catch (error) {
-    console.error("Failed to parse MJML:", error);
+    console.error('Failed to parse MJML:', error);
     return createEmptyDocument();
   }
 }
@@ -37,7 +37,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   // Notify parent of changes
   useEffect(() => {
     const mjml = serializeMjml(state.document);
-    console.log("MJML markup updated:\n", mjml);
+    console.log('MJML markup updated:\n', mjml);
     onChange(mjml);
   }, [state.document, onChange]);
 
@@ -54,7 +54,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
       }
 
       // Undo/Redo
-      if ((e.metaKey || e.ctrlKey) && e.key === "z") {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.preventDefault();
         if (e.shiftKey) {
           if (canRedo) redo();
@@ -66,7 +66,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
 
       // Delete selected block
       if (
-        (e.key === "Delete" || e.key === "Backspace") &&
+        (e.key === 'Delete' || e.key === 'Backspace') &&
         state.selectedBlockId
       ) {
         e.preventDefault();
@@ -75,15 +75,15 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
       }
 
       // Escape to deselect
-      if (e.key === "Escape" && state.selectedBlockId) {
+      if (e.key === 'Escape' && state.selectedBlockId) {
         e.preventDefault();
         selectBlock(null);
         return;
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [
     undo,
     redo,
@@ -128,12 +128,12 @@ export function MjmlEditor({
     (mjml: string) => {
       onChange(mjml);
     },
-    [onChange],
+    [onChange]
   );
 
   return (
     <ThemeProvider defaultTheme={defaultTheme}>
-      <div className={`h-full w-full bg-background ${className || ""}`}>
+      <div className={`h-full w-full bg-background ${className || ''}`}>
         <EditorProvider initialDocument={initialDocument}>
           <EditorContent onChange={handleChange} />
         </EditorProvider>

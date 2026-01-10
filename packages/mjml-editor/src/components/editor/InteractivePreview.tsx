@@ -6,7 +6,9 @@ interface InteractivePreviewProps {
   showHeader?: boolean;
 }
 
-export function InteractivePreview({ showHeader = true }: InteractivePreviewProps) {
+export function InteractivePreview({
+  showHeader = true,
+}: InteractivePreviewProps) {
   const { state, selectBlock } = useEditor();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedDocument, setDebouncedDocument] = useState(state.document);
@@ -25,11 +27,14 @@ export function InteractivePreview({ showHeader = true }: InteractivePreviewProp
   }, [debouncedDocument]);
 
   // Handle messages from iframe (block selection)
-  const handleMessage = useCallback((event: MessageEvent) => {
-    if (event.data?.type === 'BLOCK_SELECTED') {
-      selectBlock(event.data.blockId);
-    }
-  }, [selectBlock]);
+  const handleMessage = useCallback(
+    (event: MessageEvent) => {
+      if (event.data?.type === 'BLOCK_SELECTED') {
+        selectBlock(event.data.blockId);
+      }
+    },
+    [selectBlock]
+  );
 
   useEffect(() => {
     window.addEventListener('message', handleMessage);
@@ -148,11 +153,14 @@ export function InteractivePreview({ showHeader = true }: InteractivePreviewProp
       {/* Errors panel */}
       {errors.length > 0 && (
         <div className="max-h-28 overflow-auto border-t border-border bg-amber-50/50 p-3">
-          <div className="text-xs font-semibold text-amber-700 mb-2">Warnings</div>
+          <div className="text-xs font-semibold text-amber-700 mb-2">
+            Warnings
+          </div>
           <div className="space-y-1">
             {errors.map((error, i) => (
               <div key={i} className="text-xs text-amber-600">
-                <span className="font-mono">Line {error.line}:</span> {error.message}
+                <span className="font-mono">Line {error.line}:</span>{' '}
+                {error.message}
               </div>
             ))}
           </div>

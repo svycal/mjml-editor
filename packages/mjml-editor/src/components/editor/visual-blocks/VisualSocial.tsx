@@ -32,10 +32,12 @@ export function VisualSocial({ node }: VisualSocialProps) {
   const iconSize = node.attributes['icon-size'] || '20px';
 
   // Get social elements
-  const socialElements = node.children?.filter((c) => c.tagName === 'mj-social-element') || [];
+  const socialElements =
+    node.children?.filter((c) => c.tagName === 'mj-social-element') || [];
 
   // Convert align to flexbox
-  const justifyContent = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+  const justifyContent =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
   return (
     <div
@@ -75,7 +77,9 @@ export function VisualSocial({ node }: VisualSocialProps) {
         })}
 
         {socialElements.length === 0 && (
-          <span className="text-sm text-muted-foreground">Add social icons</span>
+          <span className="text-sm text-muted-foreground">
+            Add social icons
+          </span>
         )}
       </div>
     </div>

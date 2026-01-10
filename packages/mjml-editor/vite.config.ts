@@ -1,20 +1,21 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import dts from 'vite-plugin-dts'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import dts from 'vite-plugin-dts';
+import path from 'path';
 
-const isWatch = process.argv.includes('--watch')
+const isWatch = process.argv.includes('--watch');
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
     // Skip dts in watch mode to avoid incremental build errors
-    !isWatch && dts({
-      insertTypesEntry: true,
-      rollupTypes: true,
-    }),
+    !isWatch &&
+      dts({
+        insertTypesEntry: true,
+        rollupTypes: true,
+      }),
   ].filter(Boolean),
   resolve: {
     alias: {
@@ -40,11 +41,11 @@ export default defineConfig({
           'react/jsx-runtime': 'jsxRuntime',
         },
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) return 'styles.css'
-          return assetInfo.name || ''
+          if (assetInfo.name?.endsWith('.css')) return 'styles.css';
+          return assetInfo.name || '';
         },
       },
     },
     cssCodeSplit: false,
   },
-})
+});

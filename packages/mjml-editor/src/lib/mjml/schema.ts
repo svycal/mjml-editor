@@ -2,14 +2,18 @@ import type { ComponentSchema, ContentBlockType } from '@/types/mjml';
 
 // Common padding schema
 const paddingSchema: ComponentSchema = {
-  'padding': { type: 'padding', label: 'Padding', default: '10px 25px' },
+  padding: { type: 'padding', label: 'Padding', default: '10px 25px' },
 };
 
 // Section attributes
 export const sectionSchema: ComponentSchema = {
   'background-color': { type: 'color', label: 'Background Color', default: '' },
-  'background-url': { type: 'url', label: 'Background Image URL', placeholder: 'https://...' },
-  'padding': { type: 'padding', label: 'Padding', default: '20px 0' },
+  'background-url': {
+    type: 'url',
+    label: 'Background Image URL',
+    placeholder: 'https://...',
+  },
+  padding: { type: 'padding', label: 'Padding', default: '20px 0' },
   'full-width': {
     type: 'select',
     label: 'Full Width',
@@ -23,7 +27,7 @@ export const sectionSchema: ComponentSchema = {
 
 // Column attributes
 export const columnSchema: ComponentSchema = {
-  'width': { type: 'dimension', label: 'Width', placeholder: 'auto, 50%, 200px' },
+  width: { type: 'dimension', label: 'Width', placeholder: 'auto, 50%, 200px' },
   'background-color': { type: 'color', label: 'Background Color', default: '' },
   'vertical-align': {
     type: 'select',
@@ -35,14 +39,18 @@ export const columnSchema: ComponentSchema = {
       { value: 'bottom', label: 'Bottom' },
     ],
   },
-  'padding': { type: 'padding', label: 'Padding', default: '' },
+  padding: { type: 'padding', label: 'Padding', default: '' },
 };
 
 // Text attributes
 export const textSchema: ComponentSchema = {
-  'color': { type: 'color', label: 'Text Color', default: '#000000' },
+  color: { type: 'color', label: 'Text Color', default: '#000000' },
   'font-size': { type: 'dimension', label: 'Font Size', default: '13px' },
-  'font-family': { type: 'text', label: 'Font Family', default: 'Ubuntu, Helvetica, Arial, sans-serif' },
+  'font-family': {
+    type: 'text',
+    label: 'Font Family',
+    default: 'Ubuntu, Helvetica, Arial, sans-serif',
+  },
   'font-weight': {
     type: 'select',
     label: 'Font Weight',
@@ -55,7 +63,7 @@ export const textSchema: ComponentSchema = {
       { value: '700', label: 'Bold (700)' },
     ],
   },
-  'align': {
+  align: {
     type: 'select',
     label: 'Alignment',
     default: 'left',
@@ -72,12 +80,12 @@ export const textSchema: ComponentSchema = {
 
 // Image attributes
 export const imageSchema: ComponentSchema = {
-  'src': { type: 'url', label: 'Image URL', placeholder: 'https://...' },
-  'alt': { type: 'text', label: 'Alt Text', default: '' },
-  'width': { type: 'dimension', label: 'Width', placeholder: '600px' },
-  'height': { type: 'dimension', label: 'Height', default: 'auto' },
-  'href': { type: 'url', label: 'Link URL', placeholder: 'https://...' },
-  'align': {
+  src: { type: 'url', label: 'Image URL', placeholder: 'https://...' },
+  alt: { type: 'text', label: 'Alt Text', default: '' },
+  width: { type: 'dimension', label: 'Width', placeholder: '600px' },
+  height: { type: 'dimension', label: 'Height', default: 'auto' },
+  href: { type: 'url', label: 'Link URL', placeholder: 'https://...' },
+  align: {
     type: 'select',
     label: 'Alignment',
     default: 'center',
@@ -93,9 +101,13 @@ export const imageSchema: ComponentSchema = {
 
 // Button attributes
 export const buttonSchema: ComponentSchema = {
-  'href': { type: 'url', label: 'Link URL', placeholder: 'https://...' },
-  'background-color': { type: 'color', label: 'Background Color', default: '#414141' },
-  'color': { type: 'color', label: 'Text Color', default: '#ffffff' },
+  href: { type: 'url', label: 'Link URL', placeholder: 'https://...' },
+  'background-color': {
+    type: 'color',
+    label: 'Background Color',
+    default: '#414141',
+  },
+  color: { type: 'color', label: 'Text Color', default: '#ffffff' },
   'font-size': { type: 'dimension', label: 'Font Size', default: '13px' },
   'font-weight': {
     type: 'select',
@@ -106,8 +118,12 @@ export const buttonSchema: ComponentSchema = {
       { value: 'bold', label: 'Bold' },
     ],
   },
-  'border-radius': { type: 'dimension', label: 'Border Radius', default: '3px' },
-  'align': {
+  'border-radius': {
+    type: 'dimension',
+    label: 'Border Radius',
+    default: '3px',
+  },
+  align: {
     type: 'select',
     label: 'Alignment',
     default: 'center',
@@ -117,7 +133,11 @@ export const buttonSchema: ComponentSchema = {
       { value: 'right', label: 'Right' },
     ],
   },
-  'inner-padding': { type: 'padding', label: 'Inner Padding', default: '10px 25px' },
+  'inner-padding': {
+    type: 'padding',
+    label: 'Inner Padding',
+    default: '10px 25px',
+  },
   ...paddingSchema,
 };
 
@@ -135,13 +155,13 @@ export const dividerSchema: ComponentSchema = {
       { value: 'dotted', label: 'Dotted' },
     ],
   },
-  'width': { type: 'dimension', label: 'Width', default: '100%' },
+  width: { type: 'dimension', label: 'Width', default: '100%' },
   ...paddingSchema,
 };
 
 // Spacer attributes
 export const spacerSchema: ComponentSchema = {
-  'height': { type: 'dimension', label: 'Height', default: '20px' },
+  height: { type: 'dimension', label: 'Height', default: '20px' },
 };
 
 // Get schema by tag name
@@ -167,7 +187,11 @@ export function getSchemaForTag(tagName: string): ComponentSchema | null {
 }
 
 // Content block definitions for the add block picker
-export const contentBlockTypes: { type: ContentBlockType; label: string; icon: string }[] = [
+export const contentBlockTypes: {
+  type: ContentBlockType;
+  label: string;
+  icon: string;
+}[] = [
   { type: 'mj-text', label: 'Text', icon: 'T' },
   { type: 'mj-image', label: 'Image', icon: '🖼' },
   { type: 'mj-button', label: 'Button', icon: '▢' },
@@ -176,7 +200,10 @@ export const contentBlockTypes: { type: ContentBlockType; label: string; icon: s
 ];
 
 // Default content/attributes for new blocks
-export function getDefaultBlock(type: ContentBlockType): { attributes: Record<string, string>; content?: string } {
+export function getDefaultBlock(type: ContentBlockType): {
+  attributes: Record<string, string>;
+  content?: string;
+} {
   switch (type) {
     case 'mj-text':
       return {

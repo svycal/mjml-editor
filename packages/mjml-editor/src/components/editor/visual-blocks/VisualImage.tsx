@@ -25,7 +25,8 @@ export function VisualImage({ node }: VisualImageProps) {
   const padding = node.attributes['padding'] || '10px 25px';
 
   // Convert align to flexbox
-  const justifyContent = align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
+  const justifyContent =
+    align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
   return (
     <div

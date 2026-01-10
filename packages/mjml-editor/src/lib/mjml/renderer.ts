@@ -23,7 +23,9 @@ function addBlockClasses(node: MjmlNode): MjmlNode {
   // Add block-{_id} to mj-class attribute
   const existingClass = node.attributes['mj-class'] || '';
   const blockClass = `block-${node._id}`;
-  const newClass = existingClass ? `${existingClass} ${blockClass}` : blockClass;
+  const newClass = existingClass
+    ? `${existingClass} ${blockClass}`
+    : blockClass;
 
   return {
     ...node,
@@ -48,9 +50,11 @@ function jsonToMjmlWithClasses(node: MjmlNode, indent: number = 0): string {
 
   // Build attributes string (exclude internal _id)
   const attrs = Object.entries(node.attributes || {})
-    .filter(([key, value]) => key !== '_id' && value !== "" && value !== undefined)
+    .filter(
+      ([key, value]) => key !== '_id' && value !== '' && value !== undefined
+    )
     .map(([key, value]) => `${key}="${escapeAttr(value)}"`)
-    .join(" ");
+    .join(' ');
 
   const openTag = attrs ? `<${tagName} ${attrs}>` : `<${tagName}>`;
   const closeTag = `</${tagName}>`;
@@ -63,7 +67,7 @@ function jsonToMjmlWithClasses(node: MjmlNode, indent: number = 0): string {
   // Handle children
   if (node.children && node.children.length > 0) {
     const childrenStr = node.children
-      .map(child => jsonToMjmlWithClasses(child, indent + 1))
+      .map((child) => jsonToMjmlWithClasses(child, indent + 1))
       .join('\n');
     return `${spaces}${openTag}\n${childrenStr}\n${spaces}${closeTag}`;
   }

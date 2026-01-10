@@ -1,15 +1,15 @@
-import { useEditor } from "@/context/EditorContext";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { VisualSection } from "./visual-blocks/VisualSection";
+import { useEditor } from '@/context/EditorContext';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { VisualSection } from './visual-blocks/VisualSection';
 
 export function VisualEditor() {
   const { state, selectBlock } = useEditor();
 
   // Get the body node
-  const body = state.document.children?.find((c) => c.tagName === "mj-body");
+  const body = state.document.children?.find((c) => c.tagName === 'mj-body');
 
   // Get body width (MJML default is 600px)
-  const bodyWidth = body?.attributes["width"] || "600px";
+  const bodyWidth = body?.attributes['width'] || '600px';
 
   // Click on empty area deselects
   const handleBackgroundClick = (e: React.MouseEvent) => {

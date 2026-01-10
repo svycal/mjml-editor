@@ -48,7 +48,8 @@ export function VisualSection({ node }: VisualSectionProps) {
     const fullWidth = node.attributes['full-width'] === 'full-width';
 
     // Get columns
-    const columns = node.children?.filter((c) => c.tagName === 'mj-column') || [];
+    const columns =
+      node.children?.filter((c) => c.tagName === 'mj-column') || [];
     const columnCount = columns.length || 1;
 
     return (
@@ -96,7 +97,8 @@ export function VisualSection({ node }: VisualSectionProps) {
 
   // Handle group (similar to section but columns don't stack on mobile)
   if (node.tagName === 'mj-group') {
-    const columns = node.children?.filter((c) => c.tagName === 'mj-column') || [];
+    const columns =
+      node.children?.filter((c) => c.tagName === 'mj-column') || [];
     const columnCount = columns.length || 1;
 
     return (
@@ -127,7 +129,9 @@ export function VisualSection({ node }: VisualSectionProps) {
       )}
       onClick={handleClick}
     >
-      <span className="text-sm text-muted-foreground">Unknown: {node.tagName}</span>
+      <span className="text-sm text-muted-foreground">
+        Unknown: {node.tagName}
+      </span>
     </div>
   );
 }

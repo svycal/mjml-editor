@@ -6,9 +6,14 @@ import {
   useCallback,
   useMemo,
   type ReactNode,
-} from "react";
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import type { MjmlNode, EditorState, EditorAction, ContentBlockType } from '@/types/mjml';
+import type {
+  MjmlNode,
+  EditorState,
+  EditorAction,
+  ContentBlockType,
+} from '@/types/mjml';
 import {
   updateNode,
   deleteNode,
@@ -97,7 +102,10 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         document: newDocument,
-        selectedBlockId: state.selectedBlockId === action.payload ? null : state.selectedBlockId,
+        selectedBlockId:
+          state.selectedBlockId === action.payload
+            ? null
+            : state.selectedBlockId,
         history: newHistory,
         historyIndex: newHistory.length - 1,
       };
@@ -161,7 +169,11 @@ interface EditorContextValue {
   selectBlock: (id: string | null) => void;
   updateAttributes: (id: string, attributes: Record<string, string>) => void;
   updateContent: (id: string, content: string) => void;
-  addBlock: (parentId: string, index: number, blockType: ContentBlockType) => void;
+  addBlock: (
+    parentId: string,
+    index: number,
+    blockType: ContentBlockType
+  ) => void;
   addSection: () => void;
   addColumn: (sectionId: string) => void;
   deleteBlock: (id: string) => void;
@@ -181,7 +193,10 @@ interface EditorProviderProps {
   initialDocument: MjmlNode;
 }
 
-export function EditorProvider({ children, initialDocument }: EditorProviderProps) {
+export function EditorProvider({
+  children,
+  initialDocument,
+}: EditorProviderProps) {
   const [state, dispatch] = useReducer(editorReducer, {
     document: addIds(initialDocument),
     selectedBlockId: null,
@@ -193,28 +208,34 @@ export function EditorProvider({ children, initialDocument }: EditorProviderProp
     dispatch({ type: 'SELECT_BLOCK', payload: id });
   }, []);
 
-  const updateAttributes = useCallback((id: string, attributes: Record<string, string>) => {
-    dispatch({ type: 'UPDATE_ATTRIBUTES', payload: { id, attributes } });
-  }, []);
+  const updateAttributes = useCallback(
+    (id: string, attributes: Record<string, string>) => {
+      dispatch({ type: 'UPDATE_ATTRIBUTES', payload: { id, attributes } });
+    },
+    []
+  );
 
   const updateContent = useCallback((id: string, content: string) => {
     dispatch({ type: 'UPDATE_CONTENT', payload: { id, content } });
   }, []);
 
-  const addBlock = useCallback((parentId: string, index: number, blockType: ContentBlockType) => {
-    const defaults = getDefaultBlock(blockType);
-    const block: MjmlNode = {
-      tagName: blockType,
-      attributes: defaults.attributes,
-      content: defaults.content,
-      _id: uuidv4(),
-    };
-    dispatch({ type: 'ADD_BLOCK', payload: { parentId, index, block } });
-  }, []);
+  const addBlock = useCallback(
+    (parentId: string, index: number, blockType: ContentBlockType) => {
+      const defaults = getDefaultBlock(blockType);
+      const block: MjmlNode = {
+        tagName: blockType,
+        attributes: defaults.attributes,
+        content: defaults.content,
+        _id: uuidv4(),
+      };
+      dispatch({ type: 'ADD_BLOCK', payload: { parentId, index, block } });
+    },
+    []
+  );
 
   const addSection = useCallback(() => {
     // Find the body node
-    const body = state.document.children?.find(c => c.tagName === 'mj-body');
+    const body = state.document.children?.find((c) => c.tagName === 'mj-body');
     if (!body?._id) return;
 
     const section: MjmlNode = {
@@ -232,31 +253,43 @@ export function EditorProvider({ children, initialDocument }: EditorProviderProp
     };
 
     const index = body.children?.length || 0;
-    dispatch({ type: 'ADD_BLOCK', payload: { parentId: body._id, index, block: section } });
+    dispatch({
+      type: 'ADD_BLOCK',
+      payload: { parentId: body._id, index, block: section },
+    });
   }, [state.document]);
 
-  const addColumn = useCallback((sectionId: string) => {
-    const section = findNodeById(state.document, sectionId);
-    if (!section) return;
+  const addColumn = useCallback(
+    (sectionId: string) => {
+      const section = findNodeById(state.document, sectionId);
+      if (!section) return;
 
-    const column: MjmlNode = {
-      tagName: 'mj-column',
-      attributes: {},
-      _id: uuidv4(),
-      children: [],
-    };
+      const column: MjmlNode = {
+        tagName: 'mj-column',
+        attributes: {},
+        _id: uuidv4(),
+        children: [],
+      };
 
-    const index = section.children?.length || 0;
-    dispatch({ type: 'ADD_BLOCK', payload: { parentId: sectionId, index, block: column } });
-  }, [state.document]);
+      const index = section.children?.length || 0;
+      dispatch({
+        type: 'ADD_BLOCK',
+        payload: { parentId: sectionId, index, block: column },
+      });
+    },
+    [state.document]
+  );
 
   const deleteBlockFn = useCallback((id: string) => {
     dispatch({ type: 'DELETE_BLOCK', payload: id });
   }, []);
 
-  const moveBlockFn = useCallback((id: string, newParentId: string, newIndex: number) => {
-    dispatch({ type: 'MOVE_BLOCK', payload: { id, newParentId, newIndex } });
-  }, []);
+  const moveBlockFn = useCallback(
+    (id: string, newParentId: string, newIndex: number) => {
+      dispatch({ type: 'MOVE_BLOCK', payload: { id, newParentId, newIndex } });
+    },
+    []
+  );
 
   const setDocument = useCallback((document: MjmlNode) => {
     dispatch({ type: 'SET_DOCUMENT', payload: document });
@@ -310,7 +343,9 @@ export function EditorProvider({ children, initialDocument }: EditorProviderProp
     ]
   );
 
-  return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
+  return (
+    <EditorContext.Provider value={value}>{children}</EditorContext.Provider>
+  );
 }
 
 export function useEditor() {

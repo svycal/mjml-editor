@@ -34,7 +34,14 @@ function elementToJson(element: Element): MjmlNode {
   }
 
   // Check if this is an "ending tag" (content-only, no children)
-  const endingTags = ['mj-text', 'mj-button', 'mj-title', 'mj-preview', 'mj-style', 'mj-raw'];
+  const endingTags = [
+    'mj-text',
+    'mj-button',
+    'mj-title',
+    'mj-preview',
+    'mj-style',
+    'mj-raw',
+  ];
   const isEndingTag = endingTags.includes(tagName);
 
   if (isEndingTag) {
@@ -75,9 +82,9 @@ function jsonToMjml(node: MjmlNode, indent: number = 0): string {
 
   // Build attributes string
   const attrs = Object.entries(node.attributes || {})
-    .filter(([, value]) => value !== "" && value !== undefined)
+    .filter(([, value]) => value !== '' && value !== undefined)
     .map(([key, value]) => `${key}="${escapeAttr(value)}"`)
-    .join(" ");
+    .join(' ');
 
   const openTag = attrs ? `<${tagName} ${attrs}>` : `<${tagName}>`;
   const closeTag = `</${tagName}>`;
@@ -90,7 +97,7 @@ function jsonToMjml(node: MjmlNode, indent: number = 0): string {
   // Handle children
   if (node.children && node.children.length > 0) {
     const childrenStr = node.children
-      .map(child => jsonToMjml(child, indent + 1))
+      .map((child) => jsonToMjml(child, indent + 1))
       .join('\n');
     return `${spaces}${openTag}\n${childrenStr}\n${spaces}${closeTag}`;
   }
@@ -166,7 +173,7 @@ export function findParentNode(root: MjmlNode, id: string): MjmlNode | null {
  */
 export function getBody(root: MjmlNode): MjmlNode | null {
   if (root.tagName === 'mj-body') return root;
-  return root.children?.find(c => c.tagName === 'mj-body') || null;
+  return root.children?.find((c) => c.tagName === 'mj-body') || null;
 }
 
 /**
@@ -175,7 +182,7 @@ export function getBody(root: MjmlNode): MjmlNode | null {
 export function getSections(root: MjmlNode): MjmlNode[] {
   const body = getBody(root);
   if (!body?.children) return [];
-  return body.children.filter(c => c.tagName === 'mj-section');
+  return body.children.filter((c) => c.tagName === 'mj-section');
 }
 
 /**
@@ -201,7 +208,7 @@ export function updateNode(
 
   return {
     ...root,
-    children: root.children.map(child => updateNode(child, id, updater)),
+    children: root.children.map((child) => updateNode(child, id, updater)),
   };
 }
 
@@ -214,8 +221,8 @@ export function deleteNode(root: MjmlNode, id: string): MjmlNode {
   return {
     ...root,
     children: root.children
-      .filter(child => child._id !== id)
-      .map(child => deleteNode(child, id)),
+      .filter((child) => child._id !== id)
+      .map((child) => deleteNode(child, id)),
   };
 }
 
@@ -238,7 +245,9 @@ export function insertNode(
 
   return {
     ...root,
-    children: root.children.map(child => insertNode(child, parentId, index, newNode)),
+    children: root.children.map((child) =>
+      insertNode(child, parentId, index, newNode)
+    ),
   };
 }
 
