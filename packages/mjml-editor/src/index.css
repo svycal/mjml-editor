@@ -254,6 +254,26 @@
   --sidebar-ring: oklch(0.60 0.15 250);
 }
 
+@utility bg-checkered {
+  background-color: oklch(0.95 0 0);
+  background-image:
+    linear-gradient(45deg, oklch(0.88 0 0) 25%, transparent 25%),
+    linear-gradient(-45deg, oklch(0.88 0 0) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, oklch(0.88 0 0) 75%),
+    linear-gradient(-45deg, transparent 75%, oklch(0.88 0 0) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+
+  .dark & {
+    background-color: oklch(0.12 0.01 250);
+    background-image:
+      linear-gradient(45deg, oklch(0.18 0.01 250) 25%, transparent 25%),
+      linear-gradient(-45deg, oklch(0.18 0.01 250) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, oklch(0.18 0.01 250) 75%),
+      linear-gradient(-45deg, transparent 75%, oklch(0.18 0.01 250) 75%);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -263,70 +283,47 @@
   }
 }
 
-@layer utilities {
-  .transition-smooth {
-    @apply transition-all duration-150 ease-out;
-  }
+@utility transition-smooth {
+  transition-property: all;
+  transition-timing-function: ease-out;
+  transition-duration: 150ms;
+}
 
-  .bg-checkered {
-    background-color: oklch(0.95 0 0);
-    background-image:
-      linear-gradient(45deg, oklch(0.88 0 0) 25%, transparent 25%),
-      linear-gradient(-45deg, oklch(0.88 0 0) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, oklch(0.88 0 0) 75%),
-      linear-gradient(-45deg, transparent 75%, oklch(0.88 0 0) 75%);
-    background-size: 16px 16px;
-    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
-  }
+@utility shadow-framer {
+  box-shadow:
+    0 0 0 1px oklch(0 0 0 / 0.04),
+    0 1px 2px oklch(0 0 0 / 0.04),
+    0 4px 8px oklch(0 0 0 / 0.04);
 
-  .dark .bg-checkered {
-    background-color: oklch(0.12 0.01 250);
-    background-image:
-      linear-gradient(45deg, oklch(0.18 0.01 250) 25%, transparent 25%),
-      linear-gradient(-45deg, oklch(0.18 0.01 250) 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, oklch(0.18 0.01 250) 75%),
-      linear-gradient(-45deg, transparent 75%, oklch(0.18 0.01 250) 75%);
-    background-size: 16px 16px;
-    background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
-  }
-
-  .shadow-framer {
-    box-shadow:
-      0 0 0 1px oklch(0 0 0 / 0.04),
-      0 1px 2px oklch(0 0 0 / 0.04),
-      0 4px 8px oklch(0 0 0 / 0.04);
-  }
-
-  .shadow-framer-lg {
-    box-shadow:
-      0 0 0 1px oklch(0 0 0 / 0.04),
-      0 2px 4px oklch(0 0 0 / 0.03),
-      0 8px 16px oklch(0 0 0 / 0.06);
-  }
-
-  .dark .shadow-framer {
+  .dark & {
     box-shadow:
       0 0 0 1px oklch(1 0 0 / 0.05),
       0 1px 2px oklch(0 0 0 / 0.3),
       0 4px 8px oklch(0 0 0 / 0.3);
   }
 
-  .dark .shadow-framer-lg {
+  .dark .light & {
+    box-shadow:
+      0 0 0 1px oklch(0 0 0 / 0.04),
+      0 1px 2px oklch(0 0 0 / 0.04),
+      0 4px 8px oklch(0 0 0 / 0.04);
+  }
+}
+
+@utility shadow-framer-lg {
+  box-shadow:
+    0 0 0 1px oklch(0 0 0 / 0.04),
+    0 2px 4px oklch(0 0 0 / 0.03),
+    0 8px 16px oklch(0 0 0 / 0.06);
+
+  .dark & {
     box-shadow:
       0 0 0 1px oklch(1 0 0 / 0.05),
       0 2px 4px oklch(0 0 0 / 0.25),
       0 8px 16px oklch(0 0 0 / 0.4);
   }
 
-  /* Reset shadows to light mode within .light scope */
-  .dark .light .shadow-framer {
-    box-shadow:
-      0 0 0 1px oklch(0 0 0 / 0.04),
-      0 1px 2px oklch(0 0 0 / 0.04),
-      0 4px 8px oklch(0 0 0 / 0.04);
-  }
-
-  .dark .light .shadow-framer-lg {
+  .dark .light & {
     box-shadow:
       0 0 0 1px oklch(0 0 0 / 0.04),
       0 2px 4px oklch(0 0 0 / 0.03),
