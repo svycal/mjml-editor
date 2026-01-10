@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { MjmlEditor } from '@savvycal/mjml-editor';
-import '@savvycal/mjml-editor/styles.css';
+import { useState } from "react";
+import { MjmlEditor } from "@savvycal/mjml-editor";
+import "@savvycal/mjml-editor/styles.css";
 
 const initialMjml = `<mjml>
   <mj-body>
@@ -39,7 +39,13 @@ function App() {
 
   return (
     <div className="h-screen w-screen">
-      <MjmlEditor value={mjml} onChange={setMjml} />
+      <MjmlEditor
+        value={mjml}
+        onChange={(mjml) => {
+          setMjml(mjml);
+          console.log(mjml);
+        }}
+      />
     </div>
   );
 }
