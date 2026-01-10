@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useContext,
@@ -5,7 +6,7 @@ import {
   useCallback,
   useMemo,
   type ReactNode,
-} from 'react';
+} from "react";
 import { v4 as uuidv4 } from 'uuid';
 import type { MjmlNode, EditorState, EditorAction, ContentBlockType } from '@/types/mjml';
 import {

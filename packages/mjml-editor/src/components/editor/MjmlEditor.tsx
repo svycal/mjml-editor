@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { EditorProvider, useEditor } from "@/context/EditorContext";
 import { EditorPane } from "./EditorPane";
 import { PreviewPane } from "./PreviewPane";
@@ -9,6 +9,18 @@ import {
   createEmptyDocument,
 } from "@/lib/mjml/parser";
 import type { MjmlNode } from "@/types/mjml";
+
+function parseInitialValue(value: string): MjmlNode {
+  if (!value || value.trim() === "") {
+    return createEmptyDocument();
+  }
+  try {
+    return parseMjml(value);
+  } catch (error) {
+    console.error("Failed to parse MJML:", error);
+    return createEmptyDocument();
+  }
+}
 
 interface MjmlEditorProps {
   value: string;
@@ -23,6 +35,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   // Notify parent of changes
   useEffect(() => {
     const mjml = serializeMjml(state.document);
+    console.log("MJML markup updated:\n", mjml);
     onChange(mjml);
   }, [state.document, onChange]);
 
@@ -100,18 +113,8 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
 }
 
 export function MjmlEditor({ value, onChange, className }: MjmlEditorProps) {
-  // Parse initial value or create empty document
-  const initialDocument = useMemo((): MjmlNode => {
-    if (!value || value.trim() === "") {
-      return createEmptyDocument();
-    }
-    try {
-      return parseMjml(value);
-    } catch (error) {
-      console.error("Failed to parse MJML:", error);
-      return createEmptyDocument();
-    }
-  }, []);
+  // Parse initial value only once on mount using lazy initial state
+  const [initialDocument] = useState(() => parseInitialValue(value));
 
   // Memoize onChange to prevent re-renders
   const handleChange = useCallback(

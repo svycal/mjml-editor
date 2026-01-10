@@ -75,9 +75,9 @@ function jsonToMjml(node: MjmlNode, indent: number = 0): string {
 
   // Build attributes string
   const attrs = Object.entries(node.attributes || {})
-    .filter(([_, value]) => value !== '' && value !== undefined)
+    .filter(([, value]) => value !== "" && value !== undefined)
     .map(([key, value]) => `${key}="${escapeAttr(value)}"`)
-    .join(' ');
+    .join(" ");
 
   const openTag = attrs ? `<${tagName} ${attrs}>` : `<${tagName}>`;
   const closeTag = `</${tagName}>`;
@@ -125,6 +125,7 @@ export function addIds(node: MjmlNode): MjmlNode {
  * Strip internal IDs from nodes before serialization
  */
 export function stripIds(node: MjmlNode): MjmlNode {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { _id, ...rest } = node;
   return {
     ...rest,
