@@ -93,19 +93,19 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   ]);
 
   return (
-    <div className="grid grid-cols-[256px_1fr_300px] h-full">
+    <div className="grid grid-cols-[256px_1fr_300px] h-full overflow-hidden">
       {/* Left sidebar - Outline Tree */}
-      <div className="border-r border-border bg-background flex flex-col min-h-0">
+      <div className="border-r border-border bg-background flex flex-col min-h-0 overflow-hidden">
         <OutlineTree />
       </div>
 
       {/* Center - Editor Canvas with tabs */}
-      <div className="bg-canvas flex flex-col min-h-0">
+      <div className="bg-canvas flex flex-col min-h-0 overflow-hidden">
         <EditorCanvas />
       </div>
 
       {/* Right sidebar - Attributes Panel */}
-      <div className="border-l border-border bg-background flex flex-col min-h-0">
+      <div className="border-l border-border bg-background flex flex-col min-h-0 overflow-hidden">
         <BlockInspector />
       </div>
     </div>
