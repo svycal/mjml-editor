@@ -65,18 +65,18 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
 
   return (
     <div className="flex h-full w-full">
-      {/* Editor pane - left side */}
-      <div className="flex-1 min-w-0 border-r border-border">
+      {/* Editor pane - left side with canvas background */}
+      <div className="flex-1 min-w-0 border-r border-border bg-canvas">
         <EditorPane />
       </div>
 
       {/* Inspector pane - middle */}
-      <div className="w-72 border-r border-border bg-muted/30">
+      <div className="w-72 border-r border-border bg-inspector">
         <BlockInspector />
       </div>
 
       {/* Preview pane - right side */}
-      <div className="flex-1 min-w-0 bg-muted/50">
+      <div className="flex-1 min-w-0 bg-background-subtle">
         <PreviewPane />
       </div>
     </div>

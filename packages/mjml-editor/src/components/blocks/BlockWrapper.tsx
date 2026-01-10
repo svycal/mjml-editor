@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { X } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -32,10 +33,10 @@ export function BlockWrapper({
   return (
     <div
       className={cn(
-        'group relative rounded border transition-colors',
+        'group relative rounded-lg transition-smooth bg-surface',
         isSelected
-          ? 'border-primary ring-1 ring-primary'
-          : 'border-border hover:border-primary/50',
+          ? 'ring-2 ring-block-selected shadow-framer'
+          : 'ring-1 ring-border-subtle hover:ring-border hover:shadow-framer',
         className
       )}
       onClick={onSelect}
@@ -43,8 +44,10 @@ export function BlockWrapper({
       {/* Label badge */}
       <div
         className={cn(
-          'absolute -top-2.5 left-2 px-1.5 py-0.5 text-[10px] font-medium rounded',
-          isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+          'absolute -top-2 left-3 px-2 py-0.5 text-[11px] font-medium rounded-md transition-smooth',
+          isSelected
+            ? 'bg-block-selected text-white shadow-sm'
+            : 'bg-muted text-foreground-muted group-hover:text-foreground-subtle'
         )}
       >
         {label}
@@ -53,21 +56,23 @@ export function BlockWrapper({
       {/* Delete button */}
       {showDeleteButton && (
         <Button
-          variant="destructive"
-          size="icon"
+          variant="ghost"
+          size="icon-sm"
           className={cn(
-            'absolute -top-2 -right-2 h-5 w-5 rounded-full opacity-0 transition-opacity',
-            'group-hover:opacity-100',
+            'absolute -top-2 -right-2 h-6 w-6 rounded-md',
+            'bg-surface ring-1 ring-border shadow-sm',
+            'text-foreground-muted hover:text-destructive hover:bg-destructive/10',
+            'opacity-0 group-hover:opacity-100 transition-smooth',
             isSelected && 'opacity-100'
           )}
           onClick={handleDelete}
         >
-          <span className="text-xs">×</span>
+          <X className="h-3.5 w-3.5" />
         </Button>
       )}
 
       {/* Content */}
-      <div className="pt-3">{children}</div>
+      <div className="pt-4 pb-2">{children}</div>
     </div>
   );
 }

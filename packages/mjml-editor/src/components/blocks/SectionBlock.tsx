@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
 import { BlockWrapper } from './BlockWrapper';
@@ -62,12 +63,13 @@ export function SectionBlock({ node, index, isSelected, onSelect }: SectionBlock
             {/* Add column button */}
             {columns.length < 4 && (
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                className="h-full min-h-[60px] border-dashed"
+                className="h-full min-h-[60px] border border-dashed border-border rounded-lg text-foreground-muted hover:border-border-strong hover:text-foreground hover:bg-accent/50 transition-smooth"
                 onClick={handleAddColumn}
               >
-                + Column
+                <Plus className="h-4 w-4 mr-1.5" />
+                Column
               </Button>
             )}
           </div>

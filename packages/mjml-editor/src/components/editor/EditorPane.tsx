@@ -8,6 +8,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { Undo2, Redo2, Plus } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -73,36 +74,52 @@ export function EditorPane() {
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-2 border-b border-border bg-muted/30">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={undo}
-          disabled={!canUndo}
-        >
-          Undo
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={redo}
-          disabled={!canRedo}
-        >
-          Redo
-        </Button>
+      <div className="flex items-center h-11 px-3 border-b border-toolbar-border bg-toolbar">
+        {/* Undo/Redo group */}
+        <div className="flex items-center gap-0.5">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={undo}
+            disabled={!canUndo}
+            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent disabled:opacity-40"
+            title="Undo (Cmd+Z)"
+          >
+            <Undo2 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={redo}
+            disabled={!canRedo}
+            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent disabled:opacity-40"
+            title="Redo (Cmd+Shift+Z)"
+          >
+            <Redo2 className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Separator */}
+        <div className="w-px h-5 bg-border mx-2" />
+
+        {/* Spacer */}
         <div className="flex-1" />
+
+        {/* Add section button */}
         <Button
           variant="outline"
           size="sm"
           onClick={addSection}
+          className="h-7 gap-1.5 px-2.5 text-xs font-medium border-border-subtle hover:border-border hover:bg-accent"
         >
-          + Section
+          <Plus className="h-3.5 w-3.5" />
+          Section
         </Button>
       </div>
 
       {/* Block tree with drag and drop */}
       <ScrollArea className="flex-1">
-        <div className="p-4">
+        <div className="p-5">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}

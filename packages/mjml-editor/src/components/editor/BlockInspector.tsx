@@ -12,11 +12,13 @@ export function BlockInspector() {
   if (!selectedBlock) {
     return (
       <div className="flex flex-col h-full">
-        <div className="p-3 border-b border-border">
-          <h3 className="font-medium text-sm">Inspector</h3>
+        <div className="h-11 px-4 flex items-center border-b border-border bg-inspector-header">
+          <h3 className="text-sm font-semibold text-foreground">Inspector</h3>
         </div>
-        <div className="flex-1 flex items-center justify-center p-4 text-sm text-muted-foreground text-center">
-          Select a block to edit its properties
+        <div className="flex-1 flex items-center justify-center p-6">
+          <p className="text-sm text-foreground-muted text-center leading-relaxed">
+            Select a block to<br />edit its properties
+          </p>
         </div>
       </div>
     );
@@ -34,12 +36,12 @@ export function BlockInspector() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-3 border-b border-border">
-        <h3 className="font-medium text-sm">{tagLabel} Settings</h3>
+      <div className="h-11 px-4 flex items-center border-b border-border bg-inspector-header">
+        <h3 className="text-sm font-semibold text-foreground">{tagLabel}</h3>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-3 space-y-4">
+        <div className="p-4 space-y-5">
           {schema ? (
             Object.entries(schema).map(([key, attrSchema]) => (
               <AttributeEditor
@@ -51,7 +53,7 @@ export function BlockInspector() {
               />
             ))
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-foreground-muted py-4 text-center">
               No editable properties for this block type.
             </p>
           )}
@@ -80,12 +82,12 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
         onChange(newValue === 'false' ? '' : newValue);
       };
       return (
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs">
+        <div className="space-y-2">
+          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
             {schema.label}
           </Label>
           <Select value={selectValue} onValueChange={handleSelectChange}>
-            <SelectTrigger id={id} className="h-8 text-xs">
+            <SelectTrigger id={id} className="h-8 text-xs border-border-subtle">
               <SelectValue placeholder={`Select ${schema.label.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
@@ -102,8 +104,8 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
 
     case 'color':
       return (
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs">
+        <div className="space-y-2">
+          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
             {schema.label}
           </Label>
           <div className="flex gap-2">
@@ -112,14 +114,14 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
               type="color"
               value={value || schema.default || '#000000'}
               onChange={(e) => onChange(e.target.value)}
-              className="h-8 w-12 p-1 cursor-pointer"
+              className="h-8 w-10 p-0.5 cursor-pointer rounded-md border-border-subtle"
             />
             <Input
               type="text"
               value={value || ''}
               onChange={(e) => onChange(e.target.value)}
               placeholder={schema.default || '#000000'}
-              className="h-8 text-xs flex-1"
+              className="h-8 text-xs flex-1 font-mono border-border-subtle"
             />
           </div>
         </div>
@@ -127,8 +129,8 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
 
     case 'padding':
       return (
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs">
+        <div className="space-y-2">
+          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
             {schema.label}
           </Label>
           <Input
@@ -137,9 +139,9 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             placeholder={schema.default || '10px 25px'}
-            className="h-8 text-xs"
+            className="h-8 text-xs border-border-subtle"
           />
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-[10px] text-foreground-subtle">
             Format: top right bottom left (e.g., 10px 20px)
           </p>
         </div>
@@ -147,8 +149,8 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
 
     case 'dimension':
       return (
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs">
+        <div className="space-y-2">
+          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
             {schema.label}
           </Label>
           <Input
@@ -157,15 +159,15 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             placeholder={schema.placeholder || schema.default || ''}
-            className="h-8 text-xs"
+            className="h-8 text-xs border-border-subtle"
           />
         </div>
       );
 
     case 'url':
       return (
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs">
+        <div className="space-y-2">
+          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
             {schema.label}
           </Label>
           <Input
@@ -174,7 +176,7 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             placeholder={schema.placeholder || 'https://...'}
-            className="h-8 text-xs"
+            className="h-8 text-xs border-border-subtle"
           />
         </div>
       );
@@ -182,8 +184,8 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
     case 'text':
     default:
       return (
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs">
+        <div className="space-y-2">
+          <Label htmlFor={id} className="text-xs font-medium text-foreground-muted">
             {schema.label}
           </Label>
           <Input
@@ -192,7 +194,7 @@ function AttributeEditor({ attributeKey, schema, value, onChange }: AttributeEdi
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
             placeholder={schema.placeholder || schema.default || ''}
-            className="h-8 text-xs"
+            className="h-8 text-xs border-border-subtle"
           />
         </div>
       );
