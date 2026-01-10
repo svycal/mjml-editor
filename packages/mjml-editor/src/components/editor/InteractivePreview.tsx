@@ -2,7 +2,11 @@ import { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { renderMjmlInteractive } from '@/lib/mjml/renderer';
 
-export function InteractivePreview() {
+interface InteractivePreviewProps {
+  showHeader?: boolean;
+}
+
+export function InteractivePreview({ showHeader = true }: InteractivePreviewProps) {
   const { state, selectBlock } = useEditor();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedDocument, setDebouncedDocument] = useState(state.document);
@@ -120,14 +124,16 @@ export function InteractivePreview() {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="h-11 px-4 flex items-center justify-between border-b border-border bg-background">
-        <span className="text-sm font-semibold text-foreground">Preview</span>
-        {errors.length > 0 && (
-          <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">
-            {errors.length} warning{errors.length !== 1 ? 's' : ''}
-          </span>
-        )}
-      </div>
+      {showHeader && (
+        <div className="h-11 px-4 flex items-center justify-between border-b border-border bg-background">
+          <span className="text-sm font-semibold text-foreground">Preview</span>
+          {errors.length > 0 && (
+            <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">
+              {errors.length} warning{errors.length !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Preview iframe */}
       <div className="flex-1 overflow-auto bg-white">

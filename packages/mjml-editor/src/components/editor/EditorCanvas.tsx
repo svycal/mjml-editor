@@ -1,0 +1,49 @@
+import { useState } from 'react';
+import { VisualEditor } from './VisualEditor';
+import { InteractivePreview } from './InteractivePreview';
+import { cn } from '@/lib/utils';
+
+type TabType = 'edit' | 'preview';
+
+export function EditorCanvas() {
+  const [activeTab, setActiveTab] = useState<TabType>('edit');
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Tab header */}
+      <div className="h-11 px-4 flex items-center gap-1 border-b border-border bg-background">
+        <button
+          onClick={() => setActiveTab('edit')}
+          className={cn(
+            'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+            activeTab === 'edit'
+              ? 'bg-accent text-foreground'
+              : 'text-foreground-muted hover:text-foreground hover:bg-accent/50'
+          )}
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => setActiveTab('preview')}
+          className={cn(
+            'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+            activeTab === 'preview'
+              ? 'bg-accent text-foreground'
+              : 'text-foreground-muted hover:text-foreground hover:bg-accent/50'
+          )}
+        >
+          Preview
+        </button>
+      </div>
+
+      {/* Tab content */}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        {activeTab === 'edit' ? (
+          <VisualEditor />
+        ) : (
+          <InteractivePreview showHeader={false} />
+        )}
+      </div>
+    </div>
+  );
+}

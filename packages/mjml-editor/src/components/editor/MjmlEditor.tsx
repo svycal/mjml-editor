@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { EditorProvider, useEditor } from "@/context/EditorContext";
 import { OutlineTree } from "./OutlineTree";
-import { InteractivePreview } from "./InteractivePreview";
+import { EditorCanvas } from "./EditorCanvas";
 import { BlockInspector } from "./BlockInspector";
 import {
   parseMjml,
@@ -99,9 +99,9 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
         <OutlineTree />
       </div>
 
-      {/* Center - Interactive Preview */}
+      {/* Center - Editor Canvas with tabs */}
       <div className="flex-1 min-w-0 bg-canvas">
-        <InteractivePreview />
+        <EditorCanvas />
       </div>
 
       {/* Right sidebar - Attributes Panel */}
