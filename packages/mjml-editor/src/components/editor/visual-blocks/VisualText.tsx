@@ -7,10 +7,18 @@ interface VisualTextProps {
   node: MjmlNode;
 }
 
-// Strip HTML tags to get plain text
-function stripHtml(html: string): string {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
+// Convert HTML to plain text, preserving line breaks
+function htmlToText(html: string): string {
+  // Replace <br>, <br/>, <br /> with newlines
+  const withNewlines = html.replace(/<br\s*\/?>/gi, '\n');
+  // Strip remaining HTML tags
+  const doc = new DOMParser().parseFromString(withNewlines, 'text/html');
   return doc.body.textContent || '';
+}
+
+// Convert plain text to HTML, converting newlines to <br />
+function textToHtml(text: string): string {
+  return text.replace(/\n/g, '<br />');
 }
 
 export function VisualText({ node }: VisualTextProps) {
@@ -27,15 +35,26 @@ export function VisualText({ node }: VisualTextProps) {
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Initialize edit value with plain text content
-    setEditValue(stripHtml(node.content || ''));
+    // Initialize edit value with plain text (br tags become newlines)
+    setEditValue(htmlToText(node.content || ''));
     setIsEditing(true);
   };
 
   const handleBlur = () => {
     setIsEditing(false);
-    if (editValue !== stripHtml(node.content || '')) {
-      updateContent(node._id!, editValue);
+    // Convert newlines to <br /> when saving
+    const newContent = textToHtml(editValue);
+    if (newContent !== node.content) {
+      updateContent(node._id!, newContent);
+    }
+  };
+
+  // Auto-resize textarea to fit content
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
 
@@ -45,13 +64,21 @@ export function VisualText({ node }: VisualTextProps) {
     }
   };
 
-  // Focus textarea when entering edit mode
+  // Focus textarea and resize when entering edit mode
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       textareaRef.current.focus();
       textareaRef.current.select();
+      resizeTextarea();
     }
   }, [isEditing]);
+
+  // Resize textarea when content changes
+  useEffect(() => {
+    if (isEditing) {
+      resizeTextarea();
+    }
+  }, [editValue, isEditing]);
 
   // Parse styles from attributes
   const color = node.attributes['color'] || '#000000';
@@ -71,8 +98,8 @@ export function VisualText({ node }: VisualTextProps) {
     lineHeight,
   };
 
-  // Get display content (strip HTML for plain text display)
-  const displayContent = stripHtml(node.content || '');
+  // Get display content (convert br tags to newlines for display)
+  const displayContent = htmlToText(node.content || '');
 
   return (
     <div
@@ -85,24 +112,24 @@ export function VisualText({ node }: VisualTextProps) {
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
     >
-      {/* Display text (hidden when editing) */}
-      <div
-        className={cn('whitespace-pre-wrap', isEditing && 'invisible')}
-        style={textStyle}
-      >
-        {displayContent || '\u00A0'}
-      </div>
+      {/* Display text when not editing */}
+      {!isEditing && (
+        <div className="whitespace-pre-wrap" style={textStyle}>
+          {displayContent || '\u00A0'}
+        </div>
+      )}
 
-      {/* Textarea overlay for editing */}
+      {/* Textarea for editing (in normal flow so it sizes the container) */}
       {isEditing && (
         <textarea
           ref={textareaRef}
+          rows={1}
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="absolute inset-0 w-full h-full resize-none outline-none bg-transparent"
-          style={{ ...textStyle, padding }}
+          className="w-full resize-none outline-none bg-transparent"
+          style={textStyle}
         />
       )}
 
