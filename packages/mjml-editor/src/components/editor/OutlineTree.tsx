@@ -7,16 +7,16 @@ import {
   useSensors,
   type DragEndEvent,
 } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Undo2, Redo2, Plus } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { BlockTree } from './BlockTree';
+import { OutlineTreeNode } from './OutlineTreeNode';
 import { findParentNode } from '@/lib/mjml/parser';
 
-export function EditorPane() {
-  const { state, addSection, undo, redo, canUndo, canRedo, moveBlock } = useEditor();
+export function OutlineTree() {
+  const { state, undo, redo, canUndo, canRedo, moveBlock, addSection } = useEditor();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -66,16 +66,16 @@ export function EditorPane() {
       const newIndex = activeIndex < overIndex ? overIndex : overIndex;
       moveBlock(activeId, activeParent._id!, newIndex);
     } else {
-      // Moving to a different parent (column)
+      // Moving to a different parent
       moveBlock(activeId, overParent._id!, overIndex);
     }
   };
 
   return (
     <div className="flex flex-col h-full">
-      {/* Toolbar */}
-      <div className="flex items-center h-11 px-3 border-b border-toolbar-border bg-toolbar">
-        {/* Undo/Redo group */}
+      {/* Header */}
+      <div className="flex items-center justify-between h-11 px-3 border-b border-border bg-background">
+        <span className="text-sm font-semibold text-foreground">Email Structure</span>
         <div className="flex items-center gap-0.5">
           <Button
             variant="ghost"
@@ -98,47 +98,53 @@ export function EditorPane() {
             <Redo2 className="h-4 w-4" />
           </Button>
         </div>
-
-        {/* Separator */}
-        <div className="w-px h-5 bg-border mx-2" />
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Add section button */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={addSection}
-          className="h-7 gap-1.5 px-2.5 text-xs font-medium border-border-subtle hover:border-border hover:bg-accent"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Section
-        </Button>
       </div>
 
-      {/* Block tree with drag and drop */}
+      {/* Tree content */}
       <ScrollArea className="flex-1">
-        <div className="p-5">
+        <div className="py-2">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            {body?.children?.map((section, index) => (
-              <BlockTree key={section._id} node={section} index={index} />
-            ))}
+            <SortableContext
+              items={body?.children?.map((c) => c._id!) || []}
+              strategy={verticalListSortingStrategy}
+            >
+              {body?.children?.map((child, index) => (
+                <OutlineTreeNode
+                  key={child._id}
+                  node={child}
+                  depth={0}
+                  parentId={body._id}
+                  index={index}
+                />
+              ))}
+            </SortableContext>
           </DndContext>
 
-          {/* Add section placeholder when empty */}
+          {/* Empty state */}
           {(!body?.children || body.children.length === 0) && (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <p className="mb-4">No sections yet</p>
-              <Button onClick={addSection}>Add your first section</Button>
+            <div className="px-3 py-8 text-center text-sm text-muted-foreground">
+              No content yet
             </div>
           )}
         </div>
       </ScrollArea>
+
+      {/* Add Section button */}
+      <div className="px-3 py-2 border-t border-border">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addSection}
+          className="w-full h-8 gap-1.5 text-xs font-medium"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Add Section
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { EditorProvider, useEditor } from "@/context/EditorContext";
-import { EditorPane } from "./EditorPane";
-import { PreviewPane } from "./PreviewPane";
+import { OutlineTree } from "./OutlineTree";
+import { InteractivePreview } from "./InteractivePreview";
 import { BlockInspector } from "./BlockInspector";
 import {
   parseMjml,
@@ -94,19 +94,19 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
 
   return (
     <div className="flex h-full w-full">
-      {/* Editor pane - left side with canvas background */}
-      <div className="flex-1 min-w-0 border-r border-border bg-canvas">
-        <EditorPane />
+      {/* Left sidebar - Outline Tree */}
+      <div className="w-64 border-r border-border bg-background flex flex-col">
+        <OutlineTree />
       </div>
 
-      {/* Inspector pane - middle */}
-      <div className="w-72 border-r border-border bg-inspector">
+      {/* Center - Interactive Preview */}
+      <div className="flex-1 min-w-0 bg-canvas">
+        <InteractivePreview />
+      </div>
+
+      {/* Right sidebar - Attributes Panel */}
+      <div className="w-[300px] border-l border-border bg-inspector">
         <BlockInspector />
-      </div>
-
-      {/* Preview pane - right side */}
-      <div className="flex-1 min-w-0 bg-background-subtle">
-        <PreviewPane />
       </div>
     </div>
   );
