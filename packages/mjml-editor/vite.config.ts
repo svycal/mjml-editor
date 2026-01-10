@@ -4,15 +4,18 @@ import tailwindcss from '@tailwindcss/vite'
 import dts from 'vite-plugin-dts'
 import path from 'path'
 
+const isWatch = process.argv.includes('--watch')
+
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    dts({
+    // Skip dts in watch mode to avoid incremental build errors
+    !isWatch && dts({
       insertTypesEntry: true,
       rollupTypes: true,
     }),
-  ],
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
