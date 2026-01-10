@@ -105,7 +105,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
       </div>
 
       {/* Right sidebar - Attributes Panel */}
-      <div className="w-[300px] border-l border-border bg-inspector">
+      <div className="w-[300px] border-l border-border bg-background">
         <BlockInspector />
       </div>
     </div>

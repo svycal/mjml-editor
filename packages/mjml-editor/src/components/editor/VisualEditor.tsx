@@ -18,7 +18,7 @@ export function VisualEditor() {
   return (
     <ScrollArea className="h-full">
       <div
-        className="min-h-full py-8 px-4 bg-[#f4f4f5]"
+        className="min-h-full py-8 px-4 bg-white"
         onClick={handleBackgroundClick}
       >
         {/* Email container - mimics MJML default 600px width */}
