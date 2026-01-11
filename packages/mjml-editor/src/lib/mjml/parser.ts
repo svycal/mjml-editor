@@ -2,12 +2,31 @@ import { v4 as uuidv4 } from 'uuid';
 import type { MjmlNode } from '@/types/mjml';
 
 /**
+ * Escape unescaped ampersands in attribute values for XML parsing.
+ * This handles URLs like Google Fonts that contain & characters.
+ */
+function escapeAmpersandsInAttributes(mjmlString: string): string {
+  // Match attribute values with double or single quotes: attr="value" or attr='value'
+  return mjmlString.replace(/=["']([^"']*)["']/g, (_match, value, offset, string) => {
+    // Determine which quote was used
+    const quote = string[offset + 1];
+    // Replace & that's not already part of a valid XML entity
+    const escaped = value.replace(
+      /&(?!(amp|lt|gt|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);)/gi,
+      '&amp;'
+    );
+    return `=${quote}${escaped}${quote}`;
+  });
+}
+
+/**
  * Parse MJML markup string into a JSON AST with internal IDs
  * Browser-compatible implementation using DOMParser
  */
 export function parseMjml(mjmlString: string): MjmlNode {
+  const preprocessed = escapeAmpersandsInAttributes(mjmlString);
   const parser = new DOMParser();
-  const doc = parser.parseFromString(mjmlString, 'text/xml');
+  const doc = parser.parseFromString(preprocessed, 'text/xml');
 
   // Check for parsing errors
   const parseError = doc.querySelector('parsererror');
