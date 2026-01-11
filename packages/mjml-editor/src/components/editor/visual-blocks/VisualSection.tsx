@@ -83,7 +83,8 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all',
-          isSelected && 'ring-2 ring-indigo-500 ring-inset'
+          isSelected && 'ring-2 ring-indigo-500 ring-inset',
+          attrs['css-class']
         )}
         style={wrapperStyle}
         onClick={handleClick}
@@ -158,7 +159,8 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all',
-          isSelected && 'ring-2 ring-indigo-500 ring-inset'
+          isSelected && 'ring-2 ring-indigo-500 ring-inset',
+          attrs['css-class']
         )}
         style={sectionStyle}
         onClick={handleClick}
@@ -194,7 +196,8 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all flex',
-          isSelected && 'ring-2 ring-indigo-500 ring-inset'
+          isSelected && 'ring-2 ring-indigo-500 ring-inset',
+          attrs['css-class']
         )}
         onClick={handleClick}
       >

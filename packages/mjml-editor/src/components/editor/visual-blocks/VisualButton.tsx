@@ -122,7 +122,8 @@ export function VisualButton({ node }: VisualButtonProps) {
     <div
       className={cn(
         'relative transition-all',
-        isSelected && !isEditing && 'ring-2 ring-indigo-500 ring-offset-2'
+        isSelected && !isEditing && 'ring-2 ring-indigo-500 ring-offset-2',
+        attrs['css-class']
       )}
       style={{
         padding,

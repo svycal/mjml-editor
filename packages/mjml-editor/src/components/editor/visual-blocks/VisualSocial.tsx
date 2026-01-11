@@ -45,7 +45,8 @@ export function VisualSocial({ node }: VisualSocialProps) {
     <div
       className={cn(
         'relative cursor-pointer transition-all',
-        isSelected && 'ring-2 ring-indigo-500 ring-inset'
+        isSelected && 'ring-2 ring-indigo-500 ring-inset',
+        attrs['css-class']
       )}
       style={{ padding }}
       onClick={handleClick}

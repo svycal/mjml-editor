@@ -2,12 +2,19 @@ import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { VisualSection } from './visual-blocks/VisualSection';
 import { useFontLoader } from '@/hooks/useFontLoader';
+import {
+  useStyleLoader,
+  VISUAL_EDITOR_SCOPE_CLASS,
+} from '@/hooks/useStyleLoader';
 
 export function VisualEditor() {
   const { state, selectBlock } = useEditor();
 
   // Load custom fonts into the document head
   useFontLoader();
+
+  // Load mj-style CSS into the document head (scoped to visual editor)
+  useStyleLoader();
 
   // Get the body node
   const body = state.document.children?.find((c) => c.tagName === 'mj-body');
@@ -31,7 +38,10 @@ export function VisualEditor() {
     >
       <div className="py-8 px-4" onClick={handleBackgroundClick}>
         {/* Content container - constrained to body width */}
-        <div className="light mx-auto w-full" style={{ maxWidth: bodyWidth }}>
+        <div
+          className={`light mx-auto w-full ${VISUAL_EDITOR_SCOPE_CLASS}`}
+          style={{ maxWidth: bodyWidth }}
+        >
           {body?.children?.map((section) => (
             <VisualSection key={section._id} node={section} />
           ))}

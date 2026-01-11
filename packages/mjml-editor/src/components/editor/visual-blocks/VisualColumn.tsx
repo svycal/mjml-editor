@@ -107,7 +107,8 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
     <div
       className={cn(
         'relative transition-all',
-        isSelected && 'ring-2 ring-indigo-500 ring-inset'
+        isSelected && 'ring-2 ring-indigo-500 ring-inset',
+        attrs['css-class']
       )}
       style={columnStyle}
       onClick={handleClick}

@@ -29,7 +29,8 @@ export function VisualSpacer({ node }: VisualSpacerProps) {
     <div
       className={cn(
         'relative cursor-pointer transition-all',
-        isSelected && 'ring-2 ring-indigo-500 ring-inset bg-indigo-50/50'
+        isSelected && 'ring-2 ring-indigo-500 ring-inset bg-indigo-50/50',
+        attrs['css-class']
       )}
       style={{
         height,

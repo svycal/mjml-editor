@@ -1,7 +1,7 @@
 # TODO
 
 - [ ] Support for rich text inside of `mj-text` tags
-- [ ] Support for `css-class` when rendering the visual editor (styles declared in `mj-style` should get applied accordingly)
+- [x] Support for `css-class` when rendering the visual editor (styles declared in `mj-style` should get applied accordingly)
 - [ ] Syntax highlighting / proper code editing for Source view
 - [ ] Allow the "default theme" to be passed in to `<MjmlEditor>`
 - [ ] Add a prop to `<MjmlEditor>` to enable/disable the theme selector (in case the app just wants to control it instead of showing a UI control)

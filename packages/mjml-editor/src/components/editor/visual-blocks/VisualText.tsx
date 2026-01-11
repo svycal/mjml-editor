@@ -154,7 +154,8 @@ export function VisualText({ node }: VisualTextProps) {
       <div
         className={cn(
           '[&_a]:text-inherit [&_a]:underline',
-          isEditing && 'hidden'
+          isEditing && 'hidden',
+          attrs['css-class']
         )}
         style={textStyle}
         dangerouslySetInnerHTML={{ __html: content || '\u00A0' }}

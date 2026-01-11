@@ -309,3 +309,16 @@ export function extractFonts(document: MjmlNode): MjmlFontConfig[] {
     }))
     .filter((font) => font.name && font.href);
 }
+
+/**
+ * Extract CSS content from all mj-style nodes in mj-head
+ */
+export function extractStyles(document: MjmlNode): string[] {
+  const head = getHead(document);
+  if (!head?.children) return [];
+
+  return head.children
+    .filter((child) => child.tagName === 'mj-style')
+    .map((child) => child.content || '')
+    .filter((css) => css.trim().length > 0);
+}
