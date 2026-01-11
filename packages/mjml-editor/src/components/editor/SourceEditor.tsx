@@ -59,9 +59,7 @@ export function SourceEditor() {
         {isDirty && !error && (
           <span className="text-sm text-foreground-muted">Unsaved changes</span>
         )}
-        {error && (
-          <span className="text-sm text-destructive">{error}</span>
-        )}
+        {error && <span className="text-sm text-destructive">{error}</span>}
       </div>
     </div>
   );

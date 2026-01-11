@@ -1,9 +1,10 @@
 import { useEffect, useCallback, useState } from 'react';
 import { EditorProvider, useEditor } from '@/context/EditorContext';
 import { ThemeProvider } from '@/context/ThemeContext';
-import { OutlineTree } from './OutlineTree';
+import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
 import { EditorCanvas } from './EditorCanvas';
 import { BlockInspector } from './BlockInspector';
+import { GlobalStylesPanel } from './GlobalStylesPanel';
 import {
   parseMjml,
   serializeMjml,
@@ -64,10 +65,11 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
         return;
       }
 
-      // Delete selected block
+      // Delete selected block (but not global styles or body)
       if (
         (e.key === 'Delete' || e.key === 'Backspace') &&
-        state.selectedBlockId
+        state.selectedBlockId &&
+        state.selectedBlockId !== GLOBAL_STYLES_ID
       ) {
         e.preventDefault();
         deleteBlock(state.selectedBlockId);
@@ -108,7 +110,11 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
 
       {/* Right sidebar - Attributes Panel */}
       <div className="border-l border-border bg-background flex flex-col min-h-0 overflow-hidden">
-        <BlockInspector />
+        {state.selectedBlockId === GLOBAL_STYLES_ID ? (
+          <GlobalStylesPanel />
+        ) : (
+          <BlockInspector />
+        )}
       </div>
     </div>
   );

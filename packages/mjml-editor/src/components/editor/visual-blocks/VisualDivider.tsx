@@ -2,6 +2,7 @@ import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualDividerProps {
   node: MjmlNode;
@@ -10,22 +11,23 @@ interface VisualDividerProps {
 export function VisualDivider({ node }: VisualDividerProps) {
   const { state, selectBlock } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     selectBlock(node._id!);
   };
 
-  // Parse attributes - Primary
-  const borderColor = node.attributes['border-color'] || '#000000';
-  const borderWidth = node.attributes['border-width'] || '4px';
-  const borderStyle = node.attributes['border-style'] || 'solid';
-  const width = node.attributes['width'] || '100%';
-  const align = node.attributes['align'] || 'center';
-  const padding = buildPadding(node.attributes, '10px 25px');
+  // Parse resolved attributes - Primary
+  const borderColor = attrs['border-color'] || '#000000';
+  const borderWidth = attrs['border-width'] || '4px';
+  const borderStyle = attrs['border-style'] || 'solid';
+  const width = attrs['width'] || '100%';
+  const align = attrs['align'] || 'center';
+  const padding = buildPadding(attrs, '10px 25px');
 
   // Advanced attributes
-  const containerBgColor = node.attributes['container-background-color'];
+  const containerBgColor = attrs['container-background-color'];
 
   // Convert align to margin
   const marginLeft =

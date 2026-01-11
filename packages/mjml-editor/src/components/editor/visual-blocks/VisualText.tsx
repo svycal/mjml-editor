@@ -3,6 +3,7 @@ import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualTextProps {
   node: MjmlNode;
@@ -81,25 +82,28 @@ export function VisualText({ node }: VisualTextProps) {
     }
   }, [editValue, isEditing]);
 
-  // Parse styles from attributes
-  const color = node.attributes['color'] || '#000000';
-  const fontSize = node.attributes['font-size'] || '13px';
+  // Get resolved attributes (includes mj-attributes defaults)
+  const attrs = useResolvedAttributes(node);
+
+  // Parse styles from resolved attributes
+  const color = attrs['color'] || '#000000';
+  const fontSize = attrs['font-size'] || '13px';
   const fontFamily =
-    node.attributes['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
-  const fontWeight = node.attributes['font-weight'] || 'normal';
-  const fontStyle = node.attributes['font-style'] || 'normal';
-  const textAlign = (node.attributes['align'] || 'left') as
+    attrs['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
+  const fontWeight = attrs['font-weight'] || 'normal';
+  const fontStyle = attrs['font-style'] || 'normal';
+  const textAlign = (attrs['align'] || 'left') as
     | 'left'
     | 'center'
     | 'right'
     | 'justify';
-  const lineHeight = node.attributes['line-height'] || '1';
-  const letterSpacing = node.attributes['letter-spacing'];
-  const textDecoration = node.attributes['text-decoration'] || 'none';
-  const textTransform = node.attributes['text-transform'] || 'none';
-  const padding = buildPadding(node.attributes, '10px 25px');
-  const height = node.attributes['height'];
-  const containerBgColor = node.attributes['container-background-color'];
+  const lineHeight = attrs['line-height'] || '1';
+  const letterSpacing = attrs['letter-spacing'];
+  const textDecoration = attrs['text-decoration'] || 'none';
+  const textTransform = attrs['text-transform'] || 'none';
+  const padding = buildPadding(attrs, '10px 25px');
+  const height = attrs['height'];
+  const containerBgColor = attrs['container-background-color'];
 
   const textStyle: React.CSSProperties = {
     color,

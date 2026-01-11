@@ -3,6 +3,7 @@ import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualButtonProps {
   node: MjmlNode;
@@ -14,6 +15,7 @@ export function VisualButton({ node }: VisualButtonProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -52,32 +54,32 @@ export function VisualButton({ node }: VisualButtonProps) {
     }
   }, [isEditing]);
 
-  // Parse attributes
-  const bgColor = node.attributes['background-color'] || '#414141';
-  const textColor = node.attributes['color'] || '#ffffff';
-  const fontSize = node.attributes['font-size'] || '13px';
+  // Parse resolved attributes
+  const bgColor = attrs['background-color'] || '#414141';
+  const textColor = attrs['color'] || '#ffffff';
+  const fontSize = attrs['font-size'] || '13px';
   const fontFamily =
-    node.attributes['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
-  const fontWeight = node.attributes['font-weight'] || 'normal';
-  const fontStyle = node.attributes['font-style'] || 'normal';
-  const lineHeight = node.attributes['line-height'] || '120%';
-  const letterSpacing = node.attributes['letter-spacing'];
-  const textAlign = node.attributes['text-align'] || 'center';
-  const textDecoration = node.attributes['text-decoration'] || 'none';
-  const textTransform = node.attributes['text-transform'] || 'none';
-  const borderRadius = node.attributes['border-radius'] || '3px';
-  const border = node.attributes['border'];
-  const borderTop = node.attributes['border-top'];
-  const borderRight = node.attributes['border-right'];
-  const borderBottom = node.attributes['border-bottom'];
-  const borderLeft = node.attributes['border-left'];
-  const align = node.attributes['align'] || 'center';
-  const verticalAlign = node.attributes['vertical-align'] || 'middle';
-  const innerPadding = node.attributes['inner-padding'] || '10px 25px';
-  const padding = buildPadding(node.attributes, '10px 25px');
-  const width = node.attributes['width'];
-  const height = node.attributes['height'];
-  const containerBgColor = node.attributes['container-background-color'];
+    attrs['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
+  const fontWeight = attrs['font-weight'] || 'normal';
+  const fontStyle = attrs['font-style'] || 'normal';
+  const lineHeight = attrs['line-height'] || '120%';
+  const letterSpacing = attrs['letter-spacing'];
+  const textAlign = attrs['text-align'] || 'center';
+  const textDecoration = attrs['text-decoration'] || 'none';
+  const textTransform = attrs['text-transform'] || 'none';
+  const borderRadius = attrs['border-radius'] || '3px';
+  const border = attrs['border'];
+  const borderTop = attrs['border-top'];
+  const borderRight = attrs['border-right'];
+  const borderBottom = attrs['border-bottom'];
+  const borderLeft = attrs['border-left'];
+  const align = attrs['align'] || 'center';
+  const verticalAlign = attrs['vertical-align'] || 'middle';
+  const innerPadding = attrs['inner-padding'] || '10px 25px';
+  const padding = buildPadding(attrs, '10px 25px');
+  const width = attrs['width'];
+  const height = attrs['height'];
+  const containerBgColor = attrs['container-background-color'];
 
   // Convert align to flexbox
   const justifyContent =

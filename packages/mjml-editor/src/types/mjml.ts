@@ -25,6 +25,7 @@ export type MjmlTagName =
   | 'mj-preview'
   | 'mj-attributes'
   | 'mj-all'
+  | 'mj-class'
   | 'mj-style';
 
 // Block types that can be added inside a column
@@ -93,4 +94,15 @@ export type EditorAction =
     }
   | { type: 'SET_DOCUMENT'; payload: MjmlNode }
   | { type: 'UNDO' }
-  | { type: 'REDO' };
+  | { type: 'REDO' }
+  | {
+      type: 'UPDATE_MJML_ATTRIBUTE';
+      payload: {
+        attributeType: 'all' | 'element' | 'class';
+        target: string | null; // null for 'all', tagName for 'element', className for 'class'
+        attributes: Record<string, string>;
+      };
+    }
+  | { type: 'ADD_CLASS'; payload: string }
+  | { type: 'REMOVE_CLASS'; payload: string }
+  | { type: 'RENAME_CLASS'; payload: { oldName: string; newName: string } };

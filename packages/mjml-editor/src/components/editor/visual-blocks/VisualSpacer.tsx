@@ -2,6 +2,7 @@ import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualSpacerProps {
   node: MjmlNode;
@@ -10,18 +11,19 @@ interface VisualSpacerProps {
 export function VisualSpacer({ node }: VisualSpacerProps) {
   const { state, selectBlock } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     selectBlock(node._id!);
   };
 
-  // Parse attributes - Primary
-  const height = node.attributes['height'] || '20px';
-  const padding = buildPadding(node.attributes);
+  // Parse resolved attributes - Primary
+  const height = attrs['height'] || '20px';
+  const padding = buildPadding(attrs);
 
   // Advanced attributes
-  const containerBgColor = node.attributes['container-background-color'];
+  const containerBgColor = attrs['container-background-color'];
 
   return (
     <div

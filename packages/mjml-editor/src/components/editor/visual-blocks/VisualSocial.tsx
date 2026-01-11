@@ -1,6 +1,7 @@
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualSocialProps {
   node: MjmlNode;
@@ -19,17 +20,18 @@ const socialIcons: Record<string, string> = {
 export function VisualSocial({ node }: VisualSocialProps) {
   const { state, selectBlock } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     selectBlock(node._id!);
   };
 
-  // Parse attributes
-  const mode = node.attributes['mode'] || 'horizontal';
-  const align = node.attributes['align'] || 'center';
-  const padding = node.attributes['padding'] || '10px 25px';
-  const iconSize = node.attributes['icon-size'] || '20px';
+  // Parse resolved attributes
+  const mode = attrs['mode'] || 'horizontal';
+  const align = attrs['align'] || 'center';
+  const padding = attrs['padding'] || '10px 25px';
+  const iconSize = attrs['icon-size'] || '20px';
 
   // Get social elements
   const socialElements =

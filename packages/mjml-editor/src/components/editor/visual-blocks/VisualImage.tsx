@@ -2,6 +2,7 @@ import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualImageProps {
   node: MjmlNode;
@@ -10,34 +11,35 @@ interface VisualImageProps {
 export function VisualImage({ node }: VisualImageProps) {
   const { state, selectBlock } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     selectBlock(node._id!);
   };
 
-  // Parse attributes - Primary
-  const src = node.attributes['src'] || '';
-  const alt = node.attributes['alt'] || '';
-  const width = node.attributes['width'] || '100%';
-  const height = node.attributes['height'] || 'auto';
-  const align = node.attributes['align'] || 'center';
-  const padding = buildPadding(node.attributes, '10px 25px');
+  // Parse resolved attributes - Primary
+  const src = attrs['src'] || '';
+  const alt = attrs['alt'] || '';
+  const width = attrs['width'] || '100%';
+  const height = attrs['height'] || 'auto';
+  const align = attrs['align'] || 'center';
+  const padding = buildPadding(attrs, '10px 25px');
 
   // Border attributes
-  const border = node.attributes['border'];
-  const borderTop = node.attributes['border-top'];
-  const borderRight = node.attributes['border-right'];
-  const borderBottom = node.attributes['border-bottom'];
-  const borderLeft = node.attributes['border-left'];
-  const borderRadius = node.attributes['border-radius'];
+  const border = attrs['border'];
+  const borderTop = attrs['border-top'];
+  const borderRight = attrs['border-right'];
+  const borderBottom = attrs['border-bottom'];
+  const borderLeft = attrs['border-left'];
+  const borderRadius = attrs['border-radius'];
 
   // Sizing attributes
-  const maxHeight = node.attributes['max-height'];
+  const maxHeight = attrs['max-height'];
 
   // Advanced attributes
-  const containerBgColor = node.attributes['container-background-color'];
-  const title = node.attributes['title'];
+  const containerBgColor = attrs['container-background-color'];
+  const title = attrs['title'];
 
   // Convert align to flexbox
   const justifyContent =

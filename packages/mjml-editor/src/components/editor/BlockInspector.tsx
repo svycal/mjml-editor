@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, X } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,7 +18,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getSchemaForTag } from '@/lib/mjml/schema';
-import type { AttributeSchema, AttributeGroup } from '@/types/mjml';
+import {
+  parseClassNames,
+  addClassToNode,
+  removeClassFromNode,
+} from '@/lib/mjml/attributes';
+import type { AttributeSchema, AttributeGroup, MjmlNode } from '@/types/mjml';
 import { cn } from '@/lib/utils';
 
 const GROUP_LABELS: Record<AttributeGroup, string> = {
@@ -44,8 +50,82 @@ const GROUP_ORDER: AttributeGroup[] = [
   'advanced',
 ];
 
+/**
+ * Component for picking and managing mj-class values on a block
+ */
+function ClassPicker({ node }: { node: MjmlNode }) {
+  const { definedClasses, updateAttributes } = useEditor();
+  const currentClasses = parseClassNames(node.attributes['mj-class']);
+
+  // Don't show if no classes are defined
+  if (definedClasses.length === 0) {
+    return null;
+  }
+
+  const availableClasses = definedClasses.filter(
+    (c) => !currentClasses.includes(c)
+  );
+
+  const handleAddClass = (className: string) => {
+    if (!node._id || !className) return;
+    const newAttributes = addClassToNode(node, className);
+    updateAttributes(node._id, { 'mj-class': newAttributes['mj-class'] || '' });
+  };
+
+  const handleRemoveClass = (className: string) => {
+    if (!node._id) return;
+    const newAttributes = removeClassFromNode(node, className);
+    updateAttributes(node._id, {
+      'mj-class': newAttributes['mj-class'] || '',
+    });
+  };
+
+  return (
+    <div className="space-y-2 pb-4 mb-4 border-b border-border">
+      <Label className="text-xs font-medium text-foreground-muted">
+        Classes
+      </Label>
+      {currentClasses.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {currentClasses.map((className) => (
+            <Badge
+              key={className}
+              variant="secondary"
+              className="text-xs gap-1 pr-1"
+            >
+              {className}
+              <button
+                type="button"
+                onClick={() => handleRemoveClass(className)}
+                className="ml-1 hover:text-destructive transition-colors"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      {availableClasses.length > 0 && (
+        <Select onValueChange={handleAddClass} value="">
+          <SelectTrigger className="h-8 text-xs border-border-subtle">
+            <SelectValue placeholder="Add class..." />
+          </SelectTrigger>
+          <SelectContent>
+            {availableClasses.map((className) => (
+              <SelectItem key={className} value={className} className="text-xs">
+                {className}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    </div>
+  );
+}
+
 export function BlockInspector() {
-  const { selectedBlock, updateAttributes } = useEditor();
+  const { selectedBlock, updateAttributes, getInheritedValue, definedClasses } =
+    useEditor();
 
   if (!selectedBlock) {
     return (
@@ -103,6 +183,9 @@ export function BlockInspector() {
 
       <ScrollArea className="flex-1 min-h-0">
         <div className="p-4">
+          {/* Class picker - only shows when classes are defined */}
+          {definedClasses.length > 0 && <ClassPicker node={selectedBlock} />}
+
           {schema ? (
             hasGroups ? (
               <GroupedAttributeEditor
@@ -119,6 +202,7 @@ export function BlockInspector() {
                     schema={attrSchema}
                     value={selectedBlock.attributes[key] || ''}
                     onChange={(value) => handleAttributeChange(key, value)}
+                    inheritedValue={getInheritedValue(selectedBlock, key)}
                   />
                 ))}
               </div>
@@ -136,7 +220,7 @@ export function BlockInspector() {
 
 interface GroupedAttributeEditorProps {
   groupedAttributes: Record<string, { key: string; schema: AttributeSchema }[]>;
-  selectedBlock: { attributes: Record<string, string> };
+  selectedBlock: MjmlNode;
   handleAttributeChange: (key: string, value: string) => void;
 }
 
@@ -146,6 +230,7 @@ function GroupedAttributeEditor({
   handleAttributeChange,
 }: GroupedAttributeEditorProps) {
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const { getInheritedValue } = useEditor();
 
   const toggleGroup = (group: string) => {
     setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));
@@ -168,6 +253,7 @@ function GroupedAttributeEditor({
                   schema={schema}
                   value={selectedBlock.attributes[key] || ''}
                   onChange={(value) => handleAttributeChange(key, value)}
+                  inheritedValue={getInheritedValue(selectedBlock, key)}
                 />
               ))}
             </div>
@@ -201,6 +287,7 @@ function GroupedAttributeEditor({
                     schema={schema}
                     value={selectedBlock.attributes[key] || ''}
                     onChange={(value) => handleAttributeChange(key, value)}
+                    inheritedValue={getInheritedValue(selectedBlock, key)}
                   />
                 ))}
               </div>
@@ -217,6 +304,7 @@ interface AttributeEditorProps {
   schema: AttributeSchema;
   value: string;
   onChange: (value: string) => void;
+  inheritedValue?: string;
 }
 
 function AttributeEditor({
@@ -224,14 +312,22 @@ function AttributeEditor({
   schema,
   value,
   onChange,
+  inheritedValue,
 }: AttributeEditorProps) {
   const id = `attr-${attributeKey}`;
+  // Use inherited value as placeholder, falling back to schema placeholder/default
+  const placeholder =
+    inheritedValue || schema.placeholder || schema.default || '';
 
   switch (schema.type) {
     case 'select': {
       // Ensure we always have a valid non-empty value for Select
       const selectValue =
-        value || schema.default || schema.options?.[0]?.value || 'default';
+        value ||
+        inheritedValue ||
+        schema.default ||
+        schema.options?.[0]?.value ||
+        'default';
       const handleSelectChange = (newValue: string) => {
         // Convert 'false' placeholder back to empty string for MJML attributes
         onChange(newValue === 'false' ? '' : newValue);
@@ -279,7 +375,7 @@ function AttributeEditor({
             <Input
               id={id}
               type="color"
-              value={value || schema.default || '#000000'}
+              value={value || inheritedValue || schema.default || '#000000'}
               onChange={(e) => onChange(e.target.value)}
               className="h-8 w-10 p-0.5 cursor-pointer rounded-md border-border-subtle"
             />
@@ -287,7 +383,7 @@ function AttributeEditor({
               type="text"
               value={value || ''}
               onChange={(e) => onChange(e.target.value)}
-              placeholder={schema.default || '#000000'}
+              placeholder={placeholder || '#000000'}
               className="h-8 text-xs flex-1 font-mono border-border-subtle"
             />
           </div>
@@ -308,7 +404,7 @@ function AttributeEditor({
             type="text"
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={schema.default || '10px 25px'}
+            placeholder={placeholder || '10px 25px'}
             className="h-8 text-xs border-border-subtle"
           />
           <p className="text-[10px] text-foreground-subtle">
@@ -331,7 +427,7 @@ function AttributeEditor({
             type="text"
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={schema.placeholder || schema.default || ''}
+            placeholder={placeholder}
             className="h-8 text-xs border-border-subtle"
           />
         </div>
@@ -351,7 +447,7 @@ function AttributeEditor({
             type="url"
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={schema.placeholder || 'https://...'}
+            placeholder={placeholder || 'https://...'}
             className="h-8 text-xs border-border-subtle"
           />
         </div>
@@ -372,7 +468,7 @@ function AttributeEditor({
             type="text"
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={schema.placeholder || schema.default || ''}
+            placeholder={placeholder}
             className="h-8 text-xs border-border-subtle"
           />
         </div>

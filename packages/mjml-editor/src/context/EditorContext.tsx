@@ -23,9 +23,257 @@ import {
   addIds,
   findNodeById,
 } from '@/lib/mjml/parser';
-import { getDefaultBlock } from '@/lib/mjml/schema';
+import { getDefaultBlock, getSchemaForTag } from '@/lib/mjml/schema';
+import {
+  extractMjmlAttributes,
+  getInheritedValue as getInheritedValueUtil,
+  resolveNodeAttributes,
+  getDefinedClasses,
+  type MjmlAttributesConfig,
+} from '@/lib/mjml/attributes';
 
 const MAX_HISTORY = 50;
+
+/**
+ * Ensure the document has an mj-head with mj-attributes
+ */
+function ensureMjAttributes(document: MjmlNode): MjmlNode {
+  let head = document.children?.find((c) => c.tagName === 'mj-head');
+  let needsUpdate = false;
+
+  if (!head) {
+    head = {
+      tagName: 'mj-head',
+      attributes: {},
+      children: [],
+      _id: uuidv4(),
+    };
+    needsUpdate = true;
+  }
+
+  let mjAttributes = head.children?.find((c) => c.tagName === 'mj-attributes');
+  if (!mjAttributes) {
+    mjAttributes = {
+      tagName: 'mj-attributes',
+      attributes: {},
+      children: [],
+      _id: uuidv4(),
+    };
+    head = {
+      ...head,
+      children: [...(head.children || []), mjAttributes],
+    };
+    needsUpdate = true;
+  }
+
+  if (!needsUpdate) {
+    return document;
+  }
+
+  // Ensure head is first child
+  const otherChildren =
+    document.children?.filter((c) => c.tagName !== 'mj-head') || [];
+  return {
+    ...document,
+    children: [head, ...otherChildren],
+  };
+}
+
+/**
+ * Update mj-attributes in the document
+ */
+function updateMjAttributesInDocument(
+  document: MjmlNode,
+  attributeType: 'all' | 'element' | 'class',
+  target: string | null,
+  attributes: Record<string, string>
+): MjmlNode {
+  const docWithAttrs = ensureMjAttributes(document);
+  const head = docWithAttrs.children?.find((c) => c.tagName === 'mj-head');
+  if (!head) return document;
+
+  const mjAttributes = head.children?.find(
+    (c) => c.tagName === 'mj-attributes'
+  );
+  if (!mjAttributes) return document;
+
+  const updatedChildren = [...(mjAttributes.children || [])];
+
+  if (attributeType === 'all') {
+    // Update or create mj-all
+    const allIndex = updatedChildren.findIndex((c) => c.tagName === 'mj-all');
+    const allNode: MjmlNode = {
+      tagName: 'mj-all',
+      attributes:
+        allIndex >= 0
+          ? { ...updatedChildren[allIndex].attributes, ...attributes }
+          : attributes,
+      _id: allIndex >= 0 ? updatedChildren[allIndex]._id : uuidv4(),
+    };
+
+    if (allIndex >= 0) {
+      updatedChildren[allIndex] = allNode;
+    } else {
+      updatedChildren.unshift(allNode);
+    }
+  } else if (attributeType === 'element' && target) {
+    // Update or create element-specific defaults (e.g., mj-text)
+    const elementIndex = updatedChildren.findIndex((c) => c.tagName === target);
+    const elementNode: MjmlNode = {
+      tagName: target,
+      attributes:
+        elementIndex >= 0
+          ? { ...updatedChildren[elementIndex].attributes, ...attributes }
+          : attributes,
+      _id: elementIndex >= 0 ? updatedChildren[elementIndex]._id : uuidv4(),
+    };
+
+    if (elementIndex >= 0) {
+      updatedChildren[elementIndex] = elementNode;
+    } else {
+      updatedChildren.push(elementNode);
+    }
+  } else if (attributeType === 'class' && target) {
+    // Update or create mj-class
+    const classIndex = updatedChildren.findIndex(
+      (c) => c.tagName === 'mj-class' && c.attributes['name'] === target
+    );
+    const classNode: MjmlNode = {
+      tagName: 'mj-class',
+      attributes:
+        classIndex >= 0
+          ? {
+              ...updatedChildren[classIndex].attributes,
+              name: target,
+              ...attributes,
+            }
+          : { name: target, ...attributes },
+      _id: classIndex >= 0 ? updatedChildren[classIndex]._id : uuidv4(),
+    };
+
+    if (classIndex >= 0) {
+      updatedChildren[classIndex] = classNode;
+    } else {
+      updatedChildren.push(classNode);
+    }
+  }
+
+  // Update the mj-attributes node
+  const updatedMjAttributes = {
+    ...mjAttributes,
+    children: updatedChildren,
+  };
+
+  // Update head
+  const updatedHead = {
+    ...head,
+    children: head.children?.map((c) =>
+      c.tagName === 'mj-attributes' ? updatedMjAttributes : c
+    ),
+  };
+
+  // Update document
+  return {
+    ...docWithAttrs,
+    children: docWithAttrs.children?.map((c) =>
+      c.tagName === 'mj-head' ? updatedHead : c
+    ),
+  };
+}
+
+/**
+ * Add a new class to mj-attributes
+ */
+function addClassToDocument(document: MjmlNode, className: string): MjmlNode {
+  return updateMjAttributesInDocument(document, 'class', className, {});
+}
+
+/**
+ * Remove a class from mj-attributes
+ */
+function removeClassFromDocument(
+  document: MjmlNode,
+  className: string
+): MjmlNode {
+  const head = document.children?.find((c) => c.tagName === 'mj-head');
+  if (!head) return document;
+
+  const mjAttributes = head.children?.find(
+    (c) => c.tagName === 'mj-attributes'
+  );
+  if (!mjAttributes) return document;
+
+  const updatedChildren =
+    mjAttributes.children?.filter(
+      (c) => !(c.tagName === 'mj-class' && c.attributes['name'] === className)
+    ) || [];
+
+  const updatedMjAttributes = {
+    ...mjAttributes,
+    children: updatedChildren,
+  };
+
+  const updatedHead = {
+    ...head,
+    children: head.children?.map((c) =>
+      c.tagName === 'mj-attributes' ? updatedMjAttributes : c
+    ),
+  };
+
+  return {
+    ...document,
+    children: document.children?.map((c) =>
+      c.tagName === 'mj-head' ? updatedHead : c
+    ),
+  };
+}
+
+/**
+ * Rename a class in mj-attributes
+ */
+function renameClassInDocument(
+  document: MjmlNode,
+  oldName: string,
+  newName: string
+): MjmlNode {
+  const head = document.children?.find((c) => c.tagName === 'mj-head');
+  if (!head) return document;
+
+  const mjAttributes = head.children?.find(
+    (c) => c.tagName === 'mj-attributes'
+  );
+  if (!mjAttributes) return document;
+
+  const updatedChildren =
+    mjAttributes.children?.map((c) => {
+      if (c.tagName === 'mj-class' && c.attributes['name'] === oldName) {
+        return {
+          ...c,
+          attributes: { ...c.attributes, name: newName },
+        };
+      }
+      return c;
+    }) || [];
+
+  const updatedMjAttributes = {
+    ...mjAttributes,
+    children: updatedChildren,
+  };
+
+  const updatedHead = {
+    ...head,
+    children: head.children?.map((c) =>
+      c.tagName === 'mj-attributes' ? updatedMjAttributes : c
+    ),
+  };
+
+  return {
+    ...document,
+    children: document.children?.map((c) =>
+      c.tagName === 'mj-head' ? updatedHead : c
+    ),
+  };
+}
 
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
@@ -159,6 +407,84 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       };
     }
 
+    case 'UPDATE_MJML_ATTRIBUTE': {
+      const { attributeType, target, attributes } = action.payload;
+      const newDocument = updateMjAttributesInDocument(
+        state.document,
+        attributeType,
+        target,
+        attributes
+      );
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
+    case 'ADD_CLASS': {
+      const newDocument = addClassToDocument(state.document, action.payload);
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
+    case 'REMOVE_CLASS': {
+      const newDocument = removeClassFromDocument(
+        state.document,
+        action.payload
+      );
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
+    case 'RENAME_CLASS': {
+      const { oldName, newName } = action.payload;
+      const newDocument = renameClassInDocument(
+        state.document,
+        oldName,
+        newName
+      );
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
     default:
       return state;
   }
@@ -184,6 +510,22 @@ interface EditorContextValue {
   canUndo: boolean;
   canRedo: boolean;
   selectedBlock: MjmlNode | null;
+  // mj-attributes support
+  mjmlAttributes: MjmlAttributesConfig;
+  definedClasses: string[];
+  getResolvedAttributes: (node: MjmlNode) => Record<string, string>;
+  getInheritedValue: (
+    node: MjmlNode,
+    attributeKey: string
+  ) => string | undefined;
+  updateMjmlAttribute: (
+    attributeType: 'all' | 'element' | 'class',
+    target: string | null,
+    attributes: Record<string, string>
+  ) => void;
+  addClass: (name: string) => void;
+  removeClass: (name: string) => void;
+  renameClass: (oldName: string, newName: string) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -308,6 +650,57 @@ export function EditorProvider({
     return findNodeById(state.document, state.selectedBlockId);
   }, [state.document, state.selectedBlockId]);
 
+  // mj-attributes support - computed values
+  const mjmlAttributes = useMemo(
+    () => extractMjmlAttributes(state.document),
+    [state.document]
+  );
+
+  const definedClasses = useMemo(
+    () => getDefinedClasses(state.document),
+    [state.document]
+  );
+
+  const getResolvedAttributes = useCallback(
+    (node: MjmlNode) => resolveNodeAttributes(node, mjmlAttributes),
+    [mjmlAttributes]
+  );
+
+  const getInheritedValue = useCallback(
+    (node: MjmlNode, attributeKey: string) => {
+      const schema = getSchemaForTag(node.tagName);
+      return getInheritedValueUtil(node, attributeKey, mjmlAttributes, schema);
+    },
+    [mjmlAttributes]
+  );
+
+  // mj-attributes support - actions
+  const updateMjmlAttribute = useCallback(
+    (
+      attributeType: 'all' | 'element' | 'class',
+      target: string | null,
+      attributes: Record<string, string>
+    ) => {
+      dispatch({
+        type: 'UPDATE_MJML_ATTRIBUTE',
+        payload: { attributeType, target, attributes },
+      });
+    },
+    []
+  );
+
+  const addClass = useCallback((name: string) => {
+    dispatch({ type: 'ADD_CLASS', payload: name });
+  }, []);
+
+  const removeClass = useCallback((name: string) => {
+    dispatch({ type: 'REMOVE_CLASS', payload: name });
+  }, []);
+
+  const renameClass = useCallback((oldName: string, newName: string) => {
+    dispatch({ type: 'RENAME_CLASS', payload: { oldName, newName } });
+  }, []);
+
   const value: EditorContextValue = useMemo(
     () => ({
       state,
@@ -325,6 +718,15 @@ export function EditorProvider({
       canUndo: state.historyIndex > 0,
       canRedo: state.historyIndex < state.history.length - 1,
       selectedBlock,
+      // mj-attributes support
+      mjmlAttributes,
+      definedClasses,
+      getResolvedAttributes,
+      getInheritedValue,
+      updateMjmlAttribute,
+      addClass,
+      removeClass,
+      renameClass,
     }),
     [
       state,
@@ -340,6 +742,14 @@ export function EditorProvider({
       undo,
       redo,
       selectedBlock,
+      mjmlAttributes,
+      definedClasses,
+      getResolvedAttributes,
+      getInheritedValue,
+      updateMjmlAttribute,
+      addClass,
+      removeClass,
+      renameClass,
     ]
   );
 

@@ -3,6 +3,7 @@ import { VisualBlock } from './VisualBlock';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualColumnProps {
   node: MjmlNode;
@@ -12,14 +13,12 @@ interface VisualColumnProps {
 export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
   const { state, selectBlock } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     selectBlock(node._id!);
   };
-
-  // Ensure we have a proper attributes object - defensive copy
-  const attrs = node.attributes || {};
 
   // Parse width - MJML columns default to equal width
   const widthAttr = attrs['width'];

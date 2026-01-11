@@ -3,6 +3,7 @@ import { VisualColumn } from './VisualColumn';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
+import { useResolvedAttributes } from './useResolvedAttributes';
 
 interface VisualSectionProps {
   node: MjmlNode;
@@ -11,6 +12,7 @@ interface VisualSectionProps {
 export function VisualSection({ node }: VisualSectionProps) {
   const { state, selectBlock } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
+  const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -20,29 +22,29 @@ export function VisualSection({ node }: VisualSectionProps) {
   // Handle wrapper - render children sections
   if (node.tagName === 'mj-wrapper') {
     // Primary attributes
-    const bgColor = node.attributes['background-color'] || 'transparent';
-    const padding = buildPadding(node.attributes, '20px 0');
-    const fullWidth = node.attributes['full-width'] === 'full-width';
-    const textAlign = node.attributes['text-align'] || 'center';
+    const bgColor = attrs['background-color'] || 'transparent';
+    const padding = buildPadding(attrs, '20px 0');
+    const fullWidth = attrs['full-width'] === 'full-width';
+    const textAlign = attrs['text-align'] || 'center';
 
     // Background attributes
-    const bgUrl = node.attributes['background-url'];
-    const bgSize = node.attributes['background-size'] || 'auto';
-    const bgRepeat = node.attributes['background-repeat'] || 'repeat';
-    const bgPosition = node.attributes['background-position'] || 'top center';
-    const bgPositionX = node.attributes['background-position-x'];
-    const bgPositionY = node.attributes['background-position-y'];
+    const bgUrl = attrs['background-url'];
+    const bgSize = attrs['background-size'] || 'auto';
+    const bgRepeat = attrs['background-repeat'] || 'repeat';
+    const bgPosition = attrs['background-position'] || 'top center';
+    const bgPositionX = attrs['background-position-x'];
+    const bgPositionY = attrs['background-position-y'];
 
     // Border attributes
-    const border = node.attributes['border'];
-    const borderTop = node.attributes['border-top'];
-    const borderRight = node.attributes['border-right'];
-    const borderBottom = node.attributes['border-bottom'];
-    const borderLeft = node.attributes['border-left'];
-    const borderRadius = node.attributes['border-radius'];
+    const border = attrs['border'];
+    const borderTop = attrs['border-top'];
+    const borderRight = attrs['border-right'];
+    const borderBottom = attrs['border-bottom'];
+    const borderLeft = attrs['border-left'];
+    const borderRadius = attrs['border-radius'];
 
     // Gap between child sections
-    const gap = node.attributes['gap'];
+    const gap = attrs['gap'];
 
     // Compute background position
     let computedBgPosition = bgPosition;
@@ -98,29 +100,29 @@ export function VisualSection({ node }: VisualSectionProps) {
   // Handle section
   if (node.tagName === 'mj-section') {
     // Primary attributes (sections are transparent by default in MJML)
-    const bgColor = node.attributes['background-color'] || 'transparent';
-    const padding = buildPadding(node.attributes, '20px 0');
-    const fullWidth = node.attributes['full-width'] === 'full-width';
-    const textAlign = node.attributes['text-align'] || 'center';
+    const bgColor = attrs['background-color'] || 'transparent';
+    const padding = buildPadding(attrs, '20px 0');
+    const fullWidth = attrs['full-width'] === 'full-width';
+    const textAlign = attrs['text-align'] || 'center';
 
     // Background attributes
-    const bgUrl = node.attributes['background-url'];
-    const bgSize = node.attributes['background-size'] || 'auto';
-    const bgRepeat = node.attributes['background-repeat'] || 'repeat';
-    const bgPosition = node.attributes['background-position'] || 'top center';
-    const bgPositionX = node.attributes['background-position-x'];
-    const bgPositionY = node.attributes['background-position-y'];
+    const bgUrl = attrs['background-url'];
+    const bgSize = attrs['background-size'] || 'auto';
+    const bgRepeat = attrs['background-repeat'] || 'repeat';
+    const bgPosition = attrs['background-position'] || 'top center';
+    const bgPositionX = attrs['background-position-x'];
+    const bgPositionY = attrs['background-position-y'];
 
     // Border attributes
-    const border = node.attributes['border'];
-    const borderTop = node.attributes['border-top'];
-    const borderRight = node.attributes['border-right'];
-    const borderBottom = node.attributes['border-bottom'];
-    const borderLeft = node.attributes['border-left'];
-    const borderRadius = node.attributes['border-radius'];
+    const border = attrs['border'];
+    const borderTop = attrs['border-top'];
+    const borderRight = attrs['border-right'];
+    const borderBottom = attrs['border-bottom'];
+    const borderLeft = attrs['border-left'];
+    const borderRadius = attrs['border-radius'];
 
     // Direction
-    const direction = node.attributes['direction'] || 'ltr';
+    const direction = attrs['direction'] || 'ltr';
 
     // Compute background position
     let computedBgPosition = bgPosition;

@@ -15,6 +15,7 @@ import {
   GripVertical,
   Trash2,
   Mail,
+  Palette,
 } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,9 @@ import {
 import { contentBlockTypes } from '@/lib/mjml/schema';
 import type { MjmlNode, ContentBlockType } from '@/types/mjml';
 import { cn } from '@/lib/utils';
+
+// Special ID for global styles selection
+export const GLOBAL_STYLES_ID = '__global_styles__';
 
 const blockIcons: Record<string, React.ReactNode> = {
   'mj-section': <div className="w-4 h-4 border border-current rounded-sm" />,
@@ -346,8 +350,19 @@ export function OutlineTree() {
         </Button>
       </div>
 
-      {/* Body settings link */}
-      <div className="px-3 py-1 border-b border-border">
+      {/* Global Styles and Body links */}
+      <div className="px-3 py-1 border-b border-border space-y-0.5">
+        <button
+          onClick={() => selectBlock(GLOBAL_STYLES_ID)}
+          className={cn(
+            'flex items-center gap-2 w-full h-8 px-2 rounded-md text-sm',
+            'hover:bg-accent/50 transition-colors',
+            state.selectedBlockId === GLOBAL_STYLES_ID && 'bg-accent'
+          )}
+        >
+          <Palette className="h-4 w-4 text-foreground-muted" />
+          <span className="text-foreground">Global Styles</span>
+        </button>
         <button
           onClick={() => selectBlock(body?._id || null)}
           className={cn(
