@@ -20,20 +20,13 @@ export function VisualEditor() {
     }
   };
 
-  // Apply body background color to the scroll viewport
-  const viewportStyle = {
-    '--body-bg': bodyBackgroundColor || '#ffffff',
-  } as React.CSSProperties;
-
   return (
     <ScrollArea
       className="h-full"
-      style={viewportStyle}
-      data-body-bg={bodyBackgroundColor || '#ffffff'}
+      viewportStyle={{ backgroundColor: bodyBackgroundColor || '#ffffff' }}
     >
       <div
-        className="min-h-full py-8 px-4"
-        style={{ backgroundColor: bodyBackgroundColor || '#ffffff' }}
+        className="py-8 px-4"
         onClick={handleBackgroundClick}
       >
         {/* Content container - constrained to body width */}
