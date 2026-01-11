@@ -13,6 +13,7 @@ export type MjmlTagName =
   | 'mjml'
   | 'mj-head'
   | 'mj-body'
+  | 'mj-wrapper'
   | 'mj-section'
   | 'mj-column'
   | 'mj-text'

@@ -19,18 +19,63 @@ export function VisualSection({ node }: VisualSectionProps) {
 
   // Handle wrapper - render children sections
   if (node.tagName === 'mj-wrapper') {
+    // Primary attributes
     const bgColor = node.attributes['background-color'] || 'transparent';
     const padding = buildPadding(node.attributes, '20px 0');
-    const borderRadius = node.attributes['border-radius'];
+    const fullWidth = node.attributes['full-width'] === 'full-width';
+    const textAlign = node.attributes['text-align'] || 'center';
+
+    // Background attributes
+    const bgUrl = node.attributes['background-url'];
+    const bgSize = node.attributes['background-size'] || 'auto';
+    const bgRepeat = node.attributes['background-repeat'] || 'repeat';
+    const bgPosition = node.attributes['background-position'] || 'top center';
+    const bgPositionX = node.attributes['background-position-x'];
+    const bgPositionY = node.attributes['background-position-y'];
+
+    // Border attributes
     const border = node.attributes['border'];
+    const borderTop = node.attributes['border-top'];
+    const borderRight = node.attributes['border-right'];
+    const borderBottom = node.attributes['border-bottom'];
+    const borderLeft = node.attributes['border-left'];
+    const borderRadius = node.attributes['border-radius'];
+
+    // Gap between child sections
+    const gap = node.attributes['gap'];
+
+    // Compute background position
+    let computedBgPosition = bgPosition;
+    if (bgPositionX || bgPositionY) {
+      computedBgPosition = `${bgPositionX || 'center'} ${bgPositionY || 'center'}`;
+    }
 
     const wrapperStyle: React.CSSProperties = {
       backgroundColor: bgColor,
+      backgroundImage: bgUrl ? `url(${bgUrl})` : undefined,
+      backgroundSize: bgSize,
+      backgroundRepeat: bgRepeat,
+      backgroundPosition: computedBgPosition,
       padding: padding,
+      textAlign: textAlign as React.CSSProperties['textAlign'],
     };
 
+    // Only add border properties if they have values
     if (border) wrapperStyle.border = border;
+    if (borderTop) wrapperStyle.borderTop = borderTop;
+    if (borderRight) wrapperStyle.borderRight = borderRight;
+    if (borderBottom) wrapperStyle.borderBottom = borderBottom;
+    if (borderLeft) wrapperStyle.borderLeft = borderLeft;
     if (borderRadius) wrapperStyle.borderRadius = borderRadius;
+
+    // Style for the inner container that holds child sections
+    const innerStyle: React.CSSProperties = {
+      margin: '0 auto',
+      maxWidth: fullWidth ? '100%' : '600px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: gap || undefined,
+    };
 
     return (
       <div
@@ -41,17 +86,19 @@ export function VisualSection({ node }: VisualSectionProps) {
         style={wrapperStyle}
         onClick={handleClick}
       >
-        {node.children?.map((child) => (
-          <VisualSection key={child._id} node={child} />
-        ))}
+        <div style={innerStyle}>
+          {node.children?.map((child) => (
+            <VisualSection key={child._id} node={child} />
+          ))}
+        </div>
       </div>
     );
   }
 
   // Handle section
   if (node.tagName === 'mj-section') {
-    // Primary attributes
-    const bgColor = node.attributes['background-color'] || '#ffffff';
+    // Primary attributes (sections are transparent by default in MJML)
+    const bgColor = node.attributes['background-color'] || 'transparent';
     const padding = buildPadding(node.attributes, '20px 0');
     const fullWidth = node.attributes['full-width'] === 'full-width';
     const textAlign = node.attributes['text-align'] || 'center';
@@ -109,8 +156,7 @@ export function VisualSection({ node }: VisualSectionProps) {
       <div
         className={cn(
           'relative cursor-pointer transition-all',
-          isSelected && 'ring-2 ring-indigo-500 ring-inset',
-          !fullWidth && 'bg-white'
+          isSelected && 'ring-2 ring-indigo-500 ring-inset'
         )}
         style={sectionStyle}
         onClick={handleClick}
