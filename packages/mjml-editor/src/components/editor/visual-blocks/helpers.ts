@@ -1,10 +1,33 @@
 /**
+ * Parses a CSS padding shorthand into individual values.
+ * Supports 1, 2, 3, or 4 value syntax.
+ */
+function parsePadding(padding: string): {
+  top: string;
+  right: string;
+  bottom: string;
+  left: string;
+} {
+  const parts = padding.trim().split(/\s+/);
+  switch (parts.length) {
+    case 1:
+      return { top: parts[0], right: parts[0], bottom: parts[0], left: parts[0] };
+    case 2:
+      return { top: parts[0], right: parts[1], bottom: parts[0], left: parts[1] };
+    case 3:
+      return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[1] };
+    case 4:
+    default:
+      return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[3] };
+  }
+}
+
+/**
  * Builds a CSS padding value from MJML attributes.
  *
- * MJML behavior: When any individual padding attribute is set (padding-top,
- * padding-right, padding-bottom, padding-left), those values take precedence
- * and any unset individual values default to "0". If no individual values
- * are set, the unified `padding` attribute is used.
+ * MJML behavior: Individual padding attributes (padding-top, padding-right,
+ * padding-bottom, padding-left) override specific sides of the base padding.
+ * The base padding comes from the unified `padding` attribute or the default.
  *
  * @param attrs - The node's attributes object
  * @param defaultPadding - Default padding when no padding attributes are set
@@ -27,11 +50,15 @@ export function buildPadding(
     paddingLeft !== undefined;
 
   if (hasIndividualPadding) {
-    // When any individual value is set, use individual values (defaulting to 0)
-    const top = paddingTop || '0';
-    const right = paddingRight || '0';
-    const bottom = paddingBottom || '0';
-    const left = paddingLeft || '0';
+    // Parse the base padding (unified padding or default)
+    const basePadding = attrs['padding'] || defaultPadding;
+    const base = parsePadding(basePadding);
+
+    // Individual values override the base
+    const top = paddingTop ?? base.top;
+    const right = paddingRight ?? base.right;
+    const bottom = paddingBottom ?? base.bottom;
+    const left = paddingLeft ?? base.left;
     return `${top} ${right} ${bottom} ${left}`;
   }
 
