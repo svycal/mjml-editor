@@ -1,34 +1,24 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
 import { useResolvedAttributes } from './useResolvedAttributes';
+import { TiptapEditor, type TiptapEditorRef } from '../TiptapEditor';
 
 interface VisualTextProps {
   node: MjmlNode;
-}
-
-// Convert HTML to plain text, preserving line breaks
-function htmlToText(html: string): string {
-  // Replace <br>, <br/>, <br /> with newlines
-  const withNewlines = html.replace(/<br\s*\/?>/gi, '\n');
-  // Strip remaining HTML tags
-  const doc = new DOMParser().parseFromString(withNewlines, 'text/html');
-  return doc.body.textContent || '';
-}
-
-// Convert plain text to HTML, converting newlines to <br />
-function textToHtml(text: string): string {
-  return text.replace(/\n/g, '<br />');
 }
 
 export function VisualText({ node }: VisualTextProps) {
   const { state, selectBlock, updateContent } = useEditor();
   const isSelected = state.selectedBlockId === node._id;
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [pendingContent, setPendingContent] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<TiptapEditorRef>(null);
+  // Track if we've ever entered edit mode (to mount editor once)
+  const [hasEditedOnce, setHasEditedOnce] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,50 +27,73 @@ export function VisualText({ node }: VisualTextProps) {
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Initialize edit value with plain text (br tags become newlines)
-    setEditValue(htmlToText(node.content || ''));
+    setHasEditedOnce(true);
     setIsEditing(true);
+    // Focus editor after state update
+    setTimeout(() => {
+      editorRef.current?.focus();
+    }, 0);
   };
 
-  const handleBlur = () => {
+  const handleUpdate = useCallback((html: string) => {
+    setPendingContent(html);
+  }, []);
+
+  const saveAndExit = useCallback(() => {
+    if (pendingContent !== null && pendingContent !== node.content) {
+      updateContent(node._id!, pendingContent);
+    }
+    setPendingContent(null);
     setIsEditing(false);
-    // Convert newlines to <br /> when saving
-    const newContent = textToHtml(editValue);
-    if (newContent !== node.content) {
-      updateContent(node._id!, newContent);
-    }
-  };
+  }, [pendingContent, node.content, node._id, updateContent]);
 
-  // Auto-resize textarea to fit content
-  const resizeTextarea = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  };
+  const cancelEdit = useCallback(() => {
+    setPendingContent(null);
+    setIsEditing(false);
+  }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsEditing(false);
-    }
-  };
-
-  // Focus textarea and resize when entering edit mode
+  // Handle click outside to save and exit
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.select();
-      resizeTextarea();
-    }
-  }, [isEditing]);
+    if (!isEditing) return;
 
-  // Resize textarea when content changes
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        // Check if click is inside a popover (for link editing)
+        const popover = document.querySelector(
+          '[data-radix-popper-content-wrapper]'
+        );
+        if (popover?.contains(e.target as Node)) {
+          return;
+        }
+        // Check if click is inside the bubble menu (Tippy)
+        const bubbleMenu = document.querySelector('.tippy-box');
+        if (bubbleMenu?.contains(e.target as Node)) {
+          return;
+        }
+        saveAndExit();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isEditing, saveAndExit]);
+
+  // Handle escape key to exit editing without saving
   useEffect(() => {
-    if (isEditing) {
-      resizeTextarea();
-    }
-  }, [editValue, isEditing]);
+    if (!isEditing) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        cancelEdit();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isEditing, cancelEdit]);
 
   // Get resolved attributes (includes mj-attributes defaults)
   const attrs = useResolvedAttributes(node);
@@ -117,14 +130,13 @@ export function VisualText({ node }: VisualTextProps) {
     textTransform: textTransform as React.CSSProperties['textTransform'],
   };
 
-  // Only add optional properties if they have values
   if (letterSpacing) textStyle.letterSpacing = letterSpacing;
 
-  // Get display content (convert br tags to newlines for display)
-  const displayContent = htmlToText(node.content || '');
+  const content = node.content || '';
 
   return (
     <div
+      ref={containerRef}
       className={cn(
         'relative cursor-pointer transition-all',
         isSelected && !isEditing && 'ring-2 ring-indigo-500 ring-inset',
@@ -138,25 +150,29 @@ export function VisualText({ node }: VisualTextProps) {
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
     >
-      {/* Display text when not editing */}
-      {!isEditing && (
-        <div className="whitespace-pre-wrap" style={textStyle}>
-          {displayContent || '\u00A0'}
-        </div>
-      )}
+      {/* Display HTML when not editing */}
+      <div
+        className={cn(
+          '[&_a]:text-inherit [&_a]:underline',
+          isEditing && 'hidden'
+        )}
+        style={textStyle}
+        dangerouslySetInnerHTML={{ __html: content || '\u00A0' }}
+      />
 
-      {/* Textarea for editing (in normal flow so it sizes the container) */}
-      {isEditing && (
-        <textarea
-          ref={textareaRef}
-          rows={1}
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          className="w-full resize-none outline-none bg-transparent"
-          style={textStyle}
-        />
+      {/*
+        Tiptap editor - mounted once user enters edit mode, never unmounted.
+        We hide it with CSS instead of unmounting to avoid React/ProseMirror conflicts.
+      */}
+      {hasEditedOnce && (
+        <div className={cn(!isEditing && 'hidden')}>
+          <TiptapEditor
+            ref={editorRef}
+            content={content}
+            onUpdate={handleUpdate}
+            style={textStyle}
+          />
+        </div>
       )}
 
       {/* Edit hint */}

@@ -330,3 +330,18 @@
       0 8px 16px oklch(0 0 0 / 0.06);
   }
 }
+
+/* Tiptap Editor Styles */
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 0;
+}
+
+.ProseMirror a {
+  color: inherit;
+  text-decoration: underline;
+  cursor: text;
+}
