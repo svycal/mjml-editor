@@ -68,12 +68,20 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
   // Get content blocks
   const contentBlocks = node.children || [];
 
+  // Convert vertical-align to flexbox align-self
+  const alignSelf =
+    verticalAlign === 'top'
+      ? 'flex-start'
+      : verticalAlign === 'bottom'
+        ? 'flex-end'
+        : 'center';
+
   // Outer column styles - build explicitly to avoid any edge cases
   const columnStyle: React.CSSProperties = {
     width: width,
     backgroundColor: bgColor,
     padding: padding,
-    verticalAlign: verticalAlign,
+    alignSelf: alignSelf,
     direction: direction as React.CSSProperties['direction'],
   };
 
