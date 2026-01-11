@@ -167,6 +167,7 @@ export function VisualSection({ node }: VisualSectionProps) {
           style={{
             margin: '0 auto',
             maxWidth: fullWidth ? '100%' : '600px',
+            minHeight: columns.length === 0 ? '20px' : undefined,
           }}
         >
           {columns.map((column) => (
@@ -177,13 +178,6 @@ export function VisualSection({ node }: VisualSectionProps) {
             />
           ))}
         </div>
-
-        {/* Empty section state */}
-        {columns.length === 0 && (
-          <div className="py-8 text-center text-muted-foreground text-sm">
-            Empty section - add a column
-          </div>
-        )}
       </div>
     );
   }
