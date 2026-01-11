@@ -39,6 +39,7 @@ export type AttributeGroup =
   | 'primary'
   | 'typography'
   | 'border'
+  | 'inner'
   | 'sizing'
   | 'spacing'
   | 'link'

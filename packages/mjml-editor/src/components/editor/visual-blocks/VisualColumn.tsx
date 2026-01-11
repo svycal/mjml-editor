@@ -27,12 +27,69 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
     width = `${100 / totalColumns}%`;
   }
 
+  // Primary attributes
   const bgColor = node.attributes['background-color'] || 'transparent';
   const padding = node.attributes['padding'] || '0';
   const verticalAlign = node.attributes['vertical-align'] || 'top';
 
+  // Border attributes
+  const border = node.attributes['border'];
+  const borderTop = node.attributes['border-top'];
+  const borderRight = node.attributes['border-right'];
+  const borderBottom = node.attributes['border-bottom'];
+  const borderLeft = node.attributes['border-left'];
+  const borderRadius = node.attributes['border-radius'];
+
+  // Inner styling attributes
+  const innerBgColor = node.attributes['inner-background-color'];
+  const innerBorder = node.attributes['inner-border'];
+  const innerBorderTop = node.attributes['inner-border-top'];
+  const innerBorderRight = node.attributes['inner-border-right'];
+  const innerBorderBottom = node.attributes['inner-border-bottom'];
+  const innerBorderLeft = node.attributes['inner-border-left'];
+  const innerBorderRadius = node.attributes['inner-border-radius'];
+
+  // Direction
+  const direction = node.attributes['direction'] || 'ltr';
+
+  // Check if we have any inner styling
+  const hasInnerStyling =
+    innerBgColor ||
+    innerBorder ||
+    innerBorderTop ||
+    innerBorderRight ||
+    innerBorderBottom ||
+    innerBorderLeft ||
+    innerBorderRadius;
+
   // Get content blocks
   const contentBlocks = node.children || [];
+
+  // Outer column styles
+  const columnStyle: React.CSSProperties = {
+    width: width,
+    backgroundColor: bgColor,
+    padding: padding,
+    verticalAlign: verticalAlign,
+    border: border || undefined,
+    borderTop: borderTop || undefined,
+    borderRight: borderRight || undefined,
+    borderBottom: borderBottom || undefined,
+    borderLeft: borderLeft || undefined,
+    borderRadius: borderRadius || undefined,
+    direction: direction as React.CSSProperties['direction'],
+  };
+
+  // Inner wrapper styles (only used when inner styling is present)
+  const innerStyle: React.CSSProperties = {
+    backgroundColor: innerBgColor || undefined,
+    border: innerBorder || undefined,
+    borderTop: innerBorderTop || undefined,
+    borderRight: innerBorderRight || undefined,
+    borderBottom: innerBorderBottom || undefined,
+    borderLeft: innerBorderLeft || undefined,
+    borderRadius: innerBorderRadius || undefined,
+  };
 
   return (
     <div
@@ -40,26 +97,37 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
         'relative transition-all',
         isSelected && 'ring-2 ring-indigo-500 ring-inset'
       )}
-      style={{
-        width: width,
-        backgroundColor: bgColor,
-        padding: padding,
-        verticalAlign: verticalAlign,
-      }}
+      style={columnStyle}
       onClick={handleClick}
     >
-      {contentBlocks.map((block) => (
-        <VisualBlock key={block._id} node={block} />
-      ))}
-
-      {/* Empty column placeholder */}
-      {contentBlocks.length === 0 && (
-        <div
-          className="py-8 text-center text-muted-foreground text-sm cursor-pointer hover:bg-muted transition-colors"
-          onClick={handleClick}
-        >
-          Empty column
+      {hasInnerStyling ? (
+        <div style={innerStyle}>
+          {contentBlocks.map((block) => (
+            <VisualBlock key={block._id} node={block} />
+          ))}
+          {contentBlocks.length === 0 && (
+            <div
+              className="py-8 text-center text-muted-foreground text-sm cursor-pointer hover:bg-muted transition-colors"
+              onClick={handleClick}
+            >
+              Empty column
+            </div>
+          )}
         </div>
+      ) : (
+        <>
+          {contentBlocks.map((block) => (
+            <VisualBlock key={block._id} node={block} />
+          ))}
+          {contentBlocks.length === 0 && (
+            <div
+              className="py-8 text-center text-muted-foreground text-sm cursor-pointer hover:bg-muted transition-colors"
+              onClick={handleClick}
+            >
+              Empty column
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -25,10 +25,20 @@ export const sectionSchema: ComponentSchema = {
   },
 };
 
-// Column attributes
+// Column attributes - organized by group for inspector UI
 export const columnSchema: ComponentSchema = {
-  width: { type: 'dimension', label: 'Width', placeholder: 'auto, 50%, 200px' },
-  'background-color': { type: 'color', label: 'Background Color', default: '' },
+  // Primary attributes (always visible)
+  width: {
+    type: 'dimension',
+    label: 'Width',
+    placeholder: 'auto, 50%, 200px',
+    group: 'primary',
+  },
+  'background-color': {
+    type: 'color',
+    label: 'Background Color',
+    group: 'primary',
+  },
   'vertical-align': {
     type: 'select',
     label: 'Vertical Align',
@@ -38,8 +48,138 @@ export const columnSchema: ComponentSchema = {
       { value: 'middle', label: 'Middle' },
       { value: 'bottom', label: 'Bottom' },
     ],
+    group: 'primary',
   },
-  padding: { type: 'padding', label: 'Padding', default: '' },
+  padding: {
+    type: 'padding',
+    label: 'Padding',
+    group: 'primary',
+  },
+
+  // Border attributes
+  border: {
+    type: 'text',
+    label: 'Border',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-top': {
+    type: 'text',
+    label: 'Border Top',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-right': {
+    type: 'text',
+    label: 'Border Right',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-bottom': {
+    type: 'text',
+    label: 'Border Bottom',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-left': {
+    type: 'text',
+    label: 'Border Left',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-radius': {
+    type: 'dimension',
+    label: 'Border Radius',
+    placeholder: '0px',
+    group: 'border',
+  },
+
+  // Inner styling attributes
+  'inner-background-color': {
+    type: 'color',
+    label: 'Inner Background',
+    group: 'inner',
+  },
+  'inner-border': {
+    type: 'text',
+    label: 'Inner Border',
+    placeholder: '1px solid #000',
+    group: 'inner',
+  },
+  'inner-border-top': {
+    type: 'text',
+    label: 'Inner Border Top',
+    placeholder: '1px solid #000',
+    group: 'inner',
+  },
+  'inner-border-right': {
+    type: 'text',
+    label: 'Inner Border Right',
+    placeholder: '1px solid #000',
+    group: 'inner',
+  },
+  'inner-border-bottom': {
+    type: 'text',
+    label: 'Inner Border Bottom',
+    placeholder: '1px solid #000',
+    group: 'inner',
+  },
+  'inner-border-left': {
+    type: 'text',
+    label: 'Inner Border Left',
+    placeholder: '1px solid #000',
+    group: 'inner',
+  },
+  'inner-border-radius': {
+    type: 'dimension',
+    label: 'Inner Border Radius',
+    placeholder: '0px',
+    group: 'inner',
+  },
+
+  // Spacing attributes (granular padding)
+  'padding-top': {
+    type: 'dimension',
+    label: 'Padding Top',
+    placeholder: '0px',
+    group: 'spacing',
+  },
+  'padding-right': {
+    type: 'dimension',
+    label: 'Padding Right',
+    placeholder: '0px',
+    group: 'spacing',
+  },
+  'padding-bottom': {
+    type: 'dimension',
+    label: 'Padding Bottom',
+    placeholder: '0px',
+    group: 'spacing',
+  },
+  'padding-left': {
+    type: 'dimension',
+    label: 'Padding Left',
+    placeholder: '0px',
+    group: 'spacing',
+  },
+
+  // Advanced attributes
+  direction: {
+    type: 'select',
+    label: 'Direction',
+    default: 'ltr',
+    options: [
+      { value: 'ltr', label: 'Left to Right' },
+      { value: 'rtl', label: 'Right to Left' },
+    ],
+    group: 'advanced',
+  },
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
+  },
 };
 
 // Text attributes - organized by group for inspector UI
