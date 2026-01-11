@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualButtonProps {
   node: MjmlNode;
@@ -73,7 +74,7 @@ export function VisualButton({ node }: VisualButtonProps) {
   const align = node.attributes['align'] || 'center';
   const verticalAlign = node.attributes['vertical-align'] || 'middle';
   const innerPadding = node.attributes['inner-padding'] || '10px 25px';
-  const padding = node.attributes['padding'] || '10px 25px';
+  const padding = buildPadding(node.attributes, '10px 25px');
   const width = node.attributes['width'];
   const height = node.attributes['height'];
   const containerBgColor = node.attributes['container-background-color'];

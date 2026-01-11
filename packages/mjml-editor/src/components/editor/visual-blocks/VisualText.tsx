@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualTextProps {
   node: MjmlNode;
@@ -96,7 +97,7 @@ export function VisualText({ node }: VisualTextProps) {
   const letterSpacing = node.attributes['letter-spacing'];
   const textDecoration = node.attributes['text-decoration'] || 'none';
   const textTransform = node.attributes['text-transform'] || 'none';
-  const padding = node.attributes['padding'] || '10px 25px';
+  const padding = buildPadding(node.attributes, '10px 25px');
   const height = node.attributes['height'];
   const containerBgColor = node.attributes['container-background-color'];
 

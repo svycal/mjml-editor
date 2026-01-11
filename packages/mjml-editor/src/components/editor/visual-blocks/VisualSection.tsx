@@ -2,6 +2,7 @@ import { useEditor } from '@/context/EditorContext';
 import { VisualColumn } from './VisualColumn';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualSectionProps {
   node: MjmlNode;
@@ -19,7 +20,7 @@ export function VisualSection({ node }: VisualSectionProps) {
   // Handle wrapper - render children sections
   if (node.tagName === 'mj-wrapper') {
     const bgColor = node.attributes['background-color'] || 'transparent';
-    const padding = node.attributes['padding'] || '20px 0';
+    const padding = buildPadding(node.attributes, '20px 0');
     const borderRadius = node.attributes['border-radius'];
     const border = node.attributes['border'];
 
@@ -51,7 +52,7 @@ export function VisualSection({ node }: VisualSectionProps) {
   if (node.tagName === 'mj-section') {
     // Primary attributes
     const bgColor = node.attributes['background-color'] || '#ffffff';
-    const padding = node.attributes['padding'] || '20px 0';
+    const padding = buildPadding(node.attributes, '20px 0');
     const fullWidth = node.attributes['full-width'] === 'full-width';
     const textAlign = node.attributes['text-align'] || 'center';
 

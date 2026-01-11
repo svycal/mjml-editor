@@ -1,6 +1,7 @@
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualDividerProps {
   node: MjmlNode;
@@ -21,7 +22,7 @@ export function VisualDivider({ node }: VisualDividerProps) {
   const borderStyle = node.attributes['border-style'] || 'solid';
   const width = node.attributes['width'] || '100%';
   const align = node.attributes['align'] || 'center';
-  const padding = node.attributes['padding'] || '10px 25px';
+  const padding = buildPadding(node.attributes, '10px 25px');
 
   // Advanced attributes
   const containerBgColor = node.attributes['container-background-color'];

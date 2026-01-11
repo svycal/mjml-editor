@@ -1,6 +1,7 @@
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualSpacerProps {
   node: MjmlNode;
@@ -17,7 +18,7 @@ export function VisualSpacer({ node }: VisualSpacerProps) {
 
   // Parse attributes - Primary
   const height = node.attributes['height'] || '20px';
-  const padding = node.attributes['padding'];
+  const padding = buildPadding(node.attributes);
 
   // Advanced attributes
   const containerBgColor = node.attributes['container-background-color'];

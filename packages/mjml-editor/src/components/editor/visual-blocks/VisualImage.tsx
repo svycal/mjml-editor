@@ -1,6 +1,7 @@
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualImageProps {
   node: MjmlNode;
@@ -21,7 +22,7 @@ export function VisualImage({ node }: VisualImageProps) {
   const width = node.attributes['width'] || '100%';
   const height = node.attributes['height'] || 'auto';
   const align = node.attributes['align'] || 'center';
-  const padding = node.attributes['padding'] || '10px 25px';
+  const padding = buildPadding(node.attributes, '10px 25px');
 
   // Border attributes
   const border = node.attributes['border'];

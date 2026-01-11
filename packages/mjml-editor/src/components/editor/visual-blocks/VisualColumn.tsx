@@ -2,6 +2,7 @@ import { useEditor } from '@/context/EditorContext';
 import { VisualBlock } from './VisualBlock';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
+import { buildPadding } from './helpers';
 
 interface VisualColumnProps {
   node: MjmlNode;
@@ -32,7 +33,7 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
 
   // Primary attributes
   const bgColor = attrs['background-color'] || 'transparent';
-  const padding = attrs['padding'] || '0';
+  const padding = buildPadding(attrs, '0');
   const verticalAlign = attrs['vertical-align'] || 'top';
 
   // Border attributes
