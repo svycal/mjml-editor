@@ -111,12 +111,7 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
             <VisualBlock key={block._id} node={block} />
           ))}
           {contentBlocks.length === 0 && (
-            <div
-              className="py-8 text-center text-muted-foreground text-sm cursor-pointer hover:bg-muted transition-colors"
-              onClick={handleClick}
-            >
-              Empty column
-            </div>
+            <div className="py-4" onClick={handleClick} />
           )}
         </div>
       ) : (
@@ -125,12 +120,7 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
             <VisualBlock key={block._id} node={block} />
           ))}
           {contentBlocks.length === 0 && (
-            <div
-              className="py-8 text-center text-muted-foreground text-sm cursor-pointer hover:bg-muted transition-colors"
-              onClick={handleClick}
-            >
-              Empty column
-            </div>
+            <div className="py-4" onClick={handleClick} />
           )}
         </>
       )}
