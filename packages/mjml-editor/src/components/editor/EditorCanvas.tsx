@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { VisualEditor } from './VisualEditor';
 import { InteractivePreview } from './InteractivePreview';
+import { SourceEditor } from './SourceEditor';
 import { cn } from '@/lib/utils';
 
-type TabType = 'edit' | 'preview';
+type TabType = 'edit' | 'preview' | 'source';
 
 export function EditorCanvas() {
   const [activeTab, setActiveTab] = useState<TabType>('edit');
@@ -34,15 +35,24 @@ export function EditorCanvas() {
         >
           Preview
         </button>
+        <button
+          onClick={() => setActiveTab('source')}
+          className={cn(
+            'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+            activeTab === 'source'
+              ? 'bg-accent text-foreground'
+              : 'text-foreground-muted hover:text-foreground hover:bg-accent/50'
+          )}
+        >
+          Source
+        </button>
       </div>
 
       {/* Tab content */}
       <div className="flex-1 min-h-0 overflow-hidden">
-        {activeTab === 'edit' ? (
-          <VisualEditor />
-        ) : (
-          <InteractivePreview showHeader={false} />
-        )}
+        {activeTab === 'edit' && <VisualEditor />}
+        {activeTab === 'preview' && <InteractivePreview showHeader={false} />}
+        {activeTab === 'source' && <SourceEditor />}
       </div>
     </div>
   );
