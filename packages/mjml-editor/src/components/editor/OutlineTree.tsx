@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Tree, type NodeRendererProps, type TreeApi } from 'react-arborist';
 import {
   Undo2,
@@ -253,6 +253,23 @@ export function OutlineTree() {
   const { state, undo, redo, canUndo, canRedo, moveBlock, addSection, selectBlock } =
     useEditor();
   const treeRef = useRef<TreeApi<MjmlNode>>(null);
+  const treeContainerRef = useRef<HTMLDivElement>(null);
+  const [treeHeight, setTreeHeight] = useState(400);
+
+  // Track container height for the tree
+  useEffect(() => {
+    const container = treeContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setTreeHeight(entry.contentRect.height);
+      }
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   // Get the body node's children as the tree data
   const body = state.document.children?.find((c) => c.tagName === 'mj-body');
@@ -337,7 +354,7 @@ export function OutlineTree() {
       </div>
 
       {/* Tree content */}
-      <div className="flex-1 min-h-0 overflow-auto">
+      <div ref={treeContainerRef} className="flex-1 min-h-0">
         {treeData.length > 0 ? (
           <Tree<MjmlNode>
             ref={treeRef}
@@ -346,6 +363,7 @@ export function OutlineTree() {
             childrenAccessor={(node) => node.children || null}
             openByDefault={true}
             width="100%"
+            height={treeHeight}
             indent={16}
             rowHeight={32}
             paddingTop={8}
@@ -355,7 +373,7 @@ export function OutlineTree() {
             {TreeNode}
           </Tree>
         ) : (
-          <div className="px-3 py-8 text-center text-sm text-muted-foreground">
+          <div className="flex-1 px-3 py-8 text-center text-sm text-muted-foreground">
             No content yet
           </div>
         )}
