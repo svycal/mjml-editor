@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MjmlEditor } from '@savvycal/mjml-editor';
 
 const initialMjml = `
+
 <mjml>
   <mj-head>
     <mj-title>Your appointment is scheduled</mj-title>
@@ -65,12 +66,12 @@ const initialMjml = `
       <!-- Reschedule / Cancel Buttons -->
       <mj-section padding="24px 40px 0 40px">
         <mj-column>
-          <mj-button padding-right="6px" href="#" background-color="#ffffff" color="#09090b" font-size="14px" font-weight="500" border-radius="6px" border="1px solid #e4e4e7" padding="0" inner-padding="12px 20px" width="100%">
+          <mj-button padding-right="6px" href="#" background-color="#ffffff" color="#09090b" font-size="14px" font-weight="500" border-radius="6px" border="1px solid #e4e4e7" inner-padding="12px 20px" width="100%">
             Reschedule
           </mj-button>
         </mj-column>
         <mj-column>
-          <mj-button padding-left="6px" href="#" background-color="#ffffff" color="#09090b" font-size="14px" font-weight="500" border-radius="6px" border="1px solid #e4e4e7" padding="0" inner-padding="12px 20px" width="100%">
+          <mj-button padding-left="6px" href="#" background-color="#ffffff" color="#09090b" font-size="14px" font-weight="500" border-radius="6px" border="1px solid #e4e4e7" inner-padding="12px 20px" width="100%">
             Cancel
           </mj-button>
         </mj-column>
@@ -98,6 +99,7 @@ const initialMjml = `
 
   </mj-body>
 </mjml>
+
 `;
 
 function App() {
