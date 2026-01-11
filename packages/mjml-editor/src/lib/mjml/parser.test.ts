@@ -89,6 +89,54 @@ describe('parseMjml', () => {
     });
   });
 
+  describe('attribute values with quotes', () => {
+    it('should handle single quotes inside double-quoted attributes', () => {
+      const mjml = `<mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text font-family="'Inter',Helvetica,Arial,sans-serif"></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>`;
+
+      const result = parseMjml(mjml);
+      expect(result.tagName).toBe('mjml');
+
+      const body = result.children?.find((c) => c.tagName === 'mj-body');
+      const section = body?.children?.[0];
+      const column = section?.children?.[0];
+      const text = column?.children?.[0];
+      expect(text?.attributes?.['font-family']).toBe(
+        "'Inter',Helvetica,Arial,sans-serif"
+      );
+    });
+
+    it('should handle double quotes inside single-quoted attributes', () => {
+      const mjml = `<mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text font-family='"Inter",Helvetica,Arial,sans-serif'></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>`;
+
+      const result = parseMjml(mjml);
+      expect(result.tagName).toBe('mjml');
+
+      const body = result.children?.find((c) => c.tagName === 'mj-body');
+      const section = body?.children?.[0];
+      const column = section?.children?.[0];
+      const text = column?.children?.[0];
+      expect(text?.attributes?.['font-family']).toBe(
+        '"Inter",Helvetica,Arial,sans-serif'
+      );
+    });
+  });
+
   describe('basic parsing', () => {
     it('should parse valid MJML', () => {
       const mjml = `<mjml><mj-body></mj-body></mjml>`;

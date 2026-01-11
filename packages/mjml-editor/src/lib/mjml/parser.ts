@@ -6,17 +6,23 @@ import type { MjmlNode } from '@/types/mjml';
  * This handles URLs like Google Fonts that contain & characters.
  */
 function escapeAmpersandsInAttributes(mjmlString: string): string {
-  // Match attribute values with double or single quotes: attr="value" or attr='value'
-  return mjmlString.replace(/=["']([^"']*)["']/g, (_match, value, offset, string) => {
-    // Determine which quote was used
-    const quote = string[offset + 1];
-    // Replace & that's not already part of a valid XML entity
-    const escaped = value.replace(
+  const escapeAmpersands = (value: string) =>
+    value.replace(
       /&(?!(amp|lt|gt|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);)/gi,
       '&amp;'
     );
-    return `=${quote}${escaped}${quote}`;
+
+  // Handle double-quoted attributes (may contain single quotes)
+  let result = mjmlString.replace(/="([^"]*)"/g, (_match, value) => {
+    return `="${escapeAmpersands(value)}"`;
   });
+
+  // Handle single-quoted attributes (may contain double quotes)
+  result = result.replace(/='([^']*)'/g, (_match, value) => {
+    return `='${escapeAmpersands(value)}'`;
+  });
+
+  return result;
 }
 
 /**
