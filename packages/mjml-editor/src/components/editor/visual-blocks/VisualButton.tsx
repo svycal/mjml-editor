@@ -55,24 +55,62 @@ export function VisualButton({ node }: VisualButtonProps) {
   const bgColor = node.attributes['background-color'] || '#414141';
   const textColor = node.attributes['color'] || '#ffffff';
   const fontSize = node.attributes['font-size'] || '13px';
+  const fontFamily =
+    node.attributes['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
   const fontWeight = node.attributes['font-weight'] || 'normal';
+  const fontStyle = node.attributes['font-style'] || 'normal';
+  const lineHeight = node.attributes['line-height'] || '120%';
+  const letterSpacing = node.attributes['letter-spacing'];
+  const textAlign = node.attributes['text-align'] || 'center';
+  const textDecoration = node.attributes['text-decoration'] || 'none';
+  const textTransform = node.attributes['text-transform'] || 'none';
   const borderRadius = node.attributes['border-radius'] || '3px';
+  const border = node.attributes['border'] || 'none';
+  const borderTop = node.attributes['border-top'];
+  const borderRight = node.attributes['border-right'];
+  const borderBottom = node.attributes['border-bottom'];
+  const borderLeft = node.attributes['border-left'];
   const align = node.attributes['align'] || 'center';
+  const verticalAlign = node.attributes['vertical-align'] || 'middle';
   const innerPadding = node.attributes['inner-padding'] || '10px 25px';
   const padding = node.attributes['padding'] || '10px 25px';
+  const width = node.attributes['width'];
+  const height = node.attributes['height'];
+  const containerBgColor = node.attributes['container-background-color'];
 
   // Convert align to flexbox
   const justifyContent =
     align === 'left' ? 'flex-start' : align === 'right' ? 'flex-end' : 'center';
 
-  const buttonStyle = {
+  // Convert vertical-align to flexbox
+  const alignItems =
+    verticalAlign === 'top'
+      ? 'flex-start'
+      : verticalAlign === 'bottom'
+        ? 'flex-end'
+        : 'center';
+
+  const buttonStyle: React.CSSProperties = {
     backgroundColor: bgColor,
     color: textColor,
     fontSize,
+    fontFamily,
     fontWeight,
+    fontStyle,
+    lineHeight,
+    letterSpacing: letterSpacing || undefined,
+    textAlign: textAlign as React.CSSProperties['textAlign'],
+    textDecoration,
+    textTransform: textTransform as React.CSSProperties['textTransform'],
     borderRadius,
+    border,
+    borderTop: borderTop || undefined,
+    borderRight: borderRight || undefined,
+    borderBottom: borderBottom || undefined,
+    borderLeft: borderLeft || undefined,
     padding: innerPadding,
-    textDecoration: 'none',
+    width: width || undefined,
+    height: height || undefined,
   };
 
   return (
@@ -85,6 +123,8 @@ export function VisualButton({ node }: VisualButtonProps) {
         padding,
         display: 'flex',
         justifyContent,
+        alignItems,
+        backgroundColor: containerBgColor || undefined,
       }}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -110,11 +150,18 @@ export function VisualButton({ node }: VisualButtonProps) {
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="absolute inset-0 w-full h-full text-center outline-none bg-transparent"
+            className="absolute inset-0 w-full h-full outline-none bg-transparent"
             style={{
               color: textColor,
               fontSize,
+              fontFamily,
               fontWeight,
+              fontStyle,
+              lineHeight,
+              letterSpacing: letterSpacing || undefined,
+              textAlign: textAlign as React.CSSProperties['textAlign'],
+              textDecoration,
+              textTransform: textTransform as React.CSSProperties['textTransform'],
             }}
           />
         )}

@@ -1,7 +1,14 @@
+import { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
   Select,
   SelectContent,
@@ -10,7 +17,28 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getSchemaForTag } from '@/lib/mjml/schema';
-import type { AttributeSchema } from '@/types/mjml';
+import type { AttributeSchema, AttributeGroup } from '@/types/mjml';
+import { cn } from '@/lib/utils';
+
+const GROUP_LABELS: Record<AttributeGroup, string> = {
+  primary: 'Primary',
+  typography: 'Typography',
+  border: 'Border',
+  sizing: 'Sizing',
+  spacing: 'Spacing',
+  link: 'Link',
+  advanced: 'Advanced',
+};
+
+const GROUP_ORDER: AttributeGroup[] = [
+  'primary',
+  'typography',
+  'border',
+  'sizing',
+  'spacing',
+  'link',
+  'advanced',
+];
 
 export function BlockInspector() {
   const { selectedBlock, updateAttributes } = useEditor();
@@ -43,6 +71,26 @@ export function BlockInspector() {
     }
   };
 
+  // Group attributes by their group property
+  const groupedAttributes = schema
+    ? Object.entries(schema).reduce(
+        (acc, [key, attrSchema]) => {
+          const group = attrSchema.group || 'primary';
+          if (!acc[group]) {
+            acc[group] = [];
+          }
+          acc[group].push({ key, schema: attrSchema });
+          return acc;
+        },
+        {} as Record<string, { key: string; schema: AttributeSchema }[]>
+      )
+    : {};
+
+  // Check if there are any non-primary groups (to determine if we need collapsibles)
+  const hasGroups = Object.keys(groupedAttributes).some(
+    (group) => group !== 'primary'
+  );
+
   return (
     <div className="flex flex-col h-full">
       <div className="h-11 px-4 flex items-center border-b border-border bg-inspector-header">
@@ -50,17 +98,27 @@ export function BlockInspector() {
       </div>
 
       <ScrollArea className="flex-1 min-h-0">
-        <div className="p-4 space-y-5">
+        <div className="p-4">
           {schema ? (
-            Object.entries(schema).map(([key, attrSchema]) => (
-              <AttributeEditor
-                key={key}
-                attributeKey={key}
-                schema={attrSchema}
-                value={selectedBlock.attributes[key] || ''}
-                onChange={(value) => handleAttributeChange(key, value)}
+            hasGroups ? (
+              <GroupedAttributeEditor
+                groupedAttributes={groupedAttributes}
+                selectedBlock={selectedBlock}
+                handleAttributeChange={handleAttributeChange}
               />
-            ))
+            ) : (
+              <div className="space-y-5">
+                {Object.entries(schema).map(([key, attrSchema]) => (
+                  <AttributeEditor
+                    key={key}
+                    attributeKey={key}
+                    schema={attrSchema}
+                    value={selectedBlock.attributes[key] || ''}
+                    onChange={(value) => handleAttributeChange(key, value)}
+                  />
+                ))}
+              </div>
+            )
           ) : (
             <p className="text-sm text-foreground-muted py-4 text-center">
               No editable properties for this block type.
@@ -68,6 +126,84 @@ export function BlockInspector() {
           )}
         </div>
       </ScrollArea>
+    </div>
+  );
+}
+
+interface GroupedAttributeEditorProps {
+  groupedAttributes: Record<string, { key: string; schema: AttributeSchema }[]>;
+  selectedBlock: { attributes: Record<string, string> };
+  handleAttributeChange: (key: string, value: string) => void;
+}
+
+function GroupedAttributeEditor({
+  groupedAttributes,
+  selectedBlock,
+  handleAttributeChange,
+}: GroupedAttributeEditorProps) {
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+
+  const toggleGroup = (group: string) => {
+    setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));
+  };
+
+  return (
+    <div className="space-y-4">
+      {GROUP_ORDER.map((group) => {
+        const attributes = groupedAttributes[group];
+        if (!attributes || attributes.length === 0) return null;
+
+        // Primary group is always expanded without a disclosure
+        if (group === 'primary') {
+          return (
+            <div key={group} className="space-y-5">
+              {attributes.map(({ key, schema }) => (
+                <AttributeEditor
+                  key={key}
+                  attributeKey={key}
+                  schema={schema}
+                  value={selectedBlock.attributes[key] || ''}
+                  onChange={(value) => handleAttributeChange(key, value)}
+                />
+              ))}
+            </div>
+          );
+        }
+
+        // Other groups use collapsible disclosure
+        const isOpen = openGroups[group] || false;
+
+        return (
+          <Collapsible
+            key={group}
+            open={isOpen}
+            onOpenChange={() => toggleGroup(group)}
+          >
+            <CollapsibleTrigger className="flex items-center gap-1 w-full py-2 text-xs font-medium text-foreground-muted hover:text-foreground transition-colors">
+              <ChevronRight
+                className={cn(
+                  'h-3.5 w-3.5 transition-transform',
+                  isOpen && 'rotate-90'
+                )}
+              />
+              {GROUP_LABELS[group]}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="space-y-5 pt-2 pb-1">
+                {attributes.map(({ key, schema }) => (
+                  <AttributeEditor
+                    key={key}
+                    attributeKey={key}
+                    schema={schema}
+                    value={selectedBlock.attributes[key] || ''}
+                    onChange={(value) => handleAttributeChange(key, value)}
+                  />
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        );
+      })}
     </div>
   );
 }

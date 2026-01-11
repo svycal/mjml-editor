@@ -34,6 +34,16 @@ export type ContentBlockType =
   | 'mj-divider'
   | 'mj-spacer';
 
+// Attribute groups for organizing inspector UI
+export type AttributeGroup =
+  | 'primary'
+  | 'typography'
+  | 'border'
+  | 'sizing'
+  | 'spacing'
+  | 'link'
+  | 'advanced';
+
 // Attribute schema for validation and UI rendering
 export interface AttributeSchema {
   type:
@@ -48,6 +58,7 @@ export interface AttributeSchema {
   default?: string;
   options?: { value: string; label: string }[]; // For select type
   placeholder?: string;
+  group?: AttributeGroup; // For grouping in inspector UI
 }
 
 export type ComponentSchema = Record<string, AttributeSchema>;
