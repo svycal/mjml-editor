@@ -30,8 +30,8 @@ export function VisualSpacer({ node }: VisualSpacerProps) {
       )}
       style={{
         height,
-        padding: padding || undefined,
-        backgroundColor: containerBgColor || undefined,
+        ...(padding && { padding }),
+        ...(containerBgColor && { backgroundColor: containerBgColor }),
       }}
       onClick={handleClick}
     >

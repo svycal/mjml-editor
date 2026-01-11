@@ -108,10 +108,12 @@ export function VisualText({ node }: VisualTextProps) {
     fontStyle,
     textAlign,
     lineHeight,
-    letterSpacing: letterSpacing || undefined,
     textDecoration,
     textTransform: textTransform as React.CSSProperties['textTransform'],
   };
+
+  // Only add optional properties if they have values
+  if (letterSpacing) textStyle.letterSpacing = letterSpacing;
 
   // Get display content (convert br tags to newlines for display)
   const displayContent = htmlToText(node.content || '');
@@ -125,8 +127,8 @@ export function VisualText({ node }: VisualTextProps) {
       )}
       style={{
         padding,
-        height: height || undefined,
-        backgroundColor: containerBgColor || undefined,
+        ...(height && { height }),
+        ...(containerBgColor && { backgroundColor: containerBgColor }),
       }}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}

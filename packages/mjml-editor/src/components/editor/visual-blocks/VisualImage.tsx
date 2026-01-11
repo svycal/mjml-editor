@@ -24,12 +24,12 @@ export function VisualImage({ node }: VisualImageProps) {
   const padding = node.attributes['padding'] || '10px 25px';
 
   // Border attributes
-  const border = node.attributes['border'] || '0';
+  const border = node.attributes['border'];
   const borderTop = node.attributes['border-top'];
   const borderRight = node.attributes['border-right'];
   const borderBottom = node.attributes['border-bottom'];
   const borderLeft = node.attributes['border-left'];
-  const borderRadius = node.attributes['border-radius'] || '0';
+  const borderRadius = node.attributes['border-radius'];
 
   // Sizing attributes
   const maxHeight = node.attributes['max-height'];
@@ -47,23 +47,26 @@ export function VisualImage({ node }: VisualImageProps) {
     padding,
     display: 'flex',
     justifyContent,
-    backgroundColor: containerBgColor || undefined,
   };
+
+  if (containerBgColor) containerStyle.backgroundColor = containerBgColor;
 
   // Image styles
   const imageStyle: React.CSSProperties = {
     width: width,
     height: height,
     maxWidth: '100%',
-    maxHeight: maxHeight || undefined,
     display: 'block',
-    border: border,
-    borderTop: borderTop || undefined,
-    borderRight: borderRight || undefined,
-    borderBottom: borderBottom || undefined,
-    borderLeft: borderLeft || undefined,
-    borderRadius: borderRadius,
   };
+
+  // Only add optional properties if they have values
+  if (maxHeight) imageStyle.maxHeight = maxHeight;
+  if (border) imageStyle.border = border;
+  if (borderTop) imageStyle.borderTop = borderTop;
+  if (borderRight) imageStyle.borderRight = borderRight;
+  if (borderBottom) imageStyle.borderBottom = borderBottom;
+  if (borderLeft) imageStyle.borderLeft = borderLeft;
+  if (borderRadius) imageStyle.borderRadius = borderRadius;
 
   return (
     <div
@@ -82,7 +85,7 @@ export function VisualImage({ node }: VisualImageProps) {
           style={{
             width: width === '100%' ? '100%' : width,
             height: height === 'auto' ? '150px' : height,
-            borderRadius: borderRadius,
+            ...(borderRadius && { borderRadius }),
           }}
         >
           No image

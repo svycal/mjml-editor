@@ -38,7 +38,7 @@ export function VisualDivider({ node }: VisualDividerProps) {
       )}
       style={{
         padding,
-        backgroundColor: containerBgColor || undefined,
+        ...(containerBgColor && { backgroundColor: containerBgColor }),
       }}
       onClick={handleClick}
     >
