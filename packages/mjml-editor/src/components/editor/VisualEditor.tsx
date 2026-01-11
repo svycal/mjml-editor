@@ -23,26 +23,32 @@ export function VisualEditor() {
   return (
     <ScrollArea className="h-full *:data-[slot=scroll-area-viewport]:bg-checkered">
       <div className="py-8 px-4" onClick={handleBackgroundClick}>
-        {/* Email container - uses mj-body width or default 600px */}
+        {/* Email background - extends beyond content width to show body background color */}
         <div
-          className="light mx-auto shadow-framer-lg"
+          className="light mx-auto shadow-framer-lg w-full"
           style={{
-            maxWidth: bodyWidth,
+            maxWidth: `calc(${bodyWidth} + 120px)`,
             backgroundColor: bodyBackgroundColor || '#ffffff',
           }}
         >
-          {body?.children?.map((section) => (
-            <VisualSection key={section._id} node={section} />
-          ))}
+          {/* Content container - constrained to body width */}
+          <div
+            className="mx-auto w-full"
+            style={{ maxWidth: bodyWidth }}
+          >
+            {body?.children?.map((section) => (
+              <VisualSection key={section._id} node={section} />
+            ))}
 
-          {/* Empty state */}
-          {(!body?.children || body.children.length === 0) && (
-            <div className="bg-surface rounded-lg border-2 border-dashed border-border p-12 text-center">
-              <p className="text-muted-foreground">
-                Add a section to get started
-              </p>
-            </div>
-          )}
+            {/* Empty state */}
+            {(!body?.children || body.children.length === 0) && (
+              <div className="bg-surface rounded-lg border-2 border-dashed border-border p-12 text-center">
+                <p className="text-muted-foreground">
+                  Add a section to get started
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </ScrollArea>
