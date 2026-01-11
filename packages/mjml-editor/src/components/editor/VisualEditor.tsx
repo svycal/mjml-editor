@@ -20,35 +20,39 @@ export function VisualEditor() {
     }
   };
 
-  return (
-    <ScrollArea className="h-full *:data-[slot=scroll-area-viewport]:bg-checkered">
-      <div className="py-8 px-4" onClick={handleBackgroundClick}>
-        {/* Email background - extends beyond content width to show body background color */}
-        <div
-          className="light mx-auto shadow-framer-lg w-full"
-          style={{
-            maxWidth: `calc(${bodyWidth} + 120px)`,
-            backgroundColor: bodyBackgroundColor || '#ffffff',
-          }}
-        >
-          {/* Content container - constrained to body width */}
-          <div
-            className="mx-auto w-full"
-            style={{ maxWidth: bodyWidth }}
-          >
-            {body?.children?.map((section) => (
-              <VisualSection key={section._id} node={section} />
-            ))}
+  // Apply body background color to the scroll viewport
+  const viewportStyle = {
+    '--body-bg': bodyBackgroundColor || '#ffffff',
+  } as React.CSSProperties;
 
-            {/* Empty state */}
-            {(!body?.children || body.children.length === 0) && (
-              <div className="bg-surface rounded-lg border-2 border-dashed border-border p-12 text-center">
-                <p className="text-muted-foreground">
-                  Add a section to get started
-                </p>
-              </div>
-            )}
-          </div>
+  return (
+    <ScrollArea
+      className="h-full"
+      style={viewportStyle}
+      data-body-bg={bodyBackgroundColor || '#ffffff'}
+    >
+      <div
+        className="min-h-full py-8 px-4"
+        style={{ backgroundColor: bodyBackgroundColor || '#ffffff' }}
+        onClick={handleBackgroundClick}
+      >
+        {/* Content container - constrained to body width */}
+        <div
+          className="light mx-auto w-full"
+          style={{ maxWidth: bodyWidth }}
+        >
+          {body?.children?.map((section) => (
+            <VisualSection key={section._id} node={section} />
+          ))}
+
+          {/* Empty state */}
+          {(!body?.children || body.children.length === 0) && (
+            <div className="bg-surface rounded-lg border-2 border-dashed border-border p-12 text-center">
+              <p className="text-muted-foreground">
+                Add a section to get started
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </ScrollArea>
