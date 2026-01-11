@@ -1,10 +1,5 @@
 import type { ComponentSchema, ContentBlockType } from '@/types/mjml';
 
-// Common padding schema
-const paddingSchema: ComponentSchema = {
-  padding: { type: 'padding', label: 'Padding', default: '10px 25px' },
-};
-
 // Section attributes - organized by group for inspector UI
 export const sectionSchema: ComponentSchema = {
   // Primary attributes (always visible)
@@ -955,10 +950,21 @@ export const buttonSchema: ComponentSchema = {
   },
 };
 
-// Divider attributes
+// Divider attributes - organized by group for inspector UI
 export const dividerSchema: ComponentSchema = {
-  'border-color': { type: 'color', label: 'Color', default: '#000000' },
-  'border-width': { type: 'dimension', label: 'Thickness', default: '4px' },
+  // Primary attributes (always visible)
+  'border-color': {
+    type: 'color',
+    label: 'Color',
+    default: '#000000',
+    group: 'primary',
+  },
+  'border-width': {
+    type: 'dimension',
+    label: 'Thickness',
+    default: '4px',
+    group: 'primary',
+  },
   'border-style': {
     type: 'select',
     label: 'Style',
@@ -968,14 +974,121 @@ export const dividerSchema: ComponentSchema = {
       { value: 'dashed', label: 'Dashed' },
       { value: 'dotted', label: 'Dotted' },
     ],
+    group: 'primary',
   },
-  width: { type: 'dimension', label: 'Width', default: '100%' },
-  ...paddingSchema,
+  width: {
+    type: 'dimension',
+    label: 'Width',
+    default: '100%',
+    group: 'primary',
+  },
+  align: {
+    type: 'select',
+    label: 'Alignment',
+    default: 'center',
+    options: [
+      { value: 'left', label: 'Left' },
+      { value: 'center', label: 'Center' },
+      { value: 'right', label: 'Right' },
+    ],
+    group: 'primary',
+  },
+  padding: {
+    type: 'padding',
+    label: 'Padding',
+    default: '10px 25px',
+    group: 'primary',
+  },
+
+  // Spacing attributes (granular padding)
+  'padding-top': {
+    type: 'dimension',
+    label: 'Padding Top',
+    placeholder: '10px',
+    group: 'spacing',
+  },
+  'padding-right': {
+    type: 'dimension',
+    label: 'Padding Right',
+    placeholder: '25px',
+    group: 'spacing',
+  },
+  'padding-bottom': {
+    type: 'dimension',
+    label: 'Padding Bottom',
+    placeholder: '10px',
+    group: 'spacing',
+  },
+  'padding-left': {
+    type: 'dimension',
+    label: 'Padding Left',
+    placeholder: '25px',
+    group: 'spacing',
+  },
+
+  // Advanced attributes
+  'container-background-color': {
+    type: 'color',
+    label: 'Container Background',
+    group: 'advanced',
+  },
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
+  },
 };
 
-// Spacer attributes
+// Spacer attributes - organized by group for inspector UI
 export const spacerSchema: ComponentSchema = {
-  height: { type: 'dimension', label: 'Height', default: '20px' },
+  // Primary attributes (always visible)
+  height: {
+    type: 'dimension',
+    label: 'Height',
+    default: '20px',
+    group: 'primary',
+  },
+  padding: {
+    type: 'padding',
+    label: 'Padding',
+    group: 'primary',
+  },
+
+  // Spacing attributes (granular padding)
+  'padding-top': {
+    type: 'dimension',
+    label: 'Padding Top',
+    group: 'spacing',
+  },
+  'padding-right': {
+    type: 'dimension',
+    label: 'Padding Right',
+    group: 'spacing',
+  },
+  'padding-bottom': {
+    type: 'dimension',
+    label: 'Padding Bottom',
+    group: 'spacing',
+  },
+  'padding-left': {
+    type: 'dimension',
+    label: 'Padding Left',
+    group: 'spacing',
+  },
+
+  // Advanced attributes
+  'container-background-color': {
+    type: 'color',
+    label: 'Container Background',
+    group: 'advanced',
+  },
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
+  },
 };
 
 // Get schema by tag name

@@ -15,8 +15,12 @@ export function VisualSpacer({ node }: VisualSpacerProps) {
     selectBlock(node._id!);
   };
 
-  // Parse attributes
+  // Parse attributes - Primary
   const height = node.attributes['height'] || '20px';
+  const padding = node.attributes['padding'];
+
+  // Advanced attributes
+  const containerBgColor = node.attributes['container-background-color'];
 
   return (
     <div
@@ -24,7 +28,11 @@ export function VisualSpacer({ node }: VisualSpacerProps) {
         'relative cursor-pointer transition-all',
         isSelected && 'ring-2 ring-indigo-500 ring-inset bg-indigo-50/50'
       )}
-      style={{ height }}
+      style={{
+        height,
+        padding: padding || undefined,
+        backgroundColor: containerBgColor || undefined,
+      }}
       onClick={handleClick}
     >
       {/* Show height indicator when selected */}

@@ -15,12 +15,20 @@ export function VisualDivider({ node }: VisualDividerProps) {
     selectBlock(node._id!);
   };
 
-  // Parse attributes
+  // Parse attributes - Primary
   const borderColor = node.attributes['border-color'] || '#000000';
   const borderWidth = node.attributes['border-width'] || '4px';
   const borderStyle = node.attributes['border-style'] || 'solid';
   const width = node.attributes['width'] || '100%';
+  const align = node.attributes['align'] || 'center';
   const padding = node.attributes['padding'] || '10px 25px';
+
+  // Advanced attributes
+  const containerBgColor = node.attributes['container-background-color'];
+
+  // Convert align to margin
+  const marginLeft = align === 'right' ? 'auto' : align === 'center' ? 'auto' : '0';
+  const marginRight = align === 'left' ? 'auto' : align === 'center' ? 'auto' : '0';
 
   return (
     <div
@@ -28,13 +36,17 @@ export function VisualDivider({ node }: VisualDividerProps) {
         'relative cursor-pointer transition-all',
         isSelected && 'ring-2 ring-indigo-500 ring-inset'
       )}
-      style={{ padding }}
+      style={{
+        padding,
+        backgroundColor: containerBgColor || undefined,
+      }}
       onClick={handleClick}
     >
       <div
         style={{
           width,
-          margin: '0 auto',
+          marginLeft,
+          marginRight,
           borderTopColor: borderColor,
           borderTopWidth: borderWidth,
           borderTopStyle: borderStyle as 'solid' | 'dashed' | 'dotted',
