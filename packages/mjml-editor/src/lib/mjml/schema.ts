@@ -1091,9 +1091,36 @@ export const spacerSchema: ComponentSchema = {
   },
 };
 
+// Body attributes - organized by group for inspector UI
+export const bodySchema: ComponentSchema = {
+  // Primary attributes (always visible)
+  width: {
+    type: 'dimension',
+    label: 'Width',
+    default: '600px',
+    placeholder: '600px',
+    group: 'primary',
+  },
+  'background-color': {
+    type: 'color',
+    label: 'Background Color',
+    group: 'primary',
+  },
+
+  // Advanced attributes
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
+  },
+};
+
 // Get schema by tag name
 export function getSchemaForTag(tagName: string): ComponentSchema | null {
   switch (tagName) {
+    case 'mj-body':
+      return bodySchema;
     case 'mj-section':
       return sectionSchema;
     case 'mj-column':

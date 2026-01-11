@@ -10,6 +10,8 @@ export function VisualEditor() {
 
   // Get body width (MJML default is 600px)
   const bodyWidth = body?.attributes['width'] || '600px';
+  // Get body background color
+  const bodyBackgroundColor = body?.attributes['background-color'];
 
   // Click on empty area deselects
   const handleBackgroundClick = (e: React.MouseEvent) => {
@@ -23,8 +25,11 @@ export function VisualEditor() {
       <div className="py-8 px-4" onClick={handleBackgroundClick}>
         {/* Email container - uses mj-body width or default 600px */}
         <div
-          className="light mx-auto bg-white shadow-framer-lg"
-          style={{ maxWidth: bodyWidth }}
+          className="light mx-auto shadow-framer-lg"
+          style={{
+            maxWidth: bodyWidth,
+            backgroundColor: bodyBackgroundColor || '#ffffff',
+          }}
         >
           {body?.children?.map((section) => (
             <VisualSection key={section._id} node={section} />

@@ -14,6 +14,7 @@ import {
   ChevronDown,
   GripVertical,
   Trash2,
+  Mail,
 } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
@@ -249,7 +250,7 @@ function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
 }
 
 export function OutlineTree() {
-  const { state, undo, redo, canUndo, canRedo, moveBlock, addSection } =
+  const { state, undo, redo, canUndo, canRedo, moveBlock, addSection, selectBlock } =
     useEditor();
   const treeRef = useRef<TreeApi<MjmlNode>>(null);
 
@@ -318,6 +319,21 @@ export function OutlineTree() {
           <Plus className="h-3.5 w-3.5" />
           Add Section
         </Button>
+      </div>
+
+      {/* Body settings link */}
+      <div className="px-3 py-1 border-b border-border">
+        <button
+          onClick={() => selectBlock(body?._id || null)}
+          className={cn(
+            'flex items-center gap-2 w-full h-8 px-2 rounded-md text-sm',
+            'hover:bg-accent/50 transition-colors',
+            state.selectedBlockId === body?._id && 'bg-accent'
+          )}
+        >
+          <Mail className="h-4 w-4 text-foreground-muted" />
+          <span className="text-foreground">Body</span>
+        </button>
       </div>
 
       {/* Tree content */}
