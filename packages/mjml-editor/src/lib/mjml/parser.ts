@@ -2,6 +2,24 @@ import { v4 as uuidv4 } from 'uuid';
 import type { MjmlNode } from '@/types/mjml';
 
 /**
+ * Format a browser XML parse error into a user-friendly message.
+ */
+function formatParseError(errorText: string): string {
+  // Browser parse errors typically look like:
+  // "This page contains the following errors:error on line X at column Y: message\nBelow is..."
+  // Extract the meaningful part
+  const match = errorText.match(
+    /error on line (\d+) at column (\d+): (.+?)(?:\n|Below|$)/i
+  );
+  if (match) {
+    const [, line, column, message] = match;
+    return `Parse error at line ${line}, column ${column}: ${message.trim()}`;
+  }
+  // Fallback: return cleaned up error text
+  return errorText.replace(/\s+/g, ' ').trim().slice(0, 200);
+}
+
+/**
  * Escape unescaped ampersands in attribute values for XML parsing.
  * This handles URLs like Google Fonts that contain & characters.
  */
@@ -37,8 +55,8 @@ export function parseMjml(mjmlString: string): MjmlNode {
   // Check for parsing errors
   const parseError = doc.querySelector('parsererror');
   if (parseError) {
-    console.error('MJML parse error:', parseError.textContent);
-    return createEmptyDocument();
+    const errorText = parseError.textContent || 'Unknown parse error';
+    throw new Error(formatParseError(errorText));
   }
 
   const root = doc.documentElement;
