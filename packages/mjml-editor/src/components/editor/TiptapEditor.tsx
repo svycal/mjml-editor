@@ -202,13 +202,13 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
     const isLinkActive = editor.isActive('link');
 
     return (
-      <div className="relative">
-        {/* Floating toolbar */}
+      <div className="relative cursor-text">
+        {/* Floating toolbar - wrapped in light class since visual editor is always light */}
         {isToolbarVisible && (
           <div
             ref={refs.setFloating}
             style={floatingStyles}
-            className="z-50 flex items-center gap-0.5 rounded-lg border border-border bg-popover p-1 shadow-lg"
+            className="light z-50 flex items-center gap-0.5 rounded-lg border border-border bg-popover p-1 shadow-lg"
             onMouseDown={(e) => e.preventDefault()}
           >
             {linkInputVisible ? (
@@ -318,7 +318,7 @@ function FormatButton({
       title={title}
       className={cn(
         'flex items-center justify-center size-7 rounded-md transition-colors',
-        'hover:bg-accent',
+        'text-foreground hover:bg-accent',
         active && 'bg-accent text-accent-foreground'
       )}
     >
