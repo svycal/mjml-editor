@@ -5,18 +5,34 @@ import type { MjmlNode } from '@/types/mjml';
  * Format a browser XML parse error into a user-friendly message.
  */
 function formatParseError(errorText: string): string {
-  // Browser parse errors typically look like:
+  // Firefox format (newline-separated):
+  // "XML Parsing Error: duplicate attribute\nLocation: http://...\nLine Number 227, Column 119: <mj-text..."
+  const firefoxMatch = errorText.match(
+    /XML Parsing Error:\s*(.+?)\nLocation:.*?\nLine Number\s*(\d+),\s*Column\s*(\d+)/i
+  );
+  if (firefoxMatch) {
+    const [, message, line, column] = firefoxMatch;
+    const cleanMessage = capitalizeFirst(message.trim());
+    return `${cleanMessage} (line ${line}, column ${column})`;
+  }
+
+  // Chrome/Safari format:
   // "This page contains the following errors:error on line X at column Y: message\nBelow is..."
-  // Extract the meaningful part
-  const match = errorText.match(
+  const chromeMatch = errorText.match(
     /error on line (\d+) at column (\d+): (.+?)(?:\n|Below|$)/i
   );
-  if (match) {
-    const [, line, column, message] = match;
-    return `Parse error at line ${line}, column ${column}: ${message.trim()}`;
+  if (chromeMatch) {
+    const [, line, column, message] = chromeMatch;
+    const cleanMessage = capitalizeFirst(message.trim());
+    return `${cleanMessage} (line ${line}, column ${column})`;
   }
+
   // Fallback: return cleaned up error text
   return errorText.replace(/\s+/g, ' ').trim().slice(0, 200);
+}
+
+function capitalizeFirst(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
