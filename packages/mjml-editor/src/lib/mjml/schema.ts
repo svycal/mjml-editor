@@ -42,14 +42,46 @@ export const columnSchema: ComponentSchema = {
   padding: { type: 'padding', label: 'Padding', default: '' },
 };
 
-// Text attributes
+// Text attributes - organized by group for inspector UI
 export const textSchema: ComponentSchema = {
-  color: { type: 'color', label: 'Text Color', default: '#000000' },
-  'font-size': { type: 'dimension', label: 'Font Size', default: '13px' },
+  // Primary attributes (always visible)
+  color: {
+    type: 'color',
+    label: 'Text Color',
+    default: '#000000',
+    group: 'primary',
+  },
+  align: {
+    type: 'select',
+    label: 'Alignment',
+    default: 'left',
+    options: [
+      { value: 'left', label: 'Left' },
+      { value: 'center', label: 'Center' },
+      { value: 'right', label: 'Right' },
+      { value: 'justify', label: 'Justify' },
+    ],
+    group: 'primary',
+  },
+  padding: {
+    type: 'padding',
+    label: 'Padding',
+    default: '10px 25px',
+    group: 'primary',
+  },
+
+  // Typography attributes
+  'font-size': {
+    type: 'dimension',
+    label: 'Font Size',
+    default: '13px',
+    group: 'typography',
+  },
   'font-family': {
     type: 'text',
     label: 'Font Family',
     default: 'Ubuntu, Helvetica, Arial, sans-serif',
+    group: 'typography',
   },
   'font-weight': {
     type: 'select',
@@ -62,20 +94,102 @@ export const textSchema: ComponentSchema = {
       { value: '500', label: 'Medium' },
       { value: '700', label: 'Bold (700)' },
     ],
+    group: 'typography',
   },
-  align: {
+  'font-style': {
     type: 'select',
-    label: 'Alignment',
-    default: 'left',
+    label: 'Font Style',
+    default: 'normal',
     options: [
-      { value: 'left', label: 'Left' },
-      { value: 'center', label: 'Center' },
-      { value: 'right', label: 'Right' },
-      { value: 'justify', label: 'Justify' },
+      { value: 'normal', label: 'Normal' },
+      { value: 'italic', label: 'Italic' },
+      { value: 'oblique', label: 'Oblique' },
     ],
+    group: 'typography',
   },
-  'line-height': { type: 'dimension', label: 'Line Height', default: '1.5' },
-  ...paddingSchema,
+  'line-height': {
+    type: 'dimension',
+    label: 'Line Height',
+    default: '1',
+    group: 'typography',
+  },
+  'letter-spacing': {
+    type: 'dimension',
+    label: 'Letter Spacing',
+    placeholder: '0px',
+    group: 'typography',
+  },
+  'text-decoration': {
+    type: 'select',
+    label: 'Text Decoration',
+    default: 'none',
+    options: [
+      { value: 'none', label: 'None' },
+      { value: 'underline', label: 'Underline' },
+      { value: 'overline', label: 'Overline' },
+      { value: 'line-through', label: 'Line Through' },
+    ],
+    group: 'typography',
+  },
+  'text-transform': {
+    type: 'select',
+    label: 'Text Transform',
+    default: 'none',
+    options: [
+      { value: 'none', label: 'None' },
+      { value: 'capitalize', label: 'Capitalize' },
+      { value: 'uppercase', label: 'Uppercase' },
+      { value: 'lowercase', label: 'Lowercase' },
+    ],
+    group: 'typography',
+  },
+
+  // Sizing attributes
+  height: {
+    type: 'dimension',
+    label: 'Height',
+    placeholder: 'auto',
+    group: 'sizing',
+  },
+
+  // Spacing attributes (granular padding)
+  'padding-top': {
+    type: 'dimension',
+    label: 'Padding Top',
+    placeholder: '10px',
+    group: 'spacing',
+  },
+  'padding-right': {
+    type: 'dimension',
+    label: 'Padding Right',
+    placeholder: '25px',
+    group: 'spacing',
+  },
+  'padding-bottom': {
+    type: 'dimension',
+    label: 'Padding Bottom',
+    placeholder: '10px',
+    group: 'spacing',
+  },
+  'padding-left': {
+    type: 'dimension',
+    label: 'Padding Left',
+    placeholder: '25px',
+    group: 'spacing',
+  },
+
+  // Advanced attributes
+  'container-background-color': {
+    type: 'color',
+    label: 'Container Background',
+    group: 'advanced',
+  },
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
+  },
 };
 
 // Image attributes

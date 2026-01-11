@@ -86,21 +86,31 @@ export function VisualText({ node }: VisualTextProps) {
   const fontFamily =
     node.attributes['font-family'] || 'Ubuntu, Helvetica, Arial, sans-serif';
   const fontWeight = node.attributes['font-weight'] || 'normal';
+  const fontStyle = node.attributes['font-style'] || 'normal';
   const textAlign = (node.attributes['align'] || 'left') as
     | 'left'
     | 'center'
     | 'right'
     | 'justify';
-  const lineHeight = node.attributes['line-height'] || '1.5';
+  const lineHeight = node.attributes['line-height'] || '1';
+  const letterSpacing = node.attributes['letter-spacing'];
+  const textDecoration = node.attributes['text-decoration'] || 'none';
+  const textTransform = node.attributes['text-transform'] || 'none';
   const padding = node.attributes['padding'] || '10px 25px';
+  const height = node.attributes['height'];
+  const containerBgColor = node.attributes['container-background-color'];
 
-  const textStyle = {
+  const textStyle: React.CSSProperties = {
     color,
     fontSize,
     fontFamily,
     fontWeight,
+    fontStyle,
     textAlign,
     lineHeight,
+    letterSpacing: letterSpacing || undefined,
+    textDecoration,
+    textTransform: textTransform as React.CSSProperties['textTransform'],
   };
 
   // Get display content (convert br tags to newlines for display)
@@ -113,7 +123,11 @@ export function VisualText({ node }: VisualTextProps) {
         isSelected && !isEditing && 'ring-2 ring-indigo-500 ring-inset',
         isEditing && 'ring-2 ring-indigo-500'
       )}
-      style={{ padding }}
+      style={{
+        padding,
+        height: height || undefined,
+        backgroundColor: containerBgColor || undefined,
+      }}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
     >
