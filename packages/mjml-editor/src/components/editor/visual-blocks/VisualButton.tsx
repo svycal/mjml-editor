@@ -65,7 +65,7 @@ export function VisualButton({ node }: VisualButtonProps) {
   const textAlign = node.attributes['text-align'] || 'center';
   const textDecoration = node.attributes['text-decoration'] || 'none';
   const textTransform = node.attributes['text-transform'] || 'none';
-  const borderRadius = node.attributes['border-radius'];
+  const borderRadius = node.attributes['border-radius'] || '3px';
   const border = node.attributes['border'];
   const borderTop = node.attributes['border-top'];
   const borderRight = node.attributes['border-right'];
@@ -104,6 +104,7 @@ export function VisualButton({ node }: VisualButtonProps) {
     textDecoration,
     textTransform: textTransform as React.CSSProperties['textTransform'],
     padding: innerPadding,
+    borderRadius,
     width: width || undefined,
     height: height || undefined,
   };
@@ -114,7 +115,6 @@ export function VisualButton({ node }: VisualButtonProps) {
   if (borderRight) buttonStyle.borderRight = borderRight;
   if (borderBottom) buttonStyle.borderBottom = borderBottom;
   if (borderLeft) buttonStyle.borderLeft = borderLeft;
-  if (borderRadius) buttonStyle.borderRadius = borderRadius;
 
   return (
     <div
