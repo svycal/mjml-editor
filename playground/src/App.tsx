@@ -109,7 +109,7 @@ function App() {
     <div className="h-screen w-screen">
       <MjmlEditor
         value={mjml}
-        onChange={(mjml) => {
+        onChange={(mjml: string) => {
           setMjml(mjml);
           console.log(mjml);
         }}

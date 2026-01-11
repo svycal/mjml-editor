@@ -8,6 +8,7 @@
     "dev:concurrent": "concurrently \"pnpm --filter @savvycal/mjml-editor dev\" \"pnpm --filter playground dev\"",
     "build": "pnpm --filter @savvycal/mjml-editor build && pnpm --filter playground build",
     "build:lib": "pnpm --filter @savvycal/mjml-editor build",
+    "typecheck": "pnpm --filter @savvycal/mjml-editor typecheck && pnpm --filter @savvycal/mjml-editor build && pnpm --filter playground typecheck",
     "lint": "eslint .",
     "preview": "pnpm --filter playground preview"
   },
