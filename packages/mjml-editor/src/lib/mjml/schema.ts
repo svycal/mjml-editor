@@ -487,13 +487,32 @@ export const textSchema: ComponentSchema = {
   },
 };
 
-// Image attributes
+// Image attributes - organized by group for inspector UI
 export const imageSchema: ComponentSchema = {
-  src: { type: 'url', label: 'Image URL', placeholder: 'https://...' },
-  alt: { type: 'text', label: 'Alt Text', default: '' },
-  width: { type: 'dimension', label: 'Width', placeholder: '600px' },
-  height: { type: 'dimension', label: 'Height', default: 'auto' },
-  href: { type: 'url', label: 'Link URL', placeholder: 'https://...' },
+  // Primary attributes (always visible)
+  src: {
+    type: 'url',
+    label: 'Image URL',
+    placeholder: 'https://...',
+    group: 'primary',
+  },
+  alt: {
+    type: 'text',
+    label: 'Alt Text',
+    group: 'primary',
+  },
+  width: {
+    type: 'dimension',
+    label: 'Width',
+    placeholder: '600px',
+    group: 'primary',
+  },
+  height: {
+    type: 'dimension',
+    label: 'Height',
+    default: 'auto',
+    group: 'primary',
+  },
   align: {
     type: 'select',
     label: 'Alignment',
@@ -503,9 +522,172 @@ export const imageSchema: ComponentSchema = {
       { value: 'center', label: 'Center' },
       { value: 'right', label: 'Right' },
     ],
+    group: 'primary',
   },
-  'border-radius': { type: 'dimension', label: 'Border Radius', default: '' },
-  ...paddingSchema,
+  padding: {
+    type: 'padding',
+    label: 'Padding',
+    default: '10px 25px',
+    group: 'primary',
+  },
+
+  // Border attributes
+  border: {
+    type: 'text',
+    label: 'Border',
+    placeholder: '1px solid #000',
+    default: '0',
+    group: 'border',
+  },
+  'border-top': {
+    type: 'text',
+    label: 'Border Top',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-right': {
+    type: 'text',
+    label: 'Border Right',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-bottom': {
+    type: 'text',
+    label: 'Border Bottom',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-left': {
+    type: 'text',
+    label: 'Border Left',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-radius': {
+    type: 'dimension',
+    label: 'Border Radius',
+    placeholder: '0px',
+    group: 'border',
+  },
+
+  // Sizing attributes
+  'max-height': {
+    type: 'dimension',
+    label: 'Max Height',
+    placeholder: 'none',
+    group: 'sizing',
+  },
+  'fluid-on-mobile': {
+    type: 'select',
+    label: 'Fluid on Mobile',
+    default: 'false',
+    options: [
+      { value: 'false', label: 'No' },
+      { value: 'true', label: 'Yes' },
+    ],
+    group: 'sizing',
+  },
+
+  // Spacing attributes (granular padding)
+  'padding-top': {
+    type: 'dimension',
+    label: 'Padding Top',
+    placeholder: '10px',
+    group: 'spacing',
+  },
+  'padding-right': {
+    type: 'dimension',
+    label: 'Padding Right',
+    placeholder: '25px',
+    group: 'spacing',
+  },
+  'padding-bottom': {
+    type: 'dimension',
+    label: 'Padding Bottom',
+    placeholder: '10px',
+    group: 'spacing',
+  },
+  'padding-left': {
+    type: 'dimension',
+    label: 'Padding Left',
+    placeholder: '25px',
+    group: 'spacing',
+  },
+
+  // Link attributes
+  href: {
+    type: 'url',
+    label: 'Link URL',
+    placeholder: 'https://...',
+    group: 'link',
+  },
+  target: {
+    type: 'select',
+    label: 'Link Target',
+    default: '_blank',
+    options: [
+      { value: '_blank', label: 'New Tab (_blank)' },
+      { value: '_self', label: 'Same Tab (_self)' },
+      { value: '_parent', label: 'Parent Frame (_parent)' },
+      { value: '_top', label: 'Top Frame (_top)' },
+    ],
+    group: 'link',
+  },
+  rel: {
+    type: 'text',
+    label: 'Link Rel',
+    placeholder: 'noopener noreferrer',
+    group: 'link',
+  },
+  name: {
+    type: 'text',
+    label: 'Link Name',
+    placeholder: 'image-link',
+    group: 'link',
+  },
+  title: {
+    type: 'text',
+    label: 'Title / Tooltip',
+    placeholder: 'Image title',
+    group: 'link',
+  },
+
+  // Advanced attributes
+  'container-background-color': {
+    type: 'color',
+    label: 'Container Background',
+    group: 'advanced',
+  },
+  'font-size': {
+    type: 'dimension',
+    label: 'Alt Text Size',
+    default: '13px',
+    group: 'advanced',
+  },
+  srcset: {
+    type: 'text',
+    label: 'Srcset',
+    placeholder: 'image-300.jpg 300w, image-600.jpg 600w',
+    group: 'advanced',
+  },
+  sizes: {
+    type: 'text',
+    label: 'Sizes',
+    placeholder: '(max-width: 600px) 100vw, 600px',
+    group: 'advanced',
+  },
+  usemap: {
+    type: 'text',
+    label: 'Image Map',
+    placeholder: '#mapname',
+    group: 'advanced',
+  },
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
+  },
 };
 
 // Button attributes - organized by group for inspector UI
