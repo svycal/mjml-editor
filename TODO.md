@@ -8,3 +8,4 @@
 - [ ] Remove the "Email Structure" text from the top of the left nav (it's implicit)
 - [ ] Ensure the color palette is using the `zinc` color scheme from the Tailwind CSS 4 default color palette
 - [ ] Maybe: overlay click targets on hover for adding sections/columns/nodes?
+- [ ] Liquid variable support in the rich editor: ability to pass an object describing the shape of the Liquid context to the `<MjmlEditor>` and show the user a context menu when typing liquid tags `{{` .
