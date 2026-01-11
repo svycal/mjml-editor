@@ -17,8 +17,11 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
     selectBlock(node._id!);
   };
 
+  // Ensure we have a proper attributes object - defensive copy
+  const attrs = node.attributes || {};
+
   // Parse width - MJML columns default to equal width
-  const widthAttr = node.attributes['width'];
+  const widthAttr = attrs['width'];
   let width: string;
   if (widthAttr) {
     width = widthAttr;
@@ -28,29 +31,29 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
   }
 
   // Primary attributes
-  const bgColor = node.attributes['background-color'] || 'transparent';
-  const padding = node.attributes['padding'] || '0';
-  const verticalAlign = node.attributes['vertical-align'] || 'top';
+  const bgColor = attrs['background-color'] || 'transparent';
+  const padding = attrs['padding'] || '0';
+  const verticalAlign = attrs['vertical-align'] || 'top';
 
   // Border attributes
-  const border = node.attributes['border'];
-  const borderTop = node.attributes['border-top'];
-  const borderRight = node.attributes['border-right'];
-  const borderBottom = node.attributes['border-bottom'];
-  const borderLeft = node.attributes['border-left'];
-  const borderRadius = node.attributes['border-radius'];
+  const border = attrs['border'];
+  const borderTop = attrs['border-top'];
+  const borderRight = attrs['border-right'];
+  const borderBottom = attrs['border-bottom'];
+  const borderLeft = attrs['border-left'];
+  const borderRadius = attrs['border-radius'];
 
   // Inner styling attributes
-  const innerBgColor = node.attributes['inner-background-color'];
-  const innerBorder = node.attributes['inner-border'];
-  const innerBorderTop = node.attributes['inner-border-top'];
-  const innerBorderRight = node.attributes['inner-border-right'];
-  const innerBorderBottom = node.attributes['inner-border-bottom'];
-  const innerBorderLeft = node.attributes['inner-border-left'];
-  const innerBorderRadius = node.attributes['inner-border-radius'];
+  const innerBgColor = attrs['inner-background-color'];
+  const innerBorder = attrs['inner-border'];
+  const innerBorderTop = attrs['inner-border-top'];
+  const innerBorderRight = attrs['inner-border-right'];
+  const innerBorderBottom = attrs['inner-border-bottom'];
+  const innerBorderLeft = attrs['inner-border-left'];
+  const innerBorderRadius = attrs['inner-border-radius'];
 
   // Direction
-  const direction = node.attributes['direction'] || 'ltr';
+  const direction = attrs['direction'] || 'ltr';
 
   // Check if we have any inner styling
   const hasInnerStyling =
@@ -65,31 +68,32 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
   // Get content blocks
   const contentBlocks = node.children || [];
 
-  // Outer column styles
+  // Outer column styles - build explicitly to avoid any edge cases
   const columnStyle: React.CSSProperties = {
     width: width,
     backgroundColor: bgColor,
     padding: padding,
     verticalAlign: verticalAlign,
-    border: border || undefined,
-    borderTop: borderTop || undefined,
-    borderRight: borderRight || undefined,
-    borderBottom: borderBottom || undefined,
-    borderLeft: borderLeft || undefined,
-    borderRadius: borderRadius || undefined,
     direction: direction as React.CSSProperties['direction'],
   };
 
+  // Only add border properties if they have values
+  if (border) columnStyle.border = border;
+  if (borderTop) columnStyle.borderTop = borderTop;
+  if (borderRight) columnStyle.borderRight = borderRight;
+  if (borderBottom) columnStyle.borderBottom = borderBottom;
+  if (borderLeft) columnStyle.borderLeft = borderLeft;
+  if (borderRadius) columnStyle.borderRadius = borderRadius;
+
   // Inner wrapper styles (only used when inner styling is present)
-  const innerStyle: React.CSSProperties = {
-    backgroundColor: innerBgColor || undefined,
-    border: innerBorder || undefined,
-    borderTop: innerBorderTop || undefined,
-    borderRight: innerBorderRight || undefined,
-    borderBottom: innerBorderBottom || undefined,
-    borderLeft: innerBorderLeft || undefined,
-    borderRadius: innerBorderRadius || undefined,
-  };
+  const innerStyle: React.CSSProperties = {};
+  if (innerBgColor) innerStyle.backgroundColor = innerBgColor;
+  if (innerBorder) innerStyle.border = innerBorder;
+  if (innerBorderTop) innerStyle.borderTop = innerBorderTop;
+  if (innerBorderRight) innerStyle.borderRight = innerBorderRight;
+  if (innerBorderBottom) innerStyle.borderBottom = innerBorderBottom;
+  if (innerBorderLeft) innerStyle.borderLeft = innerBorderLeft;
+  if (innerBorderRadius) innerStyle.borderRadius = innerBorderRadius;
 
   return (
     <div

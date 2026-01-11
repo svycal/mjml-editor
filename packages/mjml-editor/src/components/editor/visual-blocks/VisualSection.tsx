@@ -20,6 +20,16 @@ export function VisualSection({ node }: VisualSectionProps) {
   if (node.tagName === 'mj-wrapper') {
     const bgColor = node.attributes['background-color'] || 'transparent';
     const padding = node.attributes['padding'] || '20px 0';
+    const borderRadius = node.attributes['border-radius'];
+    const border = node.attributes['border'];
+
+    const wrapperStyle: React.CSSProperties = {
+      backgroundColor: bgColor,
+      padding: padding,
+    };
+
+    if (border) wrapperStyle.border = border;
+    if (borderRadius) wrapperStyle.borderRadius = borderRadius;
 
     return (
       <div
@@ -27,10 +37,7 @@ export function VisualSection({ node }: VisualSectionProps) {
           'relative cursor-pointer transition-all',
           isSelected && 'ring-2 ring-indigo-500 ring-inset'
         )}
-        style={{
-          backgroundColor: bgColor,
-          padding: padding,
-        }}
+        style={wrapperStyle}
         onClick={handleClick}
       >
         {node.children?.map((child) => (
@@ -86,14 +93,16 @@ export function VisualSection({ node }: VisualSectionProps) {
       backgroundPosition: computedBgPosition,
       padding: padding,
       textAlign: textAlign as React.CSSProperties['textAlign'],
-      border: border || undefined,
-      borderTop: borderTop || undefined,
-      borderRight: borderRight || undefined,
-      borderBottom: borderBottom || undefined,
-      borderLeft: borderLeft || undefined,
-      borderRadius: borderRadius || undefined,
       direction: direction as React.CSSProperties['direction'],
     };
+
+    // Only add border properties if they have values
+    if (border) sectionStyle.border = border;
+    if (borderTop) sectionStyle.borderTop = borderTop;
+    if (borderRight) sectionStyle.borderRight = borderRight;
+    if (borderBottom) sectionStyle.borderBottom = borderBottom;
+    if (borderLeft) sectionStyle.borderLeft = borderLeft;
+    if (borderRadius) sectionStyle.borderRadius = borderRadius;
 
     return (
       <div

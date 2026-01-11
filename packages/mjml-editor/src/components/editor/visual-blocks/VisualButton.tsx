@@ -64,8 +64,8 @@ export function VisualButton({ node }: VisualButtonProps) {
   const textAlign = node.attributes['text-align'] || 'center';
   const textDecoration = node.attributes['text-decoration'] || 'none';
   const textTransform = node.attributes['text-transform'] || 'none';
-  const borderRadius = node.attributes['border-radius'] || '3px';
-  const border = node.attributes['border'] || 'none';
+  const borderRadius = node.attributes['border-radius'];
+  const border = node.attributes['border'];
   const borderTop = node.attributes['border-top'];
   const borderRight = node.attributes['border-right'];
   const borderBottom = node.attributes['border-bottom'];
@@ -102,16 +102,18 @@ export function VisualButton({ node }: VisualButtonProps) {
     textAlign: textAlign as React.CSSProperties['textAlign'],
     textDecoration,
     textTransform: textTransform as React.CSSProperties['textTransform'],
-    borderRadius,
-    border,
-    borderTop: borderTop || undefined,
-    borderRight: borderRight || undefined,
-    borderBottom: borderBottom || undefined,
-    borderLeft: borderLeft || undefined,
     padding: innerPadding,
     width: width || undefined,
     height: height || undefined,
   };
+
+  // Only add border properties if they have values
+  if (border) buttonStyle.border = border;
+  if (borderTop) buttonStyle.borderTop = borderTop;
+  if (borderRight) buttonStyle.borderRight = borderRight;
+  if (borderBottom) buttonStyle.borderBottom = borderBottom;
+  if (borderLeft) buttonStyle.borderLeft = borderLeft;
+  if (borderRadius) buttonStyle.borderRadius = borderRadius;
 
   return (
     <div
