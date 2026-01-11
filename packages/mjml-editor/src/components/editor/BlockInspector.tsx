@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 
 const GROUP_LABELS: Record<AttributeGroup, string> = {
   primary: 'Primary',
+  background: 'Background',
   typography: 'Typography',
   border: 'Border',
   inner: 'Inner Styling',
@@ -33,6 +34,7 @@ const GROUP_LABELS: Record<AttributeGroup, string> = {
 
 const GROUP_ORDER: AttributeGroup[] = [
   'primary',
+  'background',
   'typography',
   'border',
   'inner',

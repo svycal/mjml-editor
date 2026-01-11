@@ -5,15 +5,14 @@ const paddingSchema: ComponentSchema = {
   padding: { type: 'padding', label: 'Padding', default: '10px 25px' },
 };
 
-// Section attributes
+// Section attributes - organized by group for inspector UI
 export const sectionSchema: ComponentSchema = {
-  'background-color': { type: 'color', label: 'Background Color', default: '' },
-  'background-url': {
-    type: 'url',
-    label: 'Background Image URL',
-    placeholder: 'https://...',
+  // Primary attributes (always visible)
+  'background-color': {
+    type: 'color',
+    label: 'Background Color',
+    group: 'primary',
   },
-  padding: { type: 'padding', label: 'Padding', default: '20px 0' },
   'full-width': {
     type: 'select',
     label: 'Full Width',
@@ -22,6 +21,162 @@ export const sectionSchema: ComponentSchema = {
       { value: 'false', label: 'No' },
       { value: 'full-width', label: 'Yes' },
     ],
+    group: 'primary',
+  },
+  padding: {
+    type: 'padding',
+    label: 'Padding',
+    default: '20px 0',
+    group: 'primary',
+  },
+  'text-align': {
+    type: 'select',
+    label: 'Text Align',
+    default: 'center',
+    options: [
+      { value: 'left', label: 'Left' },
+      { value: 'center', label: 'Center' },
+      { value: 'right', label: 'Right' },
+    ],
+    group: 'primary',
+  },
+
+  // Background attributes
+  'background-url': {
+    type: 'url',
+    label: 'Background Image',
+    placeholder: 'https://...',
+    group: 'background',
+  },
+  'background-size': {
+    type: 'select',
+    label: 'Background Size',
+    default: 'auto',
+    options: [
+      { value: 'auto', label: 'Auto' },
+      { value: 'cover', label: 'Cover' },
+      { value: 'contain', label: 'Contain' },
+    ],
+    group: 'background',
+  },
+  'background-repeat': {
+    type: 'select',
+    label: 'Background Repeat',
+    default: 'repeat',
+    options: [
+      { value: 'repeat', label: 'Repeat' },
+      { value: 'no-repeat', label: 'No Repeat' },
+    ],
+    group: 'background',
+  },
+  'background-position': {
+    type: 'text',
+    label: 'Background Position',
+    default: 'top center',
+    placeholder: 'top center',
+    group: 'background',
+  },
+  'background-position-x': {
+    type: 'select',
+    label: 'Position X',
+    options: [
+      { value: 'left', label: 'Left' },
+      { value: 'center', label: 'Center' },
+      { value: 'right', label: 'Right' },
+    ],
+    group: 'background',
+  },
+  'background-position-y': {
+    type: 'select',
+    label: 'Position Y',
+    options: [
+      { value: 'top', label: 'Top' },
+      { value: 'center', label: 'Center' },
+      { value: 'bottom', label: 'Bottom' },
+    ],
+    group: 'background',
+  },
+
+  // Border attributes
+  border: {
+    type: 'text',
+    label: 'Border',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-top': {
+    type: 'text',
+    label: 'Border Top',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-right': {
+    type: 'text',
+    label: 'Border Right',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-bottom': {
+    type: 'text',
+    label: 'Border Bottom',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-left': {
+    type: 'text',
+    label: 'Border Left',
+    placeholder: '1px solid #000',
+    group: 'border',
+  },
+  'border-radius': {
+    type: 'dimension',
+    label: 'Border Radius',
+    placeholder: '0px',
+    group: 'border',
+  },
+
+  // Spacing attributes (granular padding)
+  'padding-top': {
+    type: 'dimension',
+    label: 'Padding Top',
+    placeholder: '20px',
+    group: 'spacing',
+  },
+  'padding-right': {
+    type: 'dimension',
+    label: 'Padding Right',
+    placeholder: '0px',
+    group: 'spacing',
+  },
+  'padding-bottom': {
+    type: 'dimension',
+    label: 'Padding Bottom',
+    placeholder: '20px',
+    group: 'spacing',
+  },
+  'padding-left': {
+    type: 'dimension',
+    label: 'Padding Left',
+    placeholder: '0px',
+    group: 'spacing',
+  },
+
+  // Advanced attributes
+  direction: {
+    type: 'select',
+    label: 'Direction',
+    default: 'ltr',
+    options: [
+      { value: 'ltr', label: 'Left to Right' },
+      { value: 'rtl', label: 'Right to Left' },
+    ],
+    group: 'advanced',
+  },
+  'css-class': {
+    type: 'text',
+    label: 'CSS Class',
+    placeholder: 'custom-class',
+    group: 'advanced',
   },
 };
 

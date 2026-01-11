@@ -42,15 +42,58 @@ export function VisualSection({ node }: VisualSectionProps) {
 
   // Handle section
   if (node.tagName === 'mj-section') {
+    // Primary attributes
     const bgColor = node.attributes['background-color'] || '#ffffff';
-    const bgUrl = node.attributes['background-url'];
     const padding = node.attributes['padding'] || '20px 0';
     const fullWidth = node.attributes['full-width'] === 'full-width';
+    const textAlign = node.attributes['text-align'] || 'center';
+
+    // Background attributes
+    const bgUrl = node.attributes['background-url'];
+    const bgSize = node.attributes['background-size'] || 'auto';
+    const bgRepeat = node.attributes['background-repeat'] || 'repeat';
+    const bgPosition = node.attributes['background-position'] || 'top center';
+    const bgPositionX = node.attributes['background-position-x'];
+    const bgPositionY = node.attributes['background-position-y'];
+
+    // Border attributes
+    const border = node.attributes['border'];
+    const borderTop = node.attributes['border-top'];
+    const borderRight = node.attributes['border-right'];
+    const borderBottom = node.attributes['border-bottom'];
+    const borderLeft = node.attributes['border-left'];
+    const borderRadius = node.attributes['border-radius'];
+
+    // Direction
+    const direction = node.attributes['direction'] || 'ltr';
+
+    // Compute background position
+    let computedBgPosition = bgPosition;
+    if (bgPositionX || bgPositionY) {
+      computedBgPosition = `${bgPositionX || 'center'} ${bgPositionY || 'center'}`;
+    }
 
     // Get columns
     const columns =
       node.children?.filter((c) => c.tagName === 'mj-column') || [];
     const columnCount = columns.length || 1;
+
+    const sectionStyle: React.CSSProperties = {
+      backgroundColor: bgColor,
+      backgroundImage: bgUrl ? `url(${bgUrl})` : undefined,
+      backgroundSize: bgSize,
+      backgroundRepeat: bgRepeat,
+      backgroundPosition: computedBgPosition,
+      padding: padding,
+      textAlign: textAlign as React.CSSProperties['textAlign'],
+      border: border || undefined,
+      borderTop: borderTop || undefined,
+      borderRight: borderRight || undefined,
+      borderBottom: borderBottom || undefined,
+      borderLeft: borderLeft || undefined,
+      borderRadius: borderRadius || undefined,
+      direction: direction as React.CSSProperties['direction'],
+    };
 
     return (
       <div
@@ -59,13 +102,7 @@ export function VisualSection({ node }: VisualSectionProps) {
           isSelected && 'ring-2 ring-indigo-500 ring-inset',
           !fullWidth && 'bg-white'
         )}
-        style={{
-          backgroundColor: bgColor,
-          backgroundImage: bgUrl ? `url(${bgUrl})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          padding: padding,
-        }}
+        style={sectionStyle}
         onClick={handleClick}
       >
         {/* Columns container */}

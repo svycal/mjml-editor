@@ -37,6 +37,7 @@ export type ContentBlockType =
 // Attribute groups for organizing inspector UI
 export type AttributeGroup =
   | 'primary'
+  | 'background'
   | 'typography'
   | 'border'
   | 'inner'
