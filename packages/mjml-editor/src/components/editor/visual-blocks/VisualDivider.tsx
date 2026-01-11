@@ -28,8 +28,10 @@ export function VisualDivider({ node }: VisualDividerProps) {
   const containerBgColor = node.attributes['container-background-color'];
 
   // Convert align to margin
-  const marginLeft = align === 'right' ? 'auto' : align === 'center' ? 'auto' : '0';
-  const marginRight = align === 'left' ? 'auto' : align === 'center' ? 'auto' : '0';
+  const marginLeft =
+    align === 'right' ? 'auto' : align === 'center' ? 'auto' : '0';
+  const marginRight =
+    align === 'left' ? 'auto' : align === 'center' ? 'auto' : '0';
 
   return (
     <div

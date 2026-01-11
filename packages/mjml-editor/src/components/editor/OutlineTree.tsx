@@ -250,8 +250,16 @@ function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
 }
 
 export function OutlineTree() {
-  const { state, undo, redo, canUndo, canRedo, moveBlock, addSection, selectBlock } =
-    useEditor();
+  const {
+    state,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    moveBlock,
+    addSection,
+    selectBlock,
+  } = useEditor();
   const treeRef = useRef<TreeApi<MjmlNode>>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
   const [treeHeight, setTreeHeight] = useState(400);

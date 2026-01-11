@@ -25,15 +25,9 @@ export function VisualEditor() {
       className="h-full"
       viewportStyle={{ backgroundColor: bodyBackgroundColor || '#ffffff' }}
     >
-      <div
-        className="py-8 px-4"
-        onClick={handleBackgroundClick}
-      >
+      <div className="py-8 px-4" onClick={handleBackgroundClick}>
         {/* Content container - constrained to body width */}
-        <div
-          className="light mx-auto w-full"
-          style={{ maxWidth: bodyWidth }}
-        >
+        <div className="light mx-auto w-full" style={{ maxWidth: bodyWidth }}>
           {body?.children?.map((section) => (
             <VisualSection key={section._id} node={section} />
           ))}

@@ -164,7 +164,8 @@ export function VisualButton({ node }: VisualButtonProps) {
               letterSpacing: letterSpacing || undefined,
               textAlign: textAlign as React.CSSProperties['textAlign'],
               textDecoration,
-              textTransform: textTransform as React.CSSProperties['textTransform'],
+              textTransform:
+                textTransform as React.CSSProperties['textTransform'],
             }}
           />
         )}

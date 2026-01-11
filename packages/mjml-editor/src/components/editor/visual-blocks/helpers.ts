@@ -11,14 +11,34 @@ function parsePadding(padding: string): {
   const parts = padding.trim().split(/\s+/);
   switch (parts.length) {
     case 1:
-      return { top: parts[0], right: parts[0], bottom: parts[0], left: parts[0] };
+      return {
+        top: parts[0],
+        right: parts[0],
+        bottom: parts[0],
+        left: parts[0],
+      };
     case 2:
-      return { top: parts[0], right: parts[1], bottom: parts[0], left: parts[1] };
+      return {
+        top: parts[0],
+        right: parts[1],
+        bottom: parts[0],
+        left: parts[1],
+      };
     case 3:
-      return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[1] };
+      return {
+        top: parts[0],
+        right: parts[1],
+        bottom: parts[2],
+        left: parts[1],
+      };
     case 4:
     default:
-      return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[3] };
+      return {
+        top: parts[0],
+        right: parts[1],
+        bottom: parts[2],
+        left: parts[3],
+      };
   }
 }
 
