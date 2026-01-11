@@ -285,3 +285,27 @@ export function removeClassFromNode(
 
   return newAttributes;
 }
+
+/**
+ * Font configuration extracted from mj-font nodes in mj-head
+ */
+export interface MjmlFontConfig {
+  name: string;
+  href: string;
+}
+
+/**
+ * Extract all mj-font configurations from mj-head
+ */
+export function extractFonts(document: MjmlNode): MjmlFontConfig[] {
+  const head = getHead(document);
+  if (!head?.children) return [];
+
+  return head.children
+    .filter((child) => child.tagName === 'mj-font')
+    .map((child) => ({
+      name: child.attributes['name'] || '',
+      href: child.attributes['href'] || '',
+    }))
+    .filter((font) => font.name && font.href);
+}

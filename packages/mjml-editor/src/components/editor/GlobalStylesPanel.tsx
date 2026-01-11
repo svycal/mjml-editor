@@ -12,6 +12,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
+import { FontEditor } from './FontEditor';
 
 // Common attributes for mj-all
 const ALL_ELEMENTS_SCHEMA: Record<
@@ -74,6 +75,7 @@ export function GlobalStylesPanel({ onClose }: GlobalStylesPanelProps) {
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="elements">By Type</TabsTrigger>
           <TabsTrigger value="classes">Classes</TabsTrigger>
+          <TabsTrigger value="fonts">Fonts</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="flex-1 min-h-0">
@@ -86,6 +88,10 @@ export function GlobalStylesPanel({ onClose }: GlobalStylesPanelProps) {
 
         <TabsContent value="classes" className="flex-1 min-h-0">
           <ClassEditor />
+        </TabsContent>
+
+        <TabsContent value="fonts" className="flex-1 min-h-0">
+          <FontEditor />
         </TabsContent>
       </Tabs>
     </div>

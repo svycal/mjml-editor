@@ -1,9 +1,13 @@
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { VisualSection } from './visual-blocks/VisualSection';
+import { useFontLoader } from '@/hooks/useFontLoader';
 
 export function VisualEditor() {
   const { state, selectBlock } = useEditor();
+
+  // Load custom fonts into the document head
+  useFontLoader();
 
   // Get the body node
   const body = state.document.children?.find((c) => c.tagName === 'mj-body');

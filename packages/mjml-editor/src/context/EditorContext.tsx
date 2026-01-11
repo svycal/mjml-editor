@@ -29,7 +29,9 @@ import {
   getInheritedValue as getInheritedValueUtil,
   resolveNodeAttributes,
   getDefinedClasses,
+  extractFonts,
   type MjmlAttributesConfig,
+  type MjmlFontConfig,
 } from '@/lib/mjml/attributes';
 
 const MAX_HISTORY = 50;
@@ -275,6 +277,96 @@ function renameClassInDocument(
   };
 }
 
+/**
+ * Ensure the document has an mj-head
+ */
+function ensureMjHead(document: MjmlNode): MjmlNode {
+  let head = document.children?.find((c) => c.tagName === 'mj-head');
+
+  if (!head) {
+    head = {
+      tagName: 'mj-head',
+      attributes: {},
+      children: [],
+      _id: uuidv4(),
+    };
+    // Ensure head is first child
+    const otherChildren =
+      document.children?.filter((c) => c.tagName !== 'mj-head') || [];
+    return {
+      ...document,
+      children: [head, ...otherChildren],
+    };
+  }
+
+  return document;
+}
+
+/**
+ * Add or update a font in mj-head
+ */
+function addFontToDocument(
+  document: MjmlNode,
+  name: string,
+  href: string
+): MjmlNode {
+  const docWithHead = ensureMjHead(document);
+  const head = docWithHead.children?.find((c) => c.tagName === 'mj-head');
+  if (!head) return document;
+
+  // Check if font already exists
+  const existingIndex =
+    head.children?.findIndex(
+      (c) => c.tagName === 'mj-font' && c.attributes['name'] === name
+    ) ?? -1;
+
+  const fontNode: MjmlNode = {
+    tagName: 'mj-font',
+    attributes: { name, href },
+    _id: existingIndex >= 0 ? head.children![existingIndex]._id : uuidv4(),
+  };
+
+  let updatedChildren: MjmlNode[];
+  if (existingIndex >= 0) {
+    // Update existing
+    updatedChildren = [...head.children!];
+    updatedChildren[existingIndex] = fontNode;
+  } else {
+    // Add new font at the beginning of mj-head children
+    updatedChildren = [fontNode, ...(head.children || [])];
+  }
+
+  const updatedHead = { ...head, children: updatedChildren };
+
+  return {
+    ...docWithHead,
+    children: docWithHead.children?.map((c) =>
+      c.tagName === 'mj-head' ? updatedHead : c
+    ),
+  };
+}
+
+/**
+ * Remove a font from mj-head
+ */
+function removeFontFromDocument(document: MjmlNode, name: string): MjmlNode {
+  const head = document.children?.find((c) => c.tagName === 'mj-head');
+  if (!head?.children) return document;
+
+  const updatedChildren = head.children.filter(
+    (c) => !(c.tagName === 'mj-font' && c.attributes['name'] === name)
+  );
+
+  const updatedHead = { ...head, children: updatedChildren };
+
+  return {
+    ...document,
+    children: document.children?.map((c) =>
+      c.tagName === 'mj-head' ? updatedHead : c
+    ),
+  };
+}
+
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case 'SELECT_BLOCK':
@@ -485,6 +577,56 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       };
     }
 
+    case 'ADD_FONT': {
+      const { name, href } = action.payload;
+      const newDocument = addFontToDocument(state.document, name, href);
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
+    case 'REMOVE_FONT': {
+      const newDocument = removeFontFromDocument(state.document, action.payload);
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
+    case 'UPDATE_FONT': {
+      const { name, href } = action.payload;
+      const newDocument = addFontToDocument(state.document, name, href);
+
+      const newHistory = [
+        ...state.history.slice(0, state.historyIndex + 1),
+        cloneNode(newDocument),
+      ].slice(-MAX_HISTORY);
+
+      return {
+        ...state,
+        document: newDocument,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    }
+
     default:
       return state;
   }
@@ -526,6 +668,11 @@ interface EditorContextValue {
   addClass: (name: string) => void;
   removeClass: (name: string) => void;
   renameClass: (oldName: string, newName: string) => void;
+  // mj-font support
+  fonts: MjmlFontConfig[];
+  addFont: (name: string, href: string) => void;
+  removeFont: (name: string) => void;
+  updateFont: (name: string, href: string) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -701,6 +848,22 @@ export function EditorProvider({
     dispatch({ type: 'RENAME_CLASS', payload: { oldName, newName } });
   }, []);
 
+  // mj-font support - computed values
+  const fonts = useMemo(() => extractFonts(state.document), [state.document]);
+
+  // mj-font support - actions
+  const addFont = useCallback((name: string, href: string) => {
+    dispatch({ type: 'ADD_FONT', payload: { name, href } });
+  }, []);
+
+  const removeFont = useCallback((name: string) => {
+    dispatch({ type: 'REMOVE_FONT', payload: name });
+  }, []);
+
+  const updateFont = useCallback((name: string, href: string) => {
+    dispatch({ type: 'UPDATE_FONT', payload: { name, href } });
+  }, []);
+
   const value: EditorContextValue = useMemo(
     () => ({
       state,
@@ -727,6 +890,11 @@ export function EditorProvider({
       addClass,
       removeClass,
       renameClass,
+      // mj-font support
+      fonts,
+      addFont,
+      removeFont,
+      updateFont,
     }),
     [
       state,
@@ -750,6 +918,10 @@ export function EditorProvider({
       addClass,
       removeClass,
       renameClass,
+      fonts,
+      addFont,
+      removeFont,
+      updateFont,
     ]
   );
 

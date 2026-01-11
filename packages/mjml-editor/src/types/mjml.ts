@@ -8,6 +8,12 @@ export interface MjmlNode {
   _id?: string;
 }
 
+// mj-font configuration
+export interface MjmlFont {
+  name: string;
+  href: string;
+}
+
 // Supported tag names for the editor
 export type MjmlTagName =
   | 'mjml'
@@ -26,7 +32,8 @@ export type MjmlTagName =
   | 'mj-attributes'
   | 'mj-all'
   | 'mj-class'
-  | 'mj-style';
+  | 'mj-style'
+  | 'mj-font';
 
 // Block types that can be added inside a column
 export type ContentBlockType =
@@ -105,4 +112,7 @@ export type EditorAction =
     }
   | { type: 'ADD_CLASS'; payload: string }
   | { type: 'REMOVE_CLASS'; payload: string }
-  | { type: 'RENAME_CLASS'; payload: { oldName: string; newName: string } };
+  | { type: 'RENAME_CLASS'; payload: { oldName: string; newName: string } }
+  | { type: 'ADD_FONT'; payload: MjmlFont }
+  | { type: 'REMOVE_FONT'; payload: string }
+  | { type: 'UPDATE_FONT'; payload: MjmlFont };
