@@ -9,3 +9,4 @@
 - [ ] Ensure the color palette is using the `zinc` color scheme from the Tailwind CSS 4 default color palette
 - [ ] Maybe: overlay click targets on hover for adding sections/columns/nodes?
 - [ ] Liquid variable support in the rich editor: ability to pass an object describing the shape of the Liquid context to the `<MjmlEditor>` and show the user a context menu when typing liquid tags `{{` .
+- [ ] Figure out border radius discrepancy on `mj-column` between this editor and the rendered output from `mjml` rust elixir library
