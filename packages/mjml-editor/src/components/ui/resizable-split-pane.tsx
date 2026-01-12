@@ -65,7 +65,10 @@ export function ResizableSplitPane({
     <div ref={containerRef} className={cn('flex h-full', className)}>
       <div
         style={{ width: `${leftWidth}%` }}
-        className={cn('h-full overflow-hidden', isDragging && 'pointer-events-none')}
+        className={cn(
+          'h-full overflow-hidden',
+          isDragging && 'pointer-events-none'
+        )}
       >
         {left}
       </div>
@@ -77,7 +80,10 @@ export function ResizableSplitPane({
 
       <div
         style={{ width: `${100 - leftWidth}%` }}
-        className={cn('h-full overflow-hidden', isDragging && 'pointer-events-none')}
+        className={cn(
+          'h-full overflow-hidden',
+          isDragging && 'pointer-events-none'
+        )}
       >
         {right}
       </div>

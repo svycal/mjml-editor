@@ -595,7 +595,10 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     }
 
     case 'REMOVE_FONT': {
-      const newDocument = removeFontFromDocument(state.document, action.payload);
+      const newDocument = removeFontFromDocument(
+        state.document,
+        action.payload
+      );
 
       const newHistory = [
         ...state.history.slice(0, state.historyIndex + 1),

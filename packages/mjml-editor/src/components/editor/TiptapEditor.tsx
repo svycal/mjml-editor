@@ -44,6 +44,7 @@ export interface TiptapEditorRef {
 
 export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
   function TiptapEditor({ content, onUpdate, style, className }, ref) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Intentional: only compute on mount
     const initialContent = useMemo(() => mjmlToTiptapHtml(content), []);
     const [isToolbarVisible, setIsToolbarVisible] = useState(false);
     const [linkInputVisible, setLinkInputVisible] = useState(false);

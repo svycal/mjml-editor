@@ -199,7 +199,9 @@ export function FontEditor() {
                           isOpen && 'rotate-90'
                         )}
                       />
-                      <span style={{ fontFamily: `"${font.name}", sans-serif` }}>
+                      <span
+                        style={{ fontFamily: `"${font.name}", sans-serif` }}
+                      >
                         {font.name}
                       </span>
                     </CollapsibleTrigger>

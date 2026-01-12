@@ -256,12 +256,7 @@ interface OutlineTreeProps {
 }
 
 export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
-  const {
-    state,
-    moveBlock,
-    addSection,
-    selectBlock,
-  } = useEditor();
+  const { state, moveBlock, addSection, selectBlock } = useEditor();
   const treeRef = useRef<TreeApi<MjmlNode>>(null);
   const treeContainerRef = useRef<HTMLDivElement>(null);
   const [treeHeight, setTreeHeight] = useState(400);

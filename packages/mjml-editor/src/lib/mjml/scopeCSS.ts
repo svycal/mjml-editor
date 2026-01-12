@@ -44,9 +44,13 @@ export function scopeCSS(css: string, scopeClass: string): string {
         const atRule = atRuleMatch[0];
 
         // Handle @media and other block @-rules
-        if (atRule === '@media' || atRule === '@supports' || atRule === '@layer') {
+        if (
+          atRule === '@media' ||
+          atRule === '@supports' ||
+          atRule === '@layer'
+        ) {
           // Find the opening brace
-          let braceStart = css.indexOf('{', i);
+          const braceStart = css.indexOf('{', i);
           if (braceStart === -1) {
             // Malformed CSS, just output the rest
             result += css.slice(i);
@@ -59,7 +63,7 @@ export function scopeCSS(css: string, scopeClass: string): string {
 
           // Find matching closing brace
           let braceCount = 1;
-          let innerStart = i;
+          const innerStart = i;
 
           while (i < css.length && braceCount > 0) {
             if (css[i] === '{') braceCount++;
@@ -76,7 +80,7 @@ export function scopeCSS(css: string, scopeClass: string): string {
 
         // Handle @keyframes - don't scope inner selectors
         if (atRule === '@keyframes' || atRule === '@-webkit-keyframes') {
-          let braceStart = css.indexOf('{', i);
+          const braceStart = css.indexOf('{', i);
           if (braceStart === -1) {
             result += css.slice(i);
             break;
@@ -100,7 +104,10 @@ export function scopeCSS(css: string, scopeClass: string): string {
         const semicolonIndex = css.indexOf(';', i);
         const braceIndex = css.indexOf('{', i);
 
-        if (semicolonIndex !== -1 && (braceIndex === -1 || semicolonIndex < braceIndex)) {
+        if (
+          semicolonIndex !== -1 &&
+          (braceIndex === -1 || semicolonIndex < braceIndex)
+        ) {
           result += css.slice(i, semicolonIndex + 1);
           i = semicolonIndex + 1;
           continue;

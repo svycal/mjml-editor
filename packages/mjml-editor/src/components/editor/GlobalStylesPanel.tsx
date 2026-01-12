@@ -71,7 +71,9 @@ export function GlobalStylesPanel({
               <PanelRightClose className="h-4 w-4" />
             </Button>
           )}
-          <h3 className="text-sm font-semibold text-foreground">Global Styles</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            Global Styles
+          </h3>
         </div>
         {onClose && (
           <button

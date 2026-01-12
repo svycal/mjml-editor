@@ -42,6 +42,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   // Auto-open right panel when a block is selected
   useEffect(() => {
     if (state.selectedBlockId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: sync UI state with selection
       setRightPanelOpen(true);
     }
   }, [state.selectedBlockId]);
@@ -140,7 +141,9 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
             width={300}
           >
             {state.selectedBlockId === GLOBAL_STYLES_ID ? (
-              <GlobalStylesPanel onTogglePanel={() => setRightPanelOpen(false)} />
+              <GlobalStylesPanel
+                onTogglePanel={() => setRightPanelOpen(false)}
+              />
             ) : (
               <BlockInspector onTogglePanel={() => setRightPanelOpen(false)} />
             )}

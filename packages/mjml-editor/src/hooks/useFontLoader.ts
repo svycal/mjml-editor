@@ -12,20 +12,18 @@ export function useFontLoader() {
 
   useEffect(() => {
     // Remove any font links that are no longer needed
-    document
-      .querySelectorAll(`link[id^="${LINK_ID_PREFIX}"]`)
-      .forEach((el) => {
-        const fontName = el.id.replace(LINK_ID_PREFIX, '').replace(/-/g, ' ');
-        // Check both hyphenated and original versions since we replace spaces with hyphens
-        const matches = fonts.some(
-          (f) =>
-            f.name === fontName ||
-            f.name.replace(/\s+/g, '-') === el.id.replace(LINK_ID_PREFIX, '')
-        );
-        if (!matches) {
-          el.remove();
-        }
-      });
+    document.querySelectorAll(`link[id^="${LINK_ID_PREFIX}"]`).forEach((el) => {
+      const fontName = el.id.replace(LINK_ID_PREFIX, '').replace(/-/g, ' ');
+      // Check both hyphenated and original versions since we replace spaces with hyphens
+      const matches = fonts.some(
+        (f) =>
+          f.name === fontName ||
+          f.name.replace(/\s+/g, '-') === el.id.replace(LINK_ID_PREFIX, '')
+      );
+      if (!matches) {
+        el.remove();
+      }
+    });
 
     // Add or update link tags for each font
     fonts.forEach((font) => {

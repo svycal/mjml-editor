@@ -13,9 +13,11 @@ export function SourceEditor() {
 
   useEffect(() => {
     const mjmlString = serializeMjml(state.document);
+    /* eslint-disable react-hooks/set-state-in-effect -- Intentional: sync source textarea with document state */
     setSource(mjmlString);
     setIsDirty(false);
     setError(null);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [state.document]);
 
   const handleApply = () => {
@@ -40,7 +42,11 @@ export function SourceEditor() {
   };
 
   return (
-    <ResizableSplitPane defaultLeftWidth={50} minLeftWidth={30} maxLeftWidth={70}>
+    <ResizableSplitPane
+      defaultLeftWidth={50}
+      minLeftWidth={30}
+      maxLeftWidth={70}
+    >
       <div className="flex flex-col h-full bg-background">
         <div className="px-4 pt-4">
           <div className="flex items-start gap-3 p-3 rounded-md bg-amber-50 border border-amber-200 text-amber-800">
@@ -70,7 +76,9 @@ export function SourceEditor() {
             Apply
           </button>
           {isDirty && !error && (
-            <span className="text-sm text-foreground-muted">Unsaved changes</span>
+            <span className="text-sm text-foreground-muted">
+              Unsaved changes
+            </span>
           )}
           {error && <span className="text-sm text-destructive">{error}</span>}
         </div>
