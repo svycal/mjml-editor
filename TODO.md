@@ -1,5 +1,6 @@
 # TODO
 
+- [ ] Prevent illegal drag-drop operations in the tree (see the documentation for rules)
 - [ ] Support for rich text inside of `mj-text` tags
 - [x] Support for `css-class` when rendering the visual editor (styles declared in `mj-style` should get applied accordingly)
 - [ ] Syntax highlighting / proper code editing for Source view
