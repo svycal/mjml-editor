@@ -144,10 +144,9 @@ describe('parseMjml', () => {
       expect(result.tagName).toBe('mjml');
     });
 
-    it('should return empty document for invalid MJML', () => {
+    it('should throw an error for invalid MJML', () => {
       const mjml = `<invalid><broken>`;
-      const result = parseMjml(mjml);
-      expect(result.tagName).toBe('mjml');
+      expect(() => parseMjml(mjml)).toThrow();
     });
   });
 });
