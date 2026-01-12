@@ -25,11 +25,9 @@ function CollapsedPanelButton({
       onClick={onClick}
       className={cn(
         'fixed top-14 z-40',
-        'h-10 w-8 rounded-lg',
-        'bg-background border border-border',
-        'shadow-lg',
+        'h-8 w-8 rounded-md',
         'flex items-center justify-center',
-        'text-foreground-muted hover:text-foreground',
+        'text-foreground-muted hover:text-foreground hover:bg-accent/50',
         'transition-colors duration-150',
         side === 'left' ? 'left-3' : 'right-3'
       )}
