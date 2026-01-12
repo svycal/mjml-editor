@@ -2,9 +2,10 @@ import { useEffect, useCallback, useState } from 'react';
 import { EditorProvider, useEditor } from '@/context/EditorContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
-import { EditorCanvas } from './EditorCanvas';
+import { EditorCanvas, type EditorTabType } from './EditorCanvas';
 import { BlockInspector } from './BlockInspector';
 import { GlobalStylesPanel } from './GlobalStylesPanel';
+import { FloatingPanel } from '@/components/ui/floating-panel';
 import {
   parseMjml,
   serializeMjml,
@@ -34,6 +35,16 @@ interface MjmlEditorProps {
 function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   const { state, undo, redo, canUndo, canRedo, deleteBlock, selectBlock } =
     useEditor();
+  const [leftPanelOpen, setLeftPanelOpen] = useState(true);
+  const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState<EditorTabType>('edit');
+
+  // Auto-open right panel when a block is selected
+  useEffect(() => {
+    if (state.selectedBlockId) {
+      setRightPanelOpen(true);
+    }
+  }, [state.selectedBlockId]);
 
   // Notify parent of changes
   useEffect(() => {
@@ -97,25 +108,40 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   ]);
 
   return (
-    <div className="grid grid-cols-[256px_1fr_300px] h-full overflow-hidden">
-      {/* Left sidebar - Outline Tree */}
-      <div className="border-r border-border bg-background flex flex-col min-h-0 overflow-hidden">
-        <OutlineTree />
+    <div className="relative h-full overflow-hidden">
+      {/* Full-width canvas */}
+      <div className="absolute inset-0 bg-canvas">
+        <EditorCanvas activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {/* Center - Editor Canvas with tabs */}
-      <div className="bg-canvas flex flex-col min-h-0 overflow-hidden">
-        <EditorCanvas />
-      </div>
+      {/* Floating panels - only shown in Edit mode */}
+      {activeTab === 'edit' && (
+        <>
+          {/* Left floating panel - Outline Tree */}
+          <FloatingPanel
+            side="left"
+            isOpen={leftPanelOpen}
+            onToggle={() => setLeftPanelOpen(!leftPanelOpen)}
+            width={256}
+          >
+            <OutlineTree onTogglePanel={() => setLeftPanelOpen(false)} />
+          </FloatingPanel>
 
-      {/* Right sidebar - Attributes Panel */}
-      <div className="border-l border-border bg-background flex flex-col min-h-0 overflow-hidden">
-        {state.selectedBlockId === GLOBAL_STYLES_ID ? (
-          <GlobalStylesPanel />
-        ) : (
-          <BlockInspector />
-        )}
-      </div>
+          {/* Right floating panel - Inspector */}
+          <FloatingPanel
+            side="right"
+            isOpen={rightPanelOpen}
+            onToggle={() => setRightPanelOpen(!rightPanelOpen)}
+            width={300}
+          >
+            {state.selectedBlockId === GLOBAL_STYLES_ID ? (
+              <GlobalStylesPanel onTogglePanel={() => setRightPanelOpen(false)} />
+            ) : (
+              <BlockInspector onTogglePanel={() => setRightPanelOpen(false)} />
+            )}
+          </FloatingPanel>
+        </>
+      )}
     </div>
   );
 }

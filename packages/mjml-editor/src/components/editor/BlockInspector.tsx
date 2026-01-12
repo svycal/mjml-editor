@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronRight, X, PanelRightClose } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -123,15 +124,32 @@ function ClassPicker({ node }: { node: MjmlNode }) {
   );
 }
 
-export function BlockInspector() {
+interface BlockInspectorProps {
+  onTogglePanel?: () => void;
+}
+
+export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
   const { selectedBlock, updateAttributes, getInheritedValue, definedClasses } =
     useEditor();
 
   if (!selectedBlock) {
     return (
       <div className="flex flex-col h-full">
-        <div className="h-11 px-4 flex items-center border-b border-border bg-inspector-header">
-          <h3 className="text-sm font-semibold text-foreground">Inspector</h3>
+        <div className="h-11 px-4 flex items-center justify-between border-b border-border bg-inspector-header">
+          <div className="flex items-center gap-2">
+            {onTogglePanel && (
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={onTogglePanel}
+                className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
+                title="Collapse panel"
+              >
+                <PanelRightClose className="h-4 w-4" />
+              </Button>
+            )}
+            <h3 className="text-sm font-semibold text-foreground">Inspector</h3>
+          </div>
         </div>
         <div className="flex-1 flex items-center justify-center p-6">
           <p className="text-sm text-foreground-muted text-center leading-relaxed">
@@ -177,8 +195,21 @@ export function BlockInspector() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="h-11 px-4 flex items-center border-b border-border bg-inspector-header">
-        <h3 className="text-sm font-semibold text-foreground">{tagLabel}</h3>
+      <div className="h-11 px-4 flex items-center justify-between border-b border-border bg-inspector-header">
+        <div className="flex items-center gap-2">
+          {onTogglePanel && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onTogglePanel}
+              className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
+              title="Collapse panel"
+            >
+              <PanelRightClose className="h-4 w-4" />
+            </Button>
+          )}
+          <h3 className="text-sm font-semibold text-foreground">{tagLabel}</h3>
+        </div>
       </div>
 
       <ScrollArea className="flex-1 min-h-0">

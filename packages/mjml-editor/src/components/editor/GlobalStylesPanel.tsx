@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, X, ChevronRight } from 'lucide-react';
+import { Plus, X, ChevronRight, PanelRightClose } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
@@ -47,15 +47,32 @@ const ELEMENT_TYPES = [
 
 interface GlobalStylesPanelProps {
   onClose?: () => void;
+  onTogglePanel?: () => void;
 }
 
-export function GlobalStylesPanel({ onClose }: GlobalStylesPanelProps) {
+export function GlobalStylesPanel({
+  onClose,
+  onTogglePanel,
+}: GlobalStylesPanelProps) {
   const [activeTab, setActiveTab] = useState('all');
 
   return (
     <div className="flex flex-col h-full">
       <div className="h-11 px-4 flex items-center justify-between border-b border-border bg-inspector-header">
-        <h3 className="text-sm font-semibold text-foreground">Global Styles</h3>
+        <div className="flex items-center gap-2">
+          {onTogglePanel && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onTogglePanel}
+              className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
+              title="Collapse panel"
+            >
+              <PanelRightClose className="h-4 w-4" />
+            </Button>
+          )}
+          <h3 className="text-sm font-semibold text-foreground">Global Styles</h3>
+        </div>
         {onClose && (
           <button
             onClick={onClose}

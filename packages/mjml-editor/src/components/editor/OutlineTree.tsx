@@ -16,6 +16,7 @@ import {
   Trash2,
   Mail,
   Palette,
+  PanelLeftClose,
 } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
@@ -253,7 +254,11 @@ function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
   );
 }
 
-export function OutlineTree() {
+interface OutlineTreeProps {
+  onTogglePanel?: () => void;
+}
+
+export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
   const {
     state,
     undo,
@@ -334,6 +339,17 @@ export function OutlineTree() {
           >
             <Redo2 className="h-4 w-4" />
           </Button>
+          {onTogglePanel && (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={onTogglePanel}
+              className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
+              title="Collapse panel"
+            >
+              <PanelLeftClose className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
 

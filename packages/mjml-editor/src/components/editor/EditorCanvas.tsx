@@ -1,20 +1,23 @@
-import { useState } from 'react';
 import { VisualEditor } from './VisualEditor';
 import { InteractivePreview } from './InteractivePreview';
 import { SourceEditor } from './SourceEditor';
 import { cn } from '@/lib/utils';
 
-type TabType = 'edit' | 'preview' | 'source';
+export type EditorTabType = 'edit' | 'preview' | 'source';
 
-export function EditorCanvas() {
-  const [activeTab, setActiveTab] = useState<TabType>('edit');
+interface EditorCanvasProps {
+  activeTab: EditorTabType;
+  onTabChange: (tab: EditorTabType) => void;
+}
+
+export function EditorCanvas({ activeTab, onTabChange }: EditorCanvasProps) {
 
   return (
     <div className="flex flex-col h-full">
       {/* Tab header */}
       <div className="h-11 px-4 flex items-center gap-1 border-b border-border bg-background">
         <button
-          onClick={() => setActiveTab('edit')}
+          onClick={() => onTabChange('edit')}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
             activeTab === 'edit'
@@ -25,7 +28,7 @@ export function EditorCanvas() {
           Edit
         </button>
         <button
-          onClick={() => setActiveTab('preview')}
+          onClick={() => onTabChange('preview')}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
             activeTab === 'preview'
@@ -36,7 +39,7 @@ export function EditorCanvas() {
           Preview
         </button>
         <button
-          onClick={() => setActiveTab('source')}
+          onClick={() => onTabChange('source')}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
             activeTab === 'source'
