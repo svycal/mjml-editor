@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Tree, type NodeRendererProps, type TreeApi } from 'react-arborist';
 import {
-  Undo2,
-  Redo2,
   Plus,
   Columns,
   Type,
@@ -20,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
   Popover,
   PopoverContent,
@@ -261,10 +258,6 @@ interface OutlineTreeProps {
 export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
   const {
     state,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
     moveBlock,
     addSection,
     selectBlock,
@@ -317,40 +310,17 @@ export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
         <span className="text-sm font-semibold text-foreground">
           Email Structure
         </span>
-        <div className="flex items-center gap-0.5">
-          <ThemeToggle />
+        {onTogglePanel && (
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={undo}
-            disabled={!canUndo}
-            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent disabled:opacity-40"
-            title="Undo (Cmd+Z)"
+            onClick={onTogglePanel}
+            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
+            title="Collapse panel"
           >
-            <Undo2 className="h-4 w-4" />
+            <PanelLeftClose className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={redo}
-            disabled={!canRedo}
-            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent disabled:opacity-40"
-            title="Redo (Cmd+Shift+Z)"
-          >
-            <Redo2 className="h-4 w-4" />
-          </Button>
-          {onTogglePanel && (
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onTogglePanel}
-              className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent"
-              title="Collapse panel"
-            >
-              <PanelLeftClose className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Add Section button */}

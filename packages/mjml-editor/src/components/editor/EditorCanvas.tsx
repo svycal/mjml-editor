@@ -1,6 +1,10 @@
+import { Undo2, Redo2 } from 'lucide-react';
 import { VisualEditor } from './VisualEditor';
 import { InteractivePreview } from './InteractivePreview';
 import { SourceEditor } from './SourceEditor';
+import { useEditor } from '@/context/EditorContext';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { cn } from '@/lib/utils';
 
 export type EditorTabType = 'edit' | 'preview' | 'source';
@@ -18,6 +22,7 @@ export function EditorCanvas({
   leftPanelOpen,
   rightPanelOpen,
 }: EditorCanvasProps) {
+  const { undo, redo, canUndo, canRedo } = useEditor();
 
   return (
     <div className="flex flex-col h-full">
@@ -56,6 +61,34 @@ export function EditorCanvas({
         >
           Source
         </button>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Controls */}
+        <div className="flex items-center gap-0.5">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={undo}
+            disabled={!canUndo}
+            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent disabled:opacity-40"
+            title="Undo (Cmd+Z)"
+          >
+            <Undo2 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={redo}
+            disabled={!canRedo}
+            className="h-7 w-7 rounded-md text-foreground-muted hover:text-foreground hover:bg-accent disabled:opacity-40"
+            title="Redo (Cmd+Shift+Z)"
+          >
+            <Redo2 className="h-4 w-4" />
+          </Button>
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Tab content */}
