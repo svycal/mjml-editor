@@ -7,7 +7,21 @@ import {
   VISUAL_EDITOR_SCOPE_CLASS,
 } from '@/hooks/useStyleLoader';
 
-export function VisualEditor() {
+// Panel dimensions for calculating scroll gutters
+const LEFT_PANEL_WIDTH = 256;
+const RIGHT_PANEL_WIDTH = 300;
+const PANEL_MARGIN = 12;
+const GUTTER_PADDING = 24; // Extra space beyond the panel edge
+
+interface VisualEditorProps {
+  leftPanelOpen?: boolean;
+  rightPanelOpen?: boolean;
+}
+
+export function VisualEditor({
+  leftPanelOpen,
+  rightPanelOpen,
+}: VisualEditorProps) {
   const { state, selectBlock } = useEditor();
 
   // Load custom fonts into the document head
@@ -31,12 +45,33 @@ export function VisualEditor() {
     }
   };
 
+  // Calculate gutter widths based on panel visibility
+  const leftGutter = leftPanelOpen
+    ? LEFT_PANEL_WIDTH + PANEL_MARGIN + GUTTER_PADDING
+    : 16;
+  const rightGutter = rightPanelOpen
+    ? RIGHT_PANEL_WIDTH + PANEL_MARGIN + GUTTER_PADDING
+    : 16;
+
+  // Parse body width to number for min-width calculation
+  const bodyWidthNum = parseInt(bodyWidth, 10) || 600;
+  const minContentWidth = bodyWidthNum + leftGutter + rightGutter;
+
   return (
     <ScrollArea
       className="h-full"
+      orientation="both"
       viewportStyle={{ backgroundColor: bodyBackgroundColor || '#ffffff' }}
     >
-      <div className="py-8 px-4" onClick={handleBackgroundClick}>
+      <div
+        className="py-8"
+        style={{
+          paddingLeft: leftGutter,
+          paddingRight: rightGutter,
+          minWidth: minContentWidth,
+        }}
+        onClick={handleBackgroundClick}
+      >
         {/* Content container - constrained to body width */}
         <div
           className={`light mx-auto w-full ${VISUAL_EDITOR_SCOPE_CLASS}`}

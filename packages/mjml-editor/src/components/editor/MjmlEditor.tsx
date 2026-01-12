@@ -111,7 +111,12 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
     <div className="relative h-full overflow-hidden">
       {/* Full-width canvas */}
       <div className="absolute inset-0 bg-canvas">
-        <EditorCanvas activeTab={activeTab} onTabChange={setActiveTab} />
+        <EditorCanvas
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          leftPanelOpen={leftPanelOpen}
+          rightPanelOpen={rightPanelOpen}
+        />
       </div>
 
       {/* Floating panels - only shown in Edit mode */}

@@ -8,9 +8,16 @@ export type EditorTabType = 'edit' | 'preview' | 'source';
 interface EditorCanvasProps {
   activeTab: EditorTabType;
   onTabChange: (tab: EditorTabType) => void;
+  leftPanelOpen?: boolean;
+  rightPanelOpen?: boolean;
 }
 
-export function EditorCanvas({ activeTab, onTabChange }: EditorCanvasProps) {
+export function EditorCanvas({
+  activeTab,
+  onTabChange,
+  leftPanelOpen,
+  rightPanelOpen,
+}: EditorCanvasProps) {
 
   return (
     <div className="flex flex-col h-full">
@@ -53,7 +60,12 @@ export function EditorCanvas({ activeTab, onTabChange }: EditorCanvasProps) {
 
       {/* Tab content */}
       <div className="flex-1 min-h-0 overflow-hidden">
-        {activeTab === 'edit' && <VisualEditor />}
+        {activeTab === 'edit' && (
+          <VisualEditor
+            leftPanelOpen={leftPanelOpen}
+            rightPanelOpen={rightPanelOpen}
+          />
+        )}
         {activeTab === 'preview' && <InteractivePreview showHeader={false} />}
         {activeTab === 'source' && <SourceEditor />}
       </div>
