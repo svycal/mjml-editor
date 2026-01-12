@@ -1,4 +1,5 @@
-import { Undo2, Redo2 } from 'lucide-react';
+import { useState } from 'react';
+import { Undo2, Redo2, Monitor, Smartphone } from 'lucide-react';
 import { VisualEditor } from './VisualEditor';
 import { InteractivePreview } from './InteractivePreview';
 import { SourceEditor } from './SourceEditor';
@@ -6,6 +7,8 @@ import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { cn } from '@/lib/utils';
+
+export type PreviewMode = 'desktop' | 'mobile';
 
 export type EditorTabType = 'edit' | 'preview' | 'source';
 
@@ -23,11 +26,12 @@ export function EditorCanvas({
   rightPanelOpen,
 }: EditorCanvasProps) {
   const { undo, redo, canUndo, canRedo } = useEditor();
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
 
   return (
     <div className="flex flex-col h-full">
       {/* Tab header */}
-      <div className="h-11 px-4 flex items-center gap-1 border-b border-border bg-background">
+      <div className="h-11 px-4 flex items-center gap-1 border-b border-border bg-background relative">
         <button
           onClick={() => onTabChange('edit')}
           className={cn(
@@ -61,6 +65,36 @@ export function EditorCanvas({
         >
           Source
         </button>
+
+        {/* Preview mode switcher - absolutely centered */}
+        {activeTab === 'preview' && (
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5 p-0.5 rounded-lg bg-accent/50">
+            <button
+              onClick={() => setPreviewMode('desktop')}
+              className={cn(
+                'h-7 px-2 rounded-md flex items-center gap-1.5 text-sm font-medium transition-colors',
+                previewMode === 'desktop'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-foreground-muted hover:text-foreground'
+              )}
+            >
+              <Monitor className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Desktop</span>
+            </button>
+            <button
+              onClick={() => setPreviewMode('mobile')}
+              className={cn(
+                'h-7 px-2 rounded-md flex items-center gap-1.5 text-sm font-medium transition-colors',
+                previewMode === 'mobile'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-foreground-muted hover:text-foreground'
+              )}
+            >
+              <Smartphone className="h-3.5 w-3.5" />
+              <span className="hidden md:inline">Mobile</span>
+            </button>
+          </div>
+        )}
 
         {/* Spacer */}
         <div className="flex-1" />
@@ -99,7 +133,9 @@ export function EditorCanvas({
             rightPanelOpen={rightPanelOpen}
           />
         )}
-        {activeTab === 'preview' && <InteractivePreview showHeader={false} />}
+        {activeTab === 'preview' && (
+          <InteractivePreview showHeader={false} previewMode={previewMode} />
+        )}
         {activeTab === 'source' && <SourceEditor />}
       </div>
     </div>

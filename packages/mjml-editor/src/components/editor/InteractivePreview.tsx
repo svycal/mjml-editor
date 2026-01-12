@@ -1,13 +1,18 @@
 import { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { renderMjmlInteractive } from '@/lib/mjml/renderer';
+import type { PreviewMode } from './EditorCanvas';
 
 interface InteractivePreviewProps {
   showHeader?: boolean;
+  previewMode?: PreviewMode;
 }
+
+const MOBILE_WIDTH = 375;
 
 export function InteractivePreview({
   showHeader = true,
+  previewMode = 'desktop',
 }: InteractivePreviewProps) {
   const { state, selectBlock } = useEditor();
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -141,11 +146,15 @@ export function InteractivePreview({
       )}
 
       {/* Preview iframe */}
-      <div className="flex-1 overflow-auto bg-white">
+      <div className="flex-1 overflow-auto bg-muted flex justify-center">
         <iframe
           ref={iframeRef}
           title="Email Preview"
-          className="w-full h-full border-0"
+          className="h-full border-0 bg-white transition-all duration-200"
+          style={{
+            width: previewMode === 'mobile' ? MOBILE_WIDTH : '100%',
+            maxWidth: '100%',
+          }}
           sandbox="allow-same-origin allow-scripts"
         />
       </div>
