@@ -1,11 +1,11 @@
 {
   "name": "@savvycal/mjml-editor",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/svycal/mjml-editor.git",
+    "url": "git+https://github.com/svycal/mjml-editor.git",
     "directory": "packages/mjml-editor"
   },
   "publishConfig": {
