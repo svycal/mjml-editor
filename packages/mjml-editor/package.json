@@ -26,6 +26,9 @@
   "files": [
     "dist"
   ],
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
