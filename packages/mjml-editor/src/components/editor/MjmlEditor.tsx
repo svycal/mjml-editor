@@ -169,6 +169,13 @@ export function MjmlEditor({
   defaultTheme = 'system',
   liquidSchema,
 }: MjmlEditorProps) {
+  // Track if we're mounted (client-side) - editor requires browser APIs
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Parse initial value only once on mount using lazy initial state
   const [initialDocument] = useState(() => parseInitialValue(value));
 
@@ -179,6 +186,13 @@ export function MjmlEditor({
     },
     [onChange]
   );
+
+  // Don't render during SSR - editor requires browser APIs (iframe, DOM, etc.)
+  if (!isMounted) {
+    return (
+      <div className={`h-full w-full bg-background ${className || ''}`} />
+    );
+  }
 
   return (
     <ThemeProvider defaultTheme={defaultTheme}>
