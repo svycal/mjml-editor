@@ -5,6 +5,7 @@ import { InteractivePreview } from './InteractivePreview';
 import { SourceEditor } from './SourceEditor';
 import { useEditor } from '@/context/EditorContext';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { cn } from '@/lib/utils';
 
@@ -68,32 +69,22 @@ export function EditorCanvas({
 
         {/* Preview mode switcher - absolutely centered */}
         {activeTab === 'preview' && (
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5 p-0.5 rounded-lg bg-accent/50">
-            <button
-              onClick={() => setPreviewMode('desktop')}
-              className={cn(
-                'h-7 px-2 rounded-md flex items-center gap-1.5 text-sm font-medium transition-colors',
-                previewMode === 'desktop'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-foreground-muted hover:text-foreground'
-              )}
-            >
-              <Monitor className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Desktop</span>
-            </button>
-            <button
-              onClick={() => setPreviewMode('mobile')}
-              className={cn(
-                'h-7 px-2 rounded-md flex items-center gap-1.5 text-sm font-medium transition-colors',
-                previewMode === 'mobile'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-foreground-muted hover:text-foreground'
-              )}
-            >
-              <Smartphone className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">Mobile</span>
-            </button>
-          </div>
+          <Tabs
+            value={previewMode}
+            onValueChange={(value) => setPreviewMode(value as PreviewMode)}
+            className="absolute left-1/2 -translate-x-1/2"
+          >
+            <TabsList className="h-8">
+              <TabsTrigger value="desktop" className="h-7 px-2 gap-1.5">
+                <Monitor className="h-3.5 w-3.5" />
+                <span className="hidden md:inline">Desktop</span>
+              </TabsTrigger>
+              <TabsTrigger value="mobile" className="h-7 px-2 gap-1.5">
+                <Smartphone className="h-3.5 w-3.5" />
+                <span className="hidden md:inline">Mobile</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         )}
 
         {/* Spacer */}
