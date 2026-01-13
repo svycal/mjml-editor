@@ -258,6 +258,8 @@ export const LiquidInput = forwardRef<LiquidInputRef, LiquidInputProps>(
           onBlur={handleBlur}
           className={className}
           style={style}
+          autoComplete="off"
+          data-1p-ignore
           {...props}
         />
 
