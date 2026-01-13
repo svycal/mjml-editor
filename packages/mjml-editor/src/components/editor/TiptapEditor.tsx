@@ -35,6 +35,7 @@ import {
   LiquidSuggestion,
   type SuggestionProps,
 } from '@/extensions/LiquidSuggestion';
+import { LiquidHighlight } from '@/extensions/LiquidHighlight';
 import { LiquidAutocomplete } from './LiquidAutocomplete';
 import type { LiquidSuggestion as LiquidSuggestionItem } from '@/types/liquid';
 
@@ -139,6 +140,7 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
             rel: 'noopener noreferrer',
           },
         }),
+        LiquidHighlight,
         LiquidSuggestion.configure({
           onStart: ({
             query,
