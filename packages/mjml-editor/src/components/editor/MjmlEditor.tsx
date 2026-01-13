@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { EditorProvider, useEditor } from '@/context/EditorContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { LiquidSchemaProvider } from '@/context/LiquidSchemaContext';
@@ -42,6 +42,12 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<EditorTabType>('edit');
 
+  // Store onChange in a ref to avoid infinite loops when parent doesn't memoize the callback
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
   // Auto-open right panel when a block is selected
   useEffect(() => {
     if (state.selectedBlockId) {
@@ -53,9 +59,8 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
   // Notify parent of changes
   useEffect(() => {
     const mjml = serializeMjml(state.document);
-    console.log('MJML markup updated:\n', mjml);
-    onChange(mjml);
-  }, [state.document, onChange]);
+    onChangeRef.current(mjml);
+  }, [state.document]);
 
   // Keyboard shortcuts
   useEffect(() => {
