@@ -21,7 +21,8 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./styles.css": "./dist/styles.css"
+    "./preset.css": "./dist/preset.css",
+    "./components.css": "./dist/components.css"
   },
   "files": [
     "dist"

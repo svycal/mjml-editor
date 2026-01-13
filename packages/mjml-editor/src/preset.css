@@ -1,0 +1,145 @@
+/**
+ * Tailwind CSS v4 Preset for @savvycal/mjml-editor
+ *
+ * Import this file in your app's CSS BEFORE @import "tailwindcss":
+ *
+ *   @import "@savvycal/mjml-editor/preset.css";
+ *   @import "tailwindcss";
+ *   @import "tw-animate-css";
+ *   @import "@savvycal/mjml-editor/components.css";
+ *
+ * The @source directive tells Tailwind to scan the library's dist files
+ * for utility classes, generating only what's actually used.
+ */
+
+/* Tell Tailwind to scan the library's dist files for utility classes */
+@source "../node_modules/@savvycal/mjml-editor/dist";
+
+/* Theme tokens - extends host app's Tailwind theme */
+@theme {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Editor-specific design tokens */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-inspector: var(--inspector);
+  --color-inspector-header: var(--inspector-header);
+  --color-toolbar: var(--toolbar);
+  --color-toolbar-border: var(--toolbar-border);
+  --color-block-hover: var(--block-hover);
+  --color-block-selected: var(--block-selected);
+  --color-block-selected-bg: var(--block-selected-bg);
+  --color-selection: var(--selection);
+  --color-selection-foreground: var(--selection-foreground);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-background-subtle: var(--background-subtle);
+}
+
+/* Custom utilities */
+@utility bg-checkered {
+  background-color: var(--color-zinc-100);
+  background-image:
+    linear-gradient(45deg, var(--color-zinc-200) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-zinc-200) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--color-zinc-200) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--color-zinc-200) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+
+  .dark & {
+    background-color: var(--color-zinc-950);
+    background-image:
+      linear-gradient(45deg, var(--color-zinc-800) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--color-zinc-800) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--color-zinc-800) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--color-zinc-800) 75%);
+  }
+}
+
+@utility transition-smooth {
+  transition-property: all;
+  transition-timing-function: ease-out;
+  transition-duration: 150ms;
+}
+
+@utility shadow-framer {
+  box-shadow:
+    0 0 0 1px oklch(0 0 0 / 0.04),
+    0 1px 2px oklch(0 0 0 / 0.04),
+    0 4px 8px oklch(0 0 0 / 0.04);
+
+  .dark & {
+    box-shadow:
+      0 0 0 1px oklch(1 0 0 / 0.05),
+      0 1px 2px oklch(0 0 0 / 0.3),
+      0 4px 8px oklch(0 0 0 / 0.3);
+  }
+
+  .dark .light & {
+    box-shadow:
+      0 0 0 1px oklch(0 0 0 / 0.04),
+      0 1px 2px oklch(0 0 0 / 0.04),
+      0 4px 8px oklch(0 0 0 / 0.04);
+  }
+}
+
+@utility shadow-framer-lg {
+  box-shadow:
+    0 0 0 1px oklch(0 0 0 / 0.04),
+    0 2px 4px oklch(0 0 0 / 0.03),
+    0 8px 16px oklch(0 0 0 / 0.06);
+
+  .dark & {
+    box-shadow:
+      0 0 0 1px oklch(1 0 0 / 0.05),
+      0 2px 4px oklch(0 0 0 / 0.25),
+      0 8px 16px oklch(0 0 0 / 0.4);
+  }
+
+  .dark .light & {
+    box-shadow:
+      0 0 0 1px oklch(0 0 0 / 0.04),
+      0 2px 4px oklch(0 0 0 / 0.03),
+      0 8px 16px oklch(0 0 0 / 0.06);
+  }
+}

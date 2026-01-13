@@ -35,26 +35,44 @@ pnpm add @savvycal/mjml-editor
 
 ### Peer Dependencies
 
-This library requires React 18 or 19:
+This library requires React 18+ and Tailwind CSS v4:
 
 ```bash
-npm install react react-dom
+npm install react react-dom tailwindcss @tailwindcss/vite tw-animate-css
 ```
 
 ### Styles
 
-You must import the library's CSS in your application:
+This library is designed to work with Tailwind CSS v4. Instead of bundling all styles, the library exports CSS files that integrate with your app's Tailwind build, ensuring no style conflicts and minimal CSS overhead.
 
-```tsx
-import '@savvycal/mjml-editor/styles.css';
+Add the following imports to your app's main CSS file:
+
+```css
+/* Import library preset BEFORE tailwindcss */
+@import "@savvycal/mjml-editor/preset.css";
+
+/* Your Tailwind imports */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Import library component styles AFTER tailwindcss */
+@import "@savvycal/mjml-editor/components.css";
 ```
+
+The `preset.css` file includes:
+- `@source` directive that tells Tailwind to scan the library's dist files for utility classes
+- `@theme` tokens that map CSS variables to Tailwind utilities
+- Custom utilities (`bg-checkered`, `shadow-framer`, etc.)
+
+The `components.css` file includes:
+- Scoped CSS variables for the editor theme (light/dark mode)
+- Tiptap/ProseMirror editor styles
 
 ## Usage
 
 ```tsx
 import { useState } from 'react';
 import { MjmlEditor } from '@savvycal/mjml-editor';
-import '@savvycal/mjml-editor/styles.css';
 
 function App() {
   const [mjml, setMjml] = useState(initialMjml);
@@ -77,6 +95,7 @@ function App() {
 | `className` | `string` | Optional CSS class for the container |
 | `defaultTheme` | `'light' \| 'dark' \| 'system'` | Theme preference (default: `'system'`) |
 | `liquidSchema` | `LiquidSchema` | Optional schema for Liquid template autocomplete |
+| `applyThemeToDocument` | `boolean` | Whether to apply theme class to `document.documentElement`. Needed for dropdown/popover theming. Set to `false` if your app manages document-level theme classes. (default: `true`) |
 
 ## Liquid Template Support
 
@@ -84,7 +103,6 @@ The editor provides autocomplete for Liquid template variables and tags. Pass a 
 
 ```tsx
 import { MjmlEditor, type LiquidSchema } from '@savvycal/mjml-editor';
-import '@savvycal/mjml-editor/styles.css';
 
 const liquidSchema: LiquidSchema = {
   variables: [

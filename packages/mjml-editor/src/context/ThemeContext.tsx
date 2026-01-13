@@ -42,12 +42,24 @@ interface ThemeProviderProps {
   children: ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
+  /**
+   * Whether to apply the theme class to document.documentElement.
+   * This is needed for Radix UI portals (popovers, menus, etc.) which
+   * render outside the .mjml-editor container.
+   *
+   * Set to false if the host app manages document-level theme classes
+   * and you want to prevent conflicts.
+   *
+   * @default true
+   */
+  applyToDocument?: boolean;
 }
 
 export function ThemeProvider({
   children,
   defaultTheme,
   storageKey = STORAGE_KEY,
+  applyToDocument = true,
 }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(
     () => defaultTheme ?? getStoredTheme()
@@ -67,11 +79,14 @@ export function ThemeProvider({
 
   const resolvedTheme: ResolvedTheme = theme === 'system' ? systemTheme : theme;
 
+  // Apply theme class to document.documentElement for Radix UI portals
   useEffect(() => {
+    if (!applyToDocument) return;
+
     const root = document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(resolvedTheme);
-  }, [resolvedTheme]);
+  }, [resolvedTheme, applyToDocument]);
 
   const setTheme = useCallback(
     (newTheme: Theme) => {

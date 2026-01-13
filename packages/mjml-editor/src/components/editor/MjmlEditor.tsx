@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { EditorProvider, useEditor } from '@/context/EditorContext';
-import { ThemeProvider } from '@/context/ThemeContext';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { LiquidSchemaProvider } from '@/context/LiquidSchemaContext';
 import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
 import { EditorCanvas, type EditorTabType } from './EditorCanvas';
@@ -33,6 +33,39 @@ interface MjmlEditorProps {
   className?: string;
   defaultTheme?: 'light' | 'dark' | 'system';
   liquidSchema?: LiquidSchema;
+  /**
+   * Whether to apply the theme class to document.documentElement.
+   * This is needed for Radix UI portals (popovers, menus, etc.) which
+   * render outside the editor container.
+   *
+   * Set to false if your app manages document-level theme classes
+   * and you want to prevent conflicts.
+   *
+   * @default true
+   */
+  applyThemeToDocument?: boolean;
+}
+
+/**
+ * Wrapper component that applies the mjml-editor class and theme class.
+ * This scopes all CSS variables and theme styles to the editor container.
+ */
+function ThemedEditorWrapper({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const { resolvedTheme } = useTheme();
+
+  return (
+    <div
+      className={`mjml-editor ${resolvedTheme} h-full w-full bg-background ${className || ''}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
@@ -168,6 +201,7 @@ export function MjmlEditor({
   className,
   defaultTheme = 'system',
   liquidSchema,
+  applyThemeToDocument = true,
 }: MjmlEditorProps) {
   // Track if we're mounted (client-side) - editor requires browser APIs
   const [isMounted, setIsMounted] = useState(false);
@@ -195,13 +229,13 @@ export function MjmlEditor({
   }
 
   return (
-    <ThemeProvider defaultTheme={defaultTheme}>
+    <ThemeProvider defaultTheme={defaultTheme} applyToDocument={applyThemeToDocument}>
       <LiquidSchemaProvider schema={liquidSchema}>
-        <div className={`h-full w-full bg-background ${className || ''}`}>
+        <ThemedEditorWrapper className={className}>
           <EditorProvider initialDocument={initialDocument}>
             <EditorContent onChange={handleChange} />
           </EditorProvider>
-        </div>
+        </ThemedEditorWrapper>
       </LiquidSchemaProvider>
     </ThemeProvider>
   );

@@ -1,38 +1,16 @@
 /**
- * Development CSS - for playground/development only
+ * Component styles for @savvycal/mjml-editor
  *
- * This file is NOT bundled for distribution. Consumers should import
- * the preset and components CSS files separately in their own Tailwind setup.
+ * Import this file in your app's CSS AFTER the preset and tailwindcss:
+ *
+ *   @import "@savvycal/mjml-editor/preset.css";
+ *   @import "tailwindcss";
+ *   @import "tw-animate-css";
+ *   @import "@savvycal/mjml-editor/components.css";
  */
-@import "tailwindcss";
-@import "tw-animate-css";
 
-/* Import preset for @theme and @utility definitions */
-@import "./preset.css";
-
-/* Import component styles (scoped variables, Tiptap styles) */
-@import "./components.css";
-
-/**
- * Base layer styles - for development environment only.
- * These styles are intentionally NOT included in the library bundle
- * because they would conflict with host app styles.
- */
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
-}
-
-/**
- * Development-only: apply CSS variables to :root for playground.
- * In production, consumers wrap the editor in a .mjml-editor container
- * which provides scoped CSS variables.
- */
-:root {
+/* Scoped CSS variable defaults - applied to .mjml-editor container */
+.mjml-editor {
   --radius: 0.5rem;
 
   /* Core backgrounds */
@@ -113,7 +91,9 @@
   --sidebar-ring: oklch(0.55 0.15 250);
 }
 
-.dark {
+/* Dark mode - when .mjml-editor has .dark class or is inside .dark */
+.mjml-editor.dark,
+.dark .mjml-editor {
   /* Core backgrounds */
   --background: var(--color-zinc-950);
   --background-subtle: var(--color-zinc-900);
@@ -193,7 +173,8 @@
 }
 
 /* Force light mode within .light scope (e.g., email canvas preview) */
-.dark .light {
+.mjml-editor.dark .light,
+.dark .mjml-editor .light {
   --background: var(--color-white);
   --background-subtle: var(--color-zinc-50);
   --canvas: oklch(0.975 0.005 250);
@@ -224,4 +205,28 @@
   --block-hover: oklch(0.97 0.02 250);
   --block-selected: oklch(0.40 0.15 250);
   --block-selected-bg: oklch(0.96 0.02 250);
+}
+
+/* Tiptap Editor Styles */
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 0;
+}
+
+.ProseMirror a {
+  color: inherit;
+  text-decoration: underline;
+  cursor: text;
+}
+
+/* Liquid syntax highlighting */
+.liquid-highlight {
+  background-color: oklch(0.93 0.04 250);
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: 0 -2px;
+  pointer-events: none;
 }
