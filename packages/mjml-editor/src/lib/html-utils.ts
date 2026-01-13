@@ -47,3 +47,27 @@ export function mjmlToTiptapHtml(content: string): string {
 
   return lines.map((line) => `<p>${line}</p>`).join('');
 }
+
+/**
+ * Highlight Liquid template syntax in HTML content.
+ *
+ * Wraps {{ variable }} and {% tag %} patterns with a span
+ * that has the liquid-highlight class for visual styling.
+ */
+export function highlightLiquidTags(html: string): string {
+  if (!html) return html;
+
+  // Match {{ ... }} patterns (variables)
+  let result = html.replace(
+    /(\{\{[^{}]*\}\})/g,
+    '<span class="liquid-highlight">$1</span>'
+  );
+
+  // Match {% ... %} patterns (tags)
+  result = result.replace(
+    /(\{%[^{}]*%\})/g,
+    '<span class="liquid-highlight">$1</span>'
+  );
+
+  return result;
+}

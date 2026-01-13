@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
+import { highlightLiquidTags } from '@/lib/html-utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
 import { useResolvedAttributes } from './useResolvedAttributes';
@@ -134,6 +135,12 @@ export function VisualText({ node }: VisualTextProps) {
 
   const content = node.content || '';
 
+  // Highlight Liquid tags for display in resting state
+  const highlightedContent = useMemo(
+    () => highlightLiquidTags(content) || '\u00A0',
+    [content]
+  );
+
   return (
     <div
       ref={containerRef}
@@ -158,7 +165,7 @@ export function VisualText({ node }: VisualTextProps) {
           attrs['css-class']
         )}
         style={textStyle}
-        dangerouslySetInnerHTML={{ __html: content || '\u00A0' }}
+        dangerouslySetInnerHTML={{ __html: highlightedContent }}
       />
 
       {/*
