@@ -10,6 +10,8 @@ A React-based visual editor for MJML email templates. Built for embedding in app
 - **Drag and drop** - Reorder blocks within columns
 - **Undo/redo** - Full history support with keyboard shortcuts
 - **MJML in, MJML out** - Takes MJML markup as input, returns modified MJML on change
+- **Liquid template support** - Autocomplete for Liquid variables and tags
+- **Theme support** - Light, dark, and system theme modes
 
 ## Supported Components
 
@@ -26,27 +28,33 @@ A React-based visual editor for MJML email templates. Built for embedding in app
 ## Installation
 
 ```bash
-npm install
+npm install @savvycal/mjml-editor
+# or
+pnpm add @savvycal/mjml-editor
 ```
 
-## Development
+### Peer Dependencies
+
+This library requires React 18 or 19:
 
 ```bash
-npm run dev
+npm install react react-dom
 ```
 
-Opens the editor at http://localhost:5173
+### Styles
 
-## Build
+You must import the library's CSS in your application:
 
-```bash
-npm run build
+```tsx
+import '@savvycal/mjml-editor/styles.css';
 ```
 
 ## Usage
 
 ```tsx
-import { MjmlEditor } from '@/components/editor/MjmlEditor';
+import { useState } from 'react';
+import { MjmlEditor } from '@savvycal/mjml-editor';
+import '@savvycal/mjml-editor/styles.css';
 
 function App() {
   const [mjml, setMjml] = useState(initialMjml);
@@ -64,9 +72,91 @@ function App() {
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `value` | `string` | MJML markup string |
-| `onChange` | `(mjml: string) => void` | Called when the document changes |
-| `className` | `string?` | Optional CSS class for the container |
+| `value` | `string` | MJML markup string (required) |
+| `onChange` | `(mjml: string) => void` | Called when the document changes (required) |
+| `className` | `string` | Optional CSS class for the container |
+| `defaultTheme` | `'light' \| 'dark' \| 'system'` | Theme preference (default: `'system'`) |
+| `liquidSchema` | `LiquidSchema` | Optional schema for Liquid template autocomplete |
+
+## Liquid Template Support
+
+The editor provides autocomplete for Liquid template variables and tags. Pass a `liquidSchema` prop to enable this feature:
+
+```tsx
+import { MjmlEditor, type LiquidSchema } from '@savvycal/mjml-editor';
+import '@savvycal/mjml-editor/styles.css';
+
+const liquidSchema: LiquidSchema = {
+  variables: [
+    { name: 'user.name', description: 'Recipient name' },
+    { name: 'user.email', description: 'Recipient email' },
+    { name: 'company.name', description: 'Company name' },
+  ],
+  tags: [
+    { name: 'if', description: 'Conditional block' },
+    { name: 'for', description: 'Loop block' },
+    { name: 'unless', description: 'Negative conditional' },
+  ],
+};
+
+function App() {
+  const [mjml, setMjml] = useState(initialMjml);
+
+  return (
+    <MjmlEditor
+      value={mjml}
+      onChange={setMjml}
+      liquidSchema={liquidSchema}
+    />
+  );
+}
+```
+
+When editing text content, typing `{{` will trigger variable autocomplete and `{%` will trigger tag autocomplete.
+
+## Exported Types
+
+The library exports TypeScript types for integration:
+
+```tsx
+import type {
+  MjmlNode,          // MJML document node structure
+  MjmlTagName,       // Union of supported MJML tag names
+  ContentBlockType,  // Union of content block types
+  LiquidSchema,      // Schema for Liquid autocomplete
+  LiquidSchemaItem,  // Individual variable/tag definition
+} from '@savvycal/mjml-editor';
+```
+
+### LiquidSchema
+
+```typescript
+interface LiquidSchemaItem {
+  name: string;         // Variable or tag name (e.g., "user.name")
+  description?: string; // Description shown in autocomplete
+}
+
+interface LiquidSchema {
+  variables: LiquidSchemaItem[]; // {{ variable }} syntax
+  tags: LiquidSchemaItem[];      // {% tag %} syntax
+}
+```
+
+## Theme Utilities
+
+The library exports theme utilities if you need to integrate with or control the theme externally:
+
+```tsx
+import { ThemeProvider, useTheme, ThemeToggle } from '@savvycal/mjml-editor';
+```
+
+| Export | Description |
+|--------|-------------|
+| `ThemeProvider` | Context provider for theme management |
+| `useTheme()` | Hook returning `{ theme, setTheme }` |
+| `ThemeToggle` | Pre-built UI component for theme switching |
+
+Note: `MjmlEditor` includes its own `ThemeProvider`, so you don't need to wrap it. These exports are for advanced use cases where you need theme access outside the editor.
 
 ## Keyboard Shortcuts
 
@@ -77,87 +167,9 @@ function App() {
 | `Delete` / `Backspace` | Delete selected block |
 | `Escape` | Deselect block |
 
-## Architecture
+## Contributing
 
-```
-src/
-├── components/
-│   ├── editor/           # Main editor components
-│   │   ├── MjmlEditor    # Root component
-│   │   ├── EditorPane    # Block tree with drag-and-drop
-│   │   ├── PreviewPane   # Live HTML preview
-│   │   └── BlockInspector # Property editor
-│   ├── blocks/           # Block type components
-│   └── ui/               # shadcn/ui components
-├── context/
-│   └── EditorContext     # State management
-├── lib/mjml/
-│   ├── parser           # MJML ↔ JSON conversion
-│   ├── renderer         # MJML → HTML rendering
-│   └── schema           # Component attribute definitions
-└── types/
-    └── mjml             # TypeScript types
-```
-
-## Tech Stack
-
-- React 19 + TypeScript
-- Vite
-- Tailwind CSS v4
-- shadcn/ui components
-- @dnd-kit for drag and drop
-- mjml-browser for HTML rendering
-
-## Releasing
-
-This project uses [Changesets](https://github.com/changesets/changesets) for version management and automated releases.
-
-### Adding a Changeset
-
-When you make changes that should be included in a release, add a changeset:
-
-```bash
-pnpm changeset
-```
-
-You'll be prompted to:
-
-1. Select the package(s) that changed
-2. Choose the semver bump type:
-   - `patch` - Bug fixes, documentation updates
-   - `minor` - New features, non-breaking changes
-   - `major` - Breaking changes
-3. Write a summary of your changes (this appears in the CHANGELOG)
-
-Commit the generated changeset file (in `.changeset/`) with your PR.
-
-### Release Process
-
-Releases happen automatically when PRs are merged to `main`:
-
-1. **PR merged with changesets** - A "Release" PR is automatically created/updated
-2. **Release PR merged** - Package is built, versioned, and published to npm
-3. **GitHub Release created** - A release is created with a link to the changelog
-
-### Manual Release (Emergency)
-
-If you need to release manually:
-
-```bash
-pnpm version        # Apply changeset versions
-pnpm release        # Build and publish to npm
-```
-
-### Pre-releases
-
-For pre-release versions (alpha, beta, rc):
-
-```bash
-pnpm changeset pre enter alpha   # Enter pre-release mode
-pnpm changeset                   # Add changesets as normal
-pnpm version                     # Creates 0.2.0-alpha.0, etc.
-pnpm changeset pre exit          # Exit pre-release mode
-```
+See [DEVELOPING.md](./DEVELOPING.md) for development setup and release instructions.
 
 ## License
 
