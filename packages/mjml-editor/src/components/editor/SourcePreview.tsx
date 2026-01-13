@@ -1,5 +1,5 @@
-import { useMemo, useEffect, useRef, useState } from 'react';
-import { renderMjmlString } from '@/lib/mjml/renderer';
+import { useEffect, useRef, useState } from 'react';
+import { renderMjmlString, type RenderResult } from '@/lib/mjml/renderer';
 
 interface SourcePreviewProps {
   mjmlSource: string;
@@ -12,6 +12,7 @@ export function SourcePreview({
 }: SourcePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedSource, setDebouncedSource] = useState(mjmlSource);
+  const [renderResult, setRenderResult] = useState<RenderResult>({ html: '', errors: [] });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,12 +21,23 @@ export function SourcePreview({
     return () => clearTimeout(timer);
   }, [mjmlSource, debounceMs]);
 
-  const { html, errors } = useMemo(() => {
+  useEffect(() => {
     if (!debouncedSource.trim()) {
-      return { html: '', errors: [] };
+      setRenderResult({ html: '', errors: [] });
+      return;
     }
-    return renderMjmlString(debouncedSource);
+    let cancelled = false;
+    renderMjmlString(debouncedSource).then((result) => {
+      if (!cancelled) {
+        setRenderResult(result);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedSource]);
+
+  const { html, errors } = renderResult;
 
   useEffect(() => {
     if (iframeRef.current) {

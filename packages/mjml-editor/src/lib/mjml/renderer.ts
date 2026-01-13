@@ -1,10 +1,20 @@
-import mjml2html from 'mjml-browser';
 import { serializeMjml } from './parser';
 import type { MjmlNode } from '@/types/mjml';
 
 export interface RenderResult {
   html: string;
   errors: { line: number; message: string; tagName: string }[];
+}
+
+// Lazy-load mjml-browser to avoid SSR issues (it accesses `window` on import)
+let mjml2html: typeof import('mjml-browser').default | null = null;
+
+async function getMjml2Html() {
+  if (!mjml2html) {
+    const mjmlModule = await import('mjml-browser');
+    mjml2html = mjmlModule.default;
+  }
+  return mjml2html;
 }
 
 /**
@@ -90,10 +100,11 @@ function escapeAttr(value: string): string {
 /**
  * Render MJML JSON to HTML
  */
-export function renderMjml(document: MjmlNode): RenderResult {
+export async function renderMjml(document: MjmlNode): Promise<RenderResult> {
   try {
+    const mjml = await getMjml2Html();
     const mjmlString = serializeMjml(document);
-    const result = mjml2html(mjmlString, {
+    const result = mjml(mjmlString, {
       validationLevel: 'soft',
     });
 
@@ -113,9 +124,10 @@ export function renderMjml(document: MjmlNode): RenderResult {
 /**
  * Render MJML string to HTML
  */
-export function renderMjmlString(mjmlString: string): RenderResult {
+export async function renderMjmlString(mjmlString: string): Promise<RenderResult> {
   try {
-    const result = mjml2html(mjmlString, {
+    const mjml = await getMjml2Html();
+    const result = mjml(mjmlString, {
       validationLevel: 'soft',
     });
 
@@ -136,13 +148,14 @@ export function renderMjmlString(mjmlString: string): RenderResult {
  * Render MJML JSON to HTML with block IDs preserved as CSS classes
  * This allows clicking elements in the preview to identify the source block
  */
-export function renderMjmlInteractive(document: MjmlNode): RenderResult {
+export async function renderMjmlInteractive(document: MjmlNode): Promise<RenderResult> {
   try {
+    const mjml = await getMjml2Html();
     // Add mj-class attributes with block IDs
     const withClasses = addBlockClasses(document);
     const mjmlString = serializeMjmlWithClasses(withClasses);
 
-    const result = mjml2html(mjmlString, {
+    const result = mjml(mjmlString, {
       validationLevel: 'soft',
     });
 

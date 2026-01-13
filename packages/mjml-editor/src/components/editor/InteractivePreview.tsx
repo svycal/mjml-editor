@@ -1,6 +1,6 @@
-import { useMemo, useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useEditor } from '@/context/EditorContext';
-import { renderMjmlInteractive } from '@/lib/mjml/renderer';
+import { renderMjmlInteractive, type RenderResult } from '@/lib/mjml/renderer';
 import type { PreviewMode } from './EditorCanvas';
 
 interface InteractivePreviewProps {
@@ -17,6 +17,7 @@ export function InteractivePreview({
   const { state, selectBlock } = useEditor();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedDocument, setDebouncedDocument] = useState(state.document);
+  const [renderResult, setRenderResult] = useState<RenderResult>({ html: '', errors: [] });
 
   // Debounce document changes for smoother preview updates
   useEffect(() => {
@@ -27,9 +28,19 @@ export function InteractivePreview({
   }, [state.document]);
 
   // Render MJML to HTML with block IDs as CSS classes
-  const { html, errors } = useMemo(() => {
-    return renderMjmlInteractive(debouncedDocument);
+  useEffect(() => {
+    let cancelled = false;
+    renderMjmlInteractive(debouncedDocument).then((result) => {
+      if (!cancelled) {
+        setRenderResult(result);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedDocument]);
+
+  const { html, errors } = renderResult;
 
   // Handle messages from iframe (block selection)
   const handleMessage = useCallback(
