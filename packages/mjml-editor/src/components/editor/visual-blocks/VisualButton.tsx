@@ -1,9 +1,11 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { cn } from '@/lib/utils';
+import { highlightLiquidTags } from '@/lib/html-utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
 import { useResolvedAttributes } from './useResolvedAttributes';
+import { LiquidInput, type LiquidInputRef } from '../LiquidInput';
 
 interface VisualButtonProps {
   node: MjmlNode;
@@ -14,7 +16,7 @@ export function VisualButton({ node }: VisualButtonProps) {
   const isSelected = state.selectedBlockId === node._id;
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<LiquidInputRef>(null);
   const attrs = useResolvedAttributes(node);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -118,6 +120,12 @@ export function VisualButton({ node }: VisualButtonProps) {
   if (borderBottom) buttonStyle.borderBottom = borderBottom;
   if (borderLeft) buttonStyle.borderLeft = borderLeft;
 
+  // Highlight Liquid tags for display in resting state
+  const highlightedContent = useMemo(
+    () => highlightLiquidTags(node.content || '') || 'Button',
+    [node.content]
+  );
+
   return (
     <div
       className={cn(
@@ -143,17 +151,17 @@ export function VisualButton({ node }: VisualButtonProps) {
         style={buttonStyle}
       >
         {/* Display text (invisible when editing to maintain size) */}
-        <span className={cn(isEditing && 'invisible')}>
-          {node.content || 'Button'}
-        </span>
+        <span
+          className={cn(isEditing && 'invisible')}
+          dangerouslySetInnerHTML={{ __html: highlightedContent }}
+        />
 
         {/* Input overlay for editing */}
         {isEditing && (
-          <input
+          <LiquidInput
             ref={inputRef}
-            type="text"
             value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
+            onChange={setEditValue}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             className="absolute inset-0 w-full h-full outline-none bg-transparent"
