@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState } from 'react';
 import { EditorProvider, useEditor } from '@/context/EditorContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { LiquidSchemaProvider } from '@/context/LiquidSchemaContext';
 import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
 import { EditorCanvas, type EditorTabType } from './EditorCanvas';
 import { BlockInspector } from './BlockInspector';
@@ -12,6 +13,7 @@ import {
   createEmptyDocument,
 } from '@/lib/mjml/parser';
 import type { MjmlNode } from '@/types/mjml';
+import type { LiquidSchema } from '@/types/liquid';
 
 function parseInitialValue(value: string): MjmlNode {
   if (!value || value.trim() === '') {
@@ -30,6 +32,7 @@ interface MjmlEditorProps {
   onChange: (mjml: string) => void;
   className?: string;
   defaultTheme?: 'light' | 'dark' | 'system';
+  liquidSchema?: LiquidSchema;
 }
 
 function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
@@ -159,6 +162,7 @@ export function MjmlEditor({
   onChange,
   className,
   defaultTheme = 'system',
+  liquidSchema,
 }: MjmlEditorProps) {
   // Parse initial value only once on mount using lazy initial state
   const [initialDocument] = useState(() => parseInitialValue(value));
@@ -173,11 +177,13 @@ export function MjmlEditor({
 
   return (
     <ThemeProvider defaultTheme={defaultTheme}>
-      <div className={`h-full w-full bg-background ${className || ''}`}>
-        <EditorProvider initialDocument={initialDocument}>
-          <EditorContent onChange={handleChange} />
-        </EditorProvider>
-      </div>
+      <LiquidSchemaProvider schema={liquidSchema}>
+        <div className={`h-full w-full bg-background ${className || ''}`}>
+          <EditorProvider initialDocument={initialDocument}>
+            <EditorContent onChange={handleChange} />
+          </EditorProvider>
+        </div>
+      </LiquidSchemaProvider>
     </ThemeProvider>
   );
 }

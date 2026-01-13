@@ -30,6 +30,13 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { sanitizeHtmlForMjml, mjmlToTiptapHtml } from '@/lib/html-utils';
+import { useLiquidSchema } from '@/context/LiquidSchemaContext';
+import {
+  LiquidSuggestion,
+  type SuggestionProps,
+} from '@/extensions/LiquidSuggestion';
+import { LiquidAutocomplete } from './LiquidAutocomplete';
+import type { LiquidSuggestion as LiquidSuggestionItem } from '@/types/liquid';
 
 interface TiptapEditorProps {
   content: string;
@@ -51,6 +58,43 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
     const [linkUrl, setLinkUrl] = useState('');
     const linkInputRef = useRef<HTMLInputElement>(null);
     const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Liquid autocomplete state
+    const liquidSchema = useLiquidSchema();
+    const [suggestionState, setSuggestionState] = useState<{
+      active: boolean;
+      items: LiquidSuggestionItem[];
+      selectedIndex: number;
+      triggerType: 'variable' | 'tag';
+      range: { from: number; to: number };
+      clientRect: (() => DOMRect | null) | null;
+    } | null>(null);
+
+    // Filter items based on query and type
+    const filterItems = useCallback(
+      (
+        triggerType: 'variable' | 'tag',
+        query: string
+      ): LiquidSuggestionItem[] => {
+        if (!liquidSchema) return [];
+
+        const items =
+          triggerType === 'variable'
+            ? liquidSchema.variables
+            : liquidSchema.tags;
+        const normalizedQuery = query.trim().toLowerCase();
+
+        return items
+          .filter((item) => item.name.toLowerCase().includes(normalizedQuery))
+          .map((item) => ({
+            id: `${triggerType}-${item.name}`,
+            name: item.name,
+            description: item.description,
+            type: triggerType,
+          }));
+      },
+      [liquidSchema]
+    );
 
     // Virtual element for Floating UI - represents the text selection
     const virtualEl = useRef<{
@@ -84,6 +128,102 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
           HTMLAttributes: {
             target: '_blank',
             rel: 'noopener noreferrer',
+          },
+        }),
+        LiquidSuggestion.configure({
+          onStart: ({
+            query,
+            triggerType,
+            range,
+            clientRect,
+          }: SuggestionProps) => {
+            const items = filterItems(triggerType, query);
+            if (items.length === 0 && query.trim() === '') {
+              // Don't show if no items and no query yet
+              return;
+            }
+            setSuggestionState({
+              active: true,
+              items,
+              selectedIndex: 0,
+              triggerType,
+              range,
+              clientRect,
+            });
+          },
+          onUpdate: ({
+            query,
+            triggerType,
+            range,
+            clientRect,
+          }: SuggestionProps) => {
+            const items = filterItems(triggerType, query);
+            setSuggestionState((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    items,
+                    selectedIndex: 0,
+                    range,
+                    clientRect,
+                  }
+                : null
+            );
+          },
+          onExit: () => {
+            setSuggestionState(null);
+          },
+          onKeyDown: (event: KeyboardEvent) => {
+            if (!suggestionState?.active) return false;
+
+            if (event.key === 'ArrowDown') {
+              event.preventDefault();
+              setSuggestionState((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      selectedIndex: Math.min(
+                        prev.selectedIndex + 1,
+                        prev.items.length - 1
+                      ),
+                    }
+                  : null
+              );
+              return true;
+            }
+
+            if (event.key === 'ArrowUp') {
+              event.preventDefault();
+              setSuggestionState((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      selectedIndex: Math.max(prev.selectedIndex - 1, 0),
+                    }
+                  : null
+              );
+              return true;
+            }
+
+            if (event.key === 'Enter' || event.key === 'Tab') {
+              event.preventDefault();
+              if (suggestionState.items.length > 0) {
+                const item =
+                  suggestionState.items[suggestionState.selectedIndex];
+                if (item) {
+                  handleSuggestionSelect(item);
+                }
+              }
+              return true;
+            }
+
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              setSuggestionState(null);
+              return true;
+            }
+
+            return false;
           },
         }),
       ],
@@ -189,6 +329,28 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
       setLinkUrl('');
       editor?.commands.focus();
     }, [editor]);
+
+    // Handle liquid suggestion selection
+    const handleSuggestionSelect = useCallback(
+      (item: LiquidSuggestionItem) => {
+        if (!editor || !suggestionState) return;
+
+        const { range, triggerType } = suggestionState;
+        const replacement =
+          triggerType === 'variable'
+            ? `{{ ${item.name} }}`
+            : `{% ${item.name} %}`;
+
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .insertContent(replacement)
+          .run();
+        setSuggestionState(null);
+      },
+      [editor, suggestionState]
+    );
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -296,6 +458,16 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
         )}
 
         <EditorContent editor={editor} style={style} className={className} />
+
+        {/* Liquid autocomplete popup */}
+        {suggestionState?.active && (
+          <LiquidAutocomplete
+            items={suggestionState.items}
+            selectedIndex={suggestionState.selectedIndex}
+            onSelect={handleSuggestionSelect}
+            clientRect={suggestionState.clientRect}
+          />
+        )}
       </div>
     );
   }

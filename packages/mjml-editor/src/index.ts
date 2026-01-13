@@ -14,5 +14,7 @@ export type {
   EditorAction,
 } from './types/mjml';
 
+export type { LiquidSchema, LiquidSchemaItem } from './types/liquid';
+
 // Styles - consumers should import '@savvycal/mjml-editor/styles.css'
 import './index.css';

@@ -1,5 +1,40 @@
 import { useState } from 'react';
-import { MjmlEditor } from '@savvycal/mjml-editor';
+import { MjmlEditor, type LiquidSchema } from '@savvycal/mjml-editor';
+
+// Sample Liquid schema for testing autocomplete
+const liquidSchema: LiquidSchema = {
+  variables: [
+    { name: 'user.name', description: 'The name of the recipient' },
+    { name: 'user.email', description: 'Email address of the recipient' },
+    { name: 'user.first_name', description: 'First name of the recipient' },
+    { name: 'appointment.title', description: 'Title of the appointment' },
+    {
+      name: 'appointment.date',
+      description: 'Formatted date of the appointment',
+    },
+    {
+      name: 'appointment.time',
+      description: 'Formatted time of the appointment',
+    },
+    { name: 'appointment.duration', description: 'Duration in minutes' },
+    { name: 'appointment.location', description: 'Meeting location or URL' },
+    { name: 'organizer.name', description: 'Name of the meeting organizer' },
+    { name: 'organizer.email', description: 'Email of the meeting organizer' },
+  ],
+  tags: [
+    { name: 'if', description: 'Conditional block - {% if condition %}' },
+    { name: 'endif', description: 'End conditional block' },
+    { name: 'else', description: 'Else branch of conditional' },
+    { name: 'elsif', description: 'Else-if branch - {% elsif condition %}' },
+    { name: 'for', description: 'Loop block - {% for item in array %}' },
+    { name: 'endfor', description: 'End loop block' },
+    {
+      name: 'unless',
+      description: 'Negative conditional - {% unless condition %}',
+    },
+    { name: 'endunless', description: 'End unless block' },
+  ],
+};
 
 const initialMjml = `
 
@@ -113,6 +148,7 @@ function App() {
           setMjml(mjml);
           console.log(mjml);
         }}
+        liquidSchema={liquidSchema}
       />
     </div>
   );
