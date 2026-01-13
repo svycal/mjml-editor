@@ -70,6 +70,15 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
       clientRect: (() => DOMRect | null) | null;
     } | null>(null);
 
+    // Ref to track suggestion state for use in callbacks (avoids stale closure)
+    const suggestionStateRef = useRef(suggestionState);
+    suggestionStateRef.current = suggestionState;
+
+    // Ref for handleSuggestionSelect to avoid stale closure in onKeyDown
+    const handleSuggestionSelectRef = useRef<
+      ((item: LiquidSuggestionItem) => void) | null
+    >(null);
+
     // Filter items based on query and type
     const filterItems = useCallback(
       (
@@ -174,7 +183,8 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
             setSuggestionState(null);
           },
           onKeyDown: (event: KeyboardEvent) => {
-            if (!suggestionState?.active) return false;
+            const currentState = suggestionStateRef.current;
+            if (!currentState?.active) return false;
 
             if (event.key === 'ArrowDown') {
               event.preventDefault();
@@ -207,11 +217,10 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
 
             if (event.key === 'Enter' || event.key === 'Tab') {
               event.preventDefault();
-              if (suggestionState.items.length > 0) {
-                const item =
-                  suggestionState.items[suggestionState.selectedIndex];
+              if (currentState.items.length > 0) {
+                const item = currentState.items[currentState.selectedIndex];
                 if (item) {
-                  handleSuggestionSelect(item);
+                  handleSuggestionSelectRef.current?.(item);
                 }
               }
               return true;
@@ -333,9 +342,10 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
     // Handle liquid suggestion selection
     const handleSuggestionSelect = useCallback(
       (item: LiquidSuggestionItem) => {
-        if (!editor || !suggestionState) return;
+        const currentState = suggestionStateRef.current;
+        if (!editor || !currentState) return;
 
-        const { range, triggerType } = suggestionState;
+        const { range, triggerType } = currentState;
         const replacement =
           triggerType === 'variable'
             ? `{{ ${item.name} }}`
@@ -349,8 +359,11 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
           .run();
         setSuggestionState(null);
       },
-      [editor, suggestionState]
+      [editor]
     );
+
+    // Keep ref updated for use in onKeyDown callback
+    handleSuggestionSelectRef.current = handleSuggestionSelect;
 
     useImperativeHandle(ref, () => ({
       focus: () => {
