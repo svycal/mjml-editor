@@ -24,7 +24,7 @@ function CollapsedPanelButton({
     <button
       onClick={onClick}
       className={cn(
-        'fixed top-14 z-40',
+        'absolute top-14 z-40',
         'h-8 w-8 rounded-md',
         'flex items-center justify-center',
         'text-foreground-muted hover:text-foreground hover:bg-accent/50',
@@ -53,7 +53,7 @@ export function FloatingPanel({
   return (
     <div
       className={cn(
-        'fixed top-14 bottom-3 z-40',
+        'absolute top-14 bottom-3 z-40',
         'bg-background text-foreground border border-border rounded-lg',
         'shadow-lg',
         'flex flex-col overflow-hidden',
