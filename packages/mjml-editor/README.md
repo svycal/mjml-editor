@@ -57,7 +57,7 @@ Add the following imports to your app's main CSS file:
 **Note:** `preset.css` must come before `tailwindcss` so that `@theme` tokens are registered before Tailwind generates its utilities.
 
 The `preset.css` file includes:
-- `@source` directive that tells Tailwind to scan the library's dist files for utility classes
+- `@source` directive that tells Tailwind to scan the library's dist files for utility classes (works with npm, yarn, and pnpm)
 - `@theme` tokens that map CSS variables to Tailwind utilities
 - Custom utilities (`bg-checkered`, `shadow-framer`, etc.)
 

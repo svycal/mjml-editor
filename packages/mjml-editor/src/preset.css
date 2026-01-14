@@ -12,8 +12,13 @@
  * for utility classes, generating only what's actually used.
  */
 
-/* Tell Tailwind to scan the library's dist files for utility classes */
-@source "../node_modules/@savvycal/mjml-editor/dist";
+/*
+ * Tell Tailwind to scan the library's dist files for utility classes.
+ * This path is relative to where this CSS file is located (dist/).
+ * Because the @source is in the package itself, it works regardless of
+ * how node_modules is structured (npm, yarn, pnpm, etc.).
+ */
+@source ".";
 
 /* Theme tokens - extends host app's Tailwind theme */
 @theme {
