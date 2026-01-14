@@ -18,6 +18,7 @@ interface EditorCanvasProps {
   onTabChange: (tab: EditorTabType) => void;
   leftPanelOpen?: boolean;
   rightPanelOpen?: boolean;
+  showThemeToggle?: boolean;
 }
 
 export function EditorCanvas({
@@ -25,6 +26,7 @@ export function EditorCanvas({
   onTabChange,
   leftPanelOpen,
   rightPanelOpen,
+  showThemeToggle = true,
 }: EditorCanvasProps) {
   const { undo, redo, canUndo, canRedo } = useEditor();
   const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
@@ -112,7 +114,7 @@ export function EditorCanvas({
           >
             <Redo2 className="h-4 w-4" />
           </Button>
-          <ThemeToggle />
+          {showThemeToggle && <ThemeToggle />}
         </div>
       </div>
 

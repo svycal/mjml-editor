@@ -44,6 +44,21 @@ interface MjmlEditorProps {
    * @default true
    */
   applyThemeToDocument?: boolean;
+  /**
+   * Whether to show the theme toggle in the toolbar.
+   * @default true
+   */
+  showThemeToggle?: boolean;
+  /**
+   * Whether the tree panel (left) is open by default.
+   * @default true
+   */
+  defaultLeftPanelOpen?: boolean;
+  /**
+   * Whether the inspector panel (right) is open by default.
+   * @default false
+   */
+  defaultRightPanelOpen?: boolean;
 }
 
 /**
@@ -68,11 +83,23 @@ function ThemedEditorWrapper({
   );
 }
 
-function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
+interface EditorContentProps {
+  onChange: (mjml: string) => void;
+  showThemeToggle?: boolean;
+  defaultLeftPanelOpen?: boolean;
+  defaultRightPanelOpen?: boolean;
+}
+
+function EditorContent({
+  onChange,
+  showThemeToggle = true,
+  defaultLeftPanelOpen = true,
+  defaultRightPanelOpen = false,
+}: EditorContentProps) {
   const { state, undo, redo, canUndo, canRedo, deleteBlock, selectBlock } =
     useEditor();
-  const [leftPanelOpen, setLeftPanelOpen] = useState(true);
-  const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [leftPanelOpen, setLeftPanelOpen] = useState(defaultLeftPanelOpen);
+  const [rightPanelOpen, setRightPanelOpen] = useState(defaultRightPanelOpen);
   const [activeTab, setActiveTab] = useState<EditorTabType>('edit');
 
   // Store onChange in a ref to avoid infinite loops when parent doesn't memoize the callback
@@ -158,6 +185,7 @@ function EditorContent({ onChange }: { onChange: (mjml: string) => void }) {
           onTabChange={setActiveTab}
           leftPanelOpen={leftPanelOpen}
           rightPanelOpen={rightPanelOpen}
+          showThemeToggle={showThemeToggle}
         />
       </div>
 
@@ -202,6 +230,9 @@ export function MjmlEditor({
   defaultTheme = 'system',
   liquidSchema,
   applyThemeToDocument = true,
+  showThemeToggle = true,
+  defaultLeftPanelOpen = true,
+  defaultRightPanelOpen = false,
 }: MjmlEditorProps) {
   // Track if we're mounted (client-side) - editor requires browser APIs
   const [isMounted, setIsMounted] = useState(false);
@@ -235,7 +266,12 @@ export function MjmlEditor({
       <LiquidSchemaProvider schema={liquidSchema}>
         <ThemedEditorWrapper className={className}>
           <EditorProvider initialDocument={initialDocument}>
-            <EditorContent onChange={handleChange} />
+            <EditorContent
+              onChange={handleChange}
+              showThemeToggle={showThemeToggle}
+              defaultLeftPanelOpen={defaultLeftPanelOpen}
+              defaultRightPanelOpen={defaultRightPanelOpen}
+            />
           </EditorProvider>
         </ThemedEditorWrapper>
       </LiquidSchemaProvider>
