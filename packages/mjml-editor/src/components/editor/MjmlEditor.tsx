@@ -61,7 +61,7 @@ function ThemedEditorWrapper({
 
   return (
     <div
-      className={`mjml-editor ${resolvedTheme} h-full w-full bg-background ${className || ''}`}
+      className={`mjml-editor ${resolvedTheme} h-full w-full bg-background text-foreground antialiased ${className || ''}`}
     >
       {children}
     </div>

@@ -48,16 +48,13 @@ This library is designed to work with Tailwind CSS v4. Instead of bundling all s
 Add the following imports to your app's main CSS file:
 
 ```css
-/* Import library preset BEFORE tailwindcss */
 @import "@savvycal/mjml-editor/preset.css";
-
-/* Your Tailwind imports */
 @import "tailwindcss";
 @import "tw-animate-css";
-
-/* Import library component styles AFTER tailwindcss */
 @import "@savvycal/mjml-editor/components.css";
 ```
+
+**Note:** `preset.css` must come before `tailwindcss` so that `@theme` tokens are registered before Tailwind generates its utilities.
 
 The `preset.css` file includes:
 - `@source` directive that tells Tailwind to scan the library's dist files for utility classes

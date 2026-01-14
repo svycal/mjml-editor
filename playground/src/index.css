@@ -3,16 +3,13 @@
  *
  * This follows the same import pattern documented in the README,
  * using local paths instead of node_modules references.
+ *
+ * NOTE: preset.css must come BEFORE tailwindcss so that @theme tokens
+ * are registered before Tailwind generates its utilities.
  */
-
-/* Import library preset BEFORE tailwindcss */
 @import "../../packages/mjml-editor/src/preset.css";
-
-/* Tailwind imports */
 @import "tailwindcss";
 @import "tw-animate-css";
-
-/* Import library component styles AFTER tailwindcss */
 @import "../../packages/mjml-editor/src/components.css";
 
 /* Scan library source for Tailwind classes (simulates @source in preset.css) */

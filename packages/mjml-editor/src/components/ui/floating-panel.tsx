@@ -54,7 +54,7 @@ export function FloatingPanel({
     <div
       className={cn(
         'fixed top-14 bottom-3 z-40',
-        'bg-background border border-border rounded-lg',
+        'bg-background text-foreground border border-border rounded-lg',
         'shadow-lg',
         'flex flex-col overflow-hidden',
         'transition-all duration-150 ease-out',

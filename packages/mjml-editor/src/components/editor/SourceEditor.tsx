@@ -62,7 +62,7 @@ export function SourceEditor() {
           <textarea
             value={source}
             onChange={(e) => handleChange(e.target.value)}
-            className="w-full h-full p-4 font-mono text-sm bg-muted border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full h-full p-4 font-mono text-sm bg-muted text-foreground border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
             spellCheck={false}
           />
         </div>

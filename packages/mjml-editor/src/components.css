@@ -9,6 +9,139 @@
  *   @import "@savvycal/mjml-editor/components.css";
  */
 
+/* Base CSS variable defaults at :root level */
+:root {
+  --radius: 0.5rem;
+
+  /* Core backgrounds */
+  --background: var(--color-white);
+  --background-subtle: var(--color-zinc-50);
+  --canvas: oklch(0.975 0.005 250);
+  --surface: var(--color-white);
+
+  /* Foregrounds */
+  --foreground: var(--color-zinc-950);
+  --foreground-muted: var(--color-zinc-600);
+  --foreground-subtle: var(--color-zinc-500);
+
+  /* Card/Popover */
+  --card: var(--color-white);
+  --card-foreground: var(--color-zinc-950);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-zinc-950);
+
+  /* Primary */
+  --primary: var(--color-zinc-900);
+  --primary-foreground: var(--color-zinc-50);
+
+  /* Secondary */
+  --secondary: var(--color-zinc-100);
+  --secondary-foreground: var(--color-zinc-900);
+
+  /* Muted */
+  --muted: var(--color-zinc-100);
+  --muted-foreground: var(--color-zinc-600);
+
+  /* Accent */
+  --accent: oklch(0.97 0.005 250);
+  --accent-foreground: var(--color-zinc-950);
+
+  /* Borders */
+  --border: var(--color-zinc-200);
+  --border-subtle: var(--color-zinc-200);
+  --border-strong: var(--color-zinc-300);
+
+  /* Focus/Selection */
+  --ring: oklch(0.55 0.15 250);
+  --selection: oklch(0.92 0.03 250);
+  --selection-foreground: oklch(0.35 0.12 250);
+  --input: var(--color-zinc-300);
+
+  /* Destructive */
+  --destructive: oklch(0.55 0.22 25);
+
+  /* Inspector */
+  --inspector: var(--color-zinc-50);
+  --inspector-header: var(--color-white);
+
+  /* Toolbar */
+  --toolbar: var(--color-white);
+  --toolbar-border: var(--color-zinc-200);
+
+  /* Block states */
+  --block-hover: oklch(0.97 0.02 250);
+  --block-selected: oklch(0.40 0.15 250);
+  --block-selected-bg: oklch(0.96 0.02 250);
+
+  /* Chart colors */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Sidebar */
+  --sidebar: var(--color-zinc-50);
+  --sidebar-foreground: var(--color-zinc-950);
+  --sidebar-primary: var(--color-zinc-900);
+  --sidebar-primary-foreground: var(--color-zinc-50);
+  --sidebar-accent: var(--color-zinc-100);
+  --sidebar-accent-foreground: var(--color-zinc-900);
+  --sidebar-border: var(--color-zinc-200);
+  --sidebar-ring: oklch(0.55 0.15 250);
+}
+
+/* Dark mode at root level (for Radix UI portals that render outside .mjml-editor) */
+:root.dark, .dark {
+  --background: var(--color-zinc-950);
+  --background-subtle: var(--color-zinc-900);
+  --canvas: oklch(0.10 0.005 250);
+  --surface: var(--color-zinc-800);
+  --foreground: var(--color-zinc-50);
+  --foreground-muted: var(--color-zinc-400);
+  --foreground-subtle: var(--color-zinc-500);
+  --card: var(--color-zinc-900);
+  --card-foreground: var(--color-zinc-50);
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-50);
+  --primary: var(--color-zinc-50);
+  --primary-foreground: var(--color-zinc-950);
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: var(--color-zinc-200);
+  --muted: var(--color-zinc-800);
+  --muted-foreground: var(--color-zinc-400);
+  --accent: var(--color-zinc-800);
+  --accent-foreground: var(--color-zinc-50);
+  --border: var(--color-zinc-700);
+  --border-subtle: var(--color-zinc-800);
+  --border-strong: var(--color-zinc-600);
+  --ring: oklch(0.60 0.15 250);
+  --selection: oklch(0.25 0.06 250);
+  --selection-foreground: oklch(0.75 0.12 250);
+  --input: var(--color-zinc-800);
+  --destructive: oklch(0.60 0.22 25);
+  --inspector: var(--color-zinc-950);
+  --inspector-header: var(--color-zinc-900);
+  --toolbar: var(--color-zinc-950);
+  --toolbar-border: var(--color-zinc-800);
+  --block-hover: oklch(0.20 0.03 250);
+  --block-selected: oklch(0.50 0.15 250);
+  --block-selected-bg: oklch(0.22 0.04 250);
+  --chart-1: oklch(0.70 0.20 41);
+  --chart-2: oklch(0.65 0.12 185);
+  --chart-3: oklch(0.50 0.08 227);
+  --chart-4: oklch(0.80 0.17 84);
+  --chart-5: oklch(0.75 0.17 70);
+  --sidebar: var(--color-zinc-950);
+  --sidebar-foreground: var(--color-zinc-50);
+  --sidebar-primary: var(--color-zinc-50);
+  --sidebar-primary-foreground: var(--color-zinc-950);
+  --sidebar-accent: var(--color-zinc-800);
+  --sidebar-accent-foreground: var(--color-zinc-200);
+  --sidebar-border: var(--color-zinc-800);
+  --sidebar-ring: oklch(0.60 0.15 250);
+}
+
 /* Scoped CSS variable defaults - applied to .mjml-editor container */
 .mjml-editor {
   --radius: 0.5rem;
