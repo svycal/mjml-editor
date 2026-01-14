@@ -42,7 +42,6 @@ function copyCssPlugin() {
 export default defineConfig({
   plugins: [
     react(),
-    // Tailwind plugin for development/playground - processes index.css
     tailwindcss(),
     // Skip dts in watch mode to avoid incremental build errors
     !isWatch &&

@@ -17,10 +17,6 @@ export default defineConfig(({ mode }) => {
             // Library's internal path alias (must come first)
             '@': path.resolve(libRoot, 'src'),
             // Redirect library imports to source
-            '@savvycal/mjml-editor/styles.css': path.resolve(
-              libRoot,
-              'src/index.css'
-            ),
             '@savvycal/mjml-editor': path.resolve(libRoot, 'src/index.ts'),
           }
         : {},
