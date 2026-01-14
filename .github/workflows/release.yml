@@ -49,21 +49,3 @@ jobs:
           commit: 'chore: release packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create GitHub Release
-        if: steps.changesets.outputs.published == 'true'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const publishedPackages = JSON.parse('${{ steps.changesets.outputs.publishedPackages }}');
-            for (const pkg of publishedPackages) {
-              await github.rest.repos.createRelease({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag_name: `${pkg.name}@${pkg.version}`,
-                name: `${pkg.name}@${pkg.version}`,
-                body: `See [CHANGELOG](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/packages/mjml-editor/CHANGELOG.md) for details.`,
-                draft: false,
-                prerelease: false
-              });
-            }
