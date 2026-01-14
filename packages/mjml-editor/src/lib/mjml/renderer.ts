@@ -124,7 +124,9 @@ export async function renderMjml(document: MjmlNode): Promise<RenderResult> {
 /**
  * Render MJML string to HTML
  */
-export async function renderMjmlString(mjmlString: string): Promise<RenderResult> {
+export async function renderMjmlString(
+  mjmlString: string
+): Promise<RenderResult> {
   try {
     const mjml = await getMjml2Html();
     const result = mjml(mjmlString, {
@@ -148,7 +150,9 @@ export async function renderMjmlString(mjmlString: string): Promise<RenderResult
  * Render MJML JSON to HTML with block IDs preserved as CSS classes
  * This allows clicking elements in the preview to identify the source block
  */
-export async function renderMjmlInteractive(document: MjmlNode): Promise<RenderResult> {
+export async function renderMjmlInteractive(
+  document: MjmlNode
+): Promise<RenderResult> {
   try {
     const mjml = await getMjml2Html();
     // Add mj-class attributes with block IDs

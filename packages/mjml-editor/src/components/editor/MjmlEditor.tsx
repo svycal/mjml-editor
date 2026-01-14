@@ -207,6 +207,7 @@ export function MjmlEditor({
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: SSR hydration pattern to detect client-side mount
     setIsMounted(true);
   }, []);
 
@@ -223,13 +224,14 @@ export function MjmlEditor({
 
   // Don't render during SSR - editor requires browser APIs (iframe, DOM, etc.)
   if (!isMounted) {
-    return (
-      <div className={`h-full w-full bg-background ${className || ''}`} />
-    );
+    return <div className={`h-full w-full bg-background ${className || ''}`} />;
   }
 
   return (
-    <ThemeProvider defaultTheme={defaultTheme} applyToDocument={applyThemeToDocument}>
+    <ThemeProvider
+      defaultTheme={defaultTheme}
+      applyToDocument={applyThemeToDocument}
+    >
       <LiquidSchemaProvider schema={liquidSchema}>
         <ThemedEditorWrapper className={className}>
           <EditorProvider initialDocument={initialDocument}>

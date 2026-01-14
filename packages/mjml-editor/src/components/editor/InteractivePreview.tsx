@@ -17,7 +17,10 @@ export function InteractivePreview({
   const { state, selectBlock } = useEditor();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedDocument, setDebouncedDocument] = useState(state.document);
-  const [renderResult, setRenderResult] = useState<RenderResult>({ html: '', errors: [] });
+  const [renderResult, setRenderResult] = useState<RenderResult>({
+    html: '',
+    errors: [],
+  });
 
   // Debounce document changes for smoother preview updates
   useEffect(() => {

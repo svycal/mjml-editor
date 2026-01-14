@@ -12,7 +12,10 @@ export function SourcePreview({
 }: SourcePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedSource, setDebouncedSource] = useState(mjmlSource);
-  const [renderResult, setRenderResult] = useState<RenderResult>({ html: '', errors: [] });
+  const [renderResult, setRenderResult] = useState<RenderResult>({
+    html: '',
+    errors: [],
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,6 +26,7 @@ export function SourcePreview({
 
   useEffect(() => {
     if (!debouncedSource.trim()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional: clear result for empty input
       setRenderResult({ html: '', errors: [] });
       return;
     }
