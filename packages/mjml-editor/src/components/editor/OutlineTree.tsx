@@ -324,6 +324,7 @@ export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
           variant="outline"
           size="sm"
           onClick={addSection}
+          disabled={!body}
           className="w-full h-8 gap-1.5 text-xs font-medium"
         >
           <Plus className="h-3.5 w-3.5" />

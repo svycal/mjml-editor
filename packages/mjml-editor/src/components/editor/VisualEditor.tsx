@@ -48,7 +48,7 @@ export function VisualEditor({
   // Check for invalid document structure
   if (!hasValidStructure(state.document)) {
     return (
-      <ScrollArea className="h-full">
+      <ScrollArea className="h-full" viewportStyle={{ backgroundColor: '#ffffff' }}>
         <div className="flex items-center justify-center p-8 min-h-[400px]">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md text-center">
             <p className="text-red-700 font-medium mb-2">
