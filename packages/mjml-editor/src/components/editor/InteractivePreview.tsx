@@ -181,7 +181,10 @@ export function InteractivePreview({
           </div>
           <div className="space-y-1">
             {errors.map((error, i) => (
-              <div key={i} className="text-xs text-amber-600 dark:text-amber-400">
+              <div
+                key={i}
+                className="text-xs text-amber-600 dark:text-amber-400"
+              >
                 <span className="font-mono">Line {error.line}:</span>{' '}
                 {error.message}
               </div>
