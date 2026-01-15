@@ -6,6 +6,16 @@ import {
   useStyleLoader,
   VISUAL_EDITOR_SCOPE_CLASS,
 } from '@/hooks/useStyleLoader';
+import { createEmptyDocument } from '@/lib/mjml/parser';
+import type { MjmlNode } from '@/types/mjml';
+
+/**
+ * Check if the document has a valid structure for visual editing
+ */
+function hasValidStructure(document: MjmlNode): boolean {
+  if (document.tagName !== 'mjml') return false;
+  return document.children?.some((c) => c.tagName === 'mj-body') ?? false;
+}
 
 // Panel dimensions for calculating scroll gutters
 const LEFT_PANEL_WIDTH = 256;
@@ -22,13 +32,43 @@ export function VisualEditor({
   leftPanelOpen,
   rightPanelOpen,
 }: VisualEditorProps) {
-  const { state, selectBlock } = useEditor();
+  const { state, selectBlock, setDocument } = useEditor();
 
   // Load custom fonts into the document head
   useFontLoader();
 
   // Load mj-style CSS into the document head (scoped to visual editor)
   useStyleLoader();
+
+  // Handler to reset document to a valid blank template
+  const handleResetDocument = () => {
+    setDocument(createEmptyDocument());
+  };
+
+  // Check for invalid document structure
+  if (!hasValidStructure(state.document)) {
+    return (
+      <ScrollArea className="h-full">
+        <div className="flex items-center justify-center p-8 min-h-[400px]">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md text-center">
+            <p className="text-red-700 font-medium mb-2">
+              Invalid MJML structure
+            </p>
+            <p className="text-red-600 text-sm mb-4">
+              The document is missing required elements like mj-body. Reset to a
+              blank template to continue editing.
+            </p>
+            <button
+              onClick={handleResetDocument}
+              className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
+            >
+              Reset to blank template
+            </button>
+          </div>
+        </div>
+      </ScrollArea>
+    );
+  }
 
   // Get the body node
   const body = state.document.children?.find((c) => c.tagName === 'mj-body');
