@@ -1,21 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useEditor } from '@/context/EditorContext';
 
 const LINK_ID_PREFIX = 'mjml-editor-font-';
 
+// MJML default font - Ubuntu is injected by MJML when rendering
+const MJML_DEFAULT_FONT = {
+  name: 'Ubuntu',
+  href: 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700',
+};
+
 /**
  * Hook that injects <link> tags into the document head for each mj-font.
+ * Also loads MJML's default Ubuntu font to match preview rendering.
  * This enables custom fonts to render in the visual editor.
  */
 export function useFontLoader() {
   const { fonts } = useEditor();
+
+  // Include MJML default font alongside custom fonts
+  const allFonts = useMemo(() => [MJML_DEFAULT_FONT, ...fonts], [fonts]);
 
   useEffect(() => {
     // Remove any font links that are no longer needed
     document.querySelectorAll(`link[id^="${LINK_ID_PREFIX}"]`).forEach((el) => {
       const fontName = el.id.replace(LINK_ID_PREFIX, '').replace(/-/g, ' ');
       // Check both hyphenated and original versions since we replace spaces with hyphens
-      const matches = fonts.some(
+      const matches = allFonts.some(
         (f) =>
           f.name === fontName ||
           f.name.replace(/\s+/g, '-') === el.id.replace(LINK_ID_PREFIX, '')
@@ -26,7 +36,7 @@ export function useFontLoader() {
     });
 
     // Add or update link tags for each font
-    fonts.forEach((font) => {
+    allFonts.forEach((font) => {
       const linkId = `${LINK_ID_PREFIX}${font.name.replace(/\s+/g, '-')}`;
       let link = document.getElementById(linkId) as HTMLLinkElement | null;
 
@@ -51,5 +61,5 @@ export function useFontLoader() {
         .querySelectorAll(`link[id^="${LINK_ID_PREFIX}"]`)
         .forEach((el) => el.remove());
     };
-  }, [fonts]);
+  }, [allFonts]);
 }
