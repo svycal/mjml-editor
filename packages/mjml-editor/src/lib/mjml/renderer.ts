@@ -115,7 +115,7 @@ export async function renderMjml(document: MjmlNode): Promise<RenderResult> {
   } catch (error) {
     console.error('MJML render error:', error);
     return {
-      html: '<p style="color: red; padding: 20px;">Error rendering email preview</p>',
+      html: '<p style="color: #dc2626; padding: 20px; background: white; margin: 0;">Error rendering email preview</p>',
       errors: [{ line: 0, message: String(error), tagName: 'mjml' }],
     };
   }
@@ -140,7 +140,7 @@ export async function renderMjmlString(
   } catch (error) {
     console.error('MJML render error:', error);
     return {
-      html: '<p style="color: red; padding: 20px;">Error rendering email preview</p>',
+      html: '<p style="color: #dc2626; padding: 20px; background: white; margin: 0;">Error rendering email preview</p>',
       errors: [{ line: 0, message: String(error), tagName: 'mjml' }],
     };
   }
@@ -170,7 +170,7 @@ export async function renderMjmlInteractive(
   } catch (error) {
     console.error('MJML render error:', error);
     return {
-      html: '<p style="color: red; padding: 20px;">Error rendering email preview</p>',
+      html: '<p style="color: #dc2626; padding: 20px; background: white; margin: 0;">Error rendering email preview</p>',
       errors: [{ line: 0, message: String(error), tagName: 'mjml' }],
     };
   }

@@ -83,8 +83,8 @@ export function VisualEditor({
 
           {/* Empty state */}
           {(!body?.children || body.children.length === 0) && (
-            <div className="bg-surface rounded-lg border-2 border-dashed border-border p-12 text-center">
-              <p className="text-muted-foreground">
+            <div className="bg-zinc-100 rounded-lg border-2 border-dashed border-zinc-300 p-12 text-center">
+              <p className="text-zinc-500">
                 Add a section to get started
               </p>
             </div>
