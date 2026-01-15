@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.2.0
+
+### Minor Changes
+
+- [`d2d720b`](https://github.com/svycal/mjml-editor/commit/d2d720bd2b2dbb49361be7cdf337e2d2abeac3a0) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Add error state handling for invalid MJML structure in the visual editor and load the default Ubuntu font for proper preview rendering
+
 ## 0.1.0
 
 ### Minor Changes
