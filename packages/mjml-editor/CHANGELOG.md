@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.3.0
+
+### Minor Changes
+
+- [`e83800b`](https://github.com/svycal/mjml-editor/commit/e83800b1bf69c686e65459da95104e560eea1cd2) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Add drag-and-drop validation to enforce MJML nesting rules. Invalid drop operations (e.g., dropping a column outside a section or a text block outside a column) are now prevented in the outline tree.
+
 ## 0.2.0
 
 ### Minor Changes
