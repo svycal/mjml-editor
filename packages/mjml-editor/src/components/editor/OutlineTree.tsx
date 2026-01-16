@@ -1,5 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
-import { Tree, type NodeRendererProps, type TreeApi } from 'react-arborist';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  Tree,
+  type NodeRendererProps,
+  type TreeApi,
+  type NodeApi,
+} from 'react-arborist';
 import {
   Plus,
   Columns,
@@ -24,6 +29,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { contentBlockTypes } from '@/lib/mjml/schema';
+import { canBeChildOf, isContentBlock } from '@/lib/mjml/nesting-rules';
 import type { MjmlNode, ContentBlockType } from '@/types/mjml';
 import { cn } from '@/lib/utils';
 
@@ -298,6 +304,41 @@ export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
     }
   };
 
+  // Validate if a drop operation should be allowed based on MJML nesting rules
+  const handleDisableDrop = useCallback(
+    ({
+      parentNode,
+      dragNodes,
+    }: {
+      parentNode: NodeApi<MjmlNode> | null;
+      dragNodes: NodeApi<MjmlNode>[];
+    }): boolean => {
+      // When parentNode is null, we're dropping at root level (into mj-body)
+      const parentTagName = parentNode?.data?.tagName || 'mj-body';
+
+      // Content blocks can't accept children
+      if (isContentBlock(parentTagName)) {
+        return true;
+      }
+
+      // Check each dragged node
+      for (const dragNode of dragNodes) {
+        // Check if the dragged node can be a child of the target parent
+        if (!canBeChildOf(dragNode.data.tagName, parentTagName)) {
+          return true;
+        }
+
+        // Prevent dropping a node into itself or its descendants
+        if (parentNode && dragNode.isAncestorOf(parentNode)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    []
+  );
+
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -374,6 +415,7 @@ export function OutlineTree({ onTogglePanel }: OutlineTreeProps) {
             paddingTop={8}
             paddingBottom={8}
             onMove={handleMove}
+            disableDrop={handleDisableDrop}
           >
             {TreeNode}
           </Tree>

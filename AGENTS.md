@@ -21,7 +21,7 @@ A React component library that provides a visual editor for MJML email templates
 
 ## Package Manager
 
-Always use `pnpm` instead of `npm`:
+Always use `pnpm`. Never use `npm` or `bun`:
 
 ```bash
 # Correct
@@ -31,7 +31,9 @@ pnpm build
 
 # Incorrect
 npm install
+bun install
 npm run dev
+bun run dev
 ```
 
 ## Tech Stack
