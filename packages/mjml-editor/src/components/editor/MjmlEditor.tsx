@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState, useRef } from 'react';
 import { EditorProvider, useEditor } from '@/context/EditorContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { LiquidSchemaProvider } from '@/context/LiquidSchemaContext';
+import { ExtensionsProvider } from '@/context/ExtensionsContext';
 import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
 import { EditorCanvas, type EditorTabType } from './EditorCanvas';
 import { BlockInspector } from './BlockInspector';
@@ -12,7 +13,7 @@ import {
   serializeMjml,
   createEmptyDocument,
 } from '@/lib/mjml/parser';
-import type { MjmlNode } from '@/types/mjml';
+import type { MjmlNode, EditorExtensions } from '@/types/mjml';
 import type { LiquidSchema } from '@/types/liquid';
 
 function parseInitialValue(value: string): MjmlNode {
@@ -33,6 +34,22 @@ interface MjmlEditorProps {
   className?: string;
   defaultTheme?: 'light' | 'dark' | 'system';
   liquidSchema?: LiquidSchema;
+  /**
+   * Enable optional editor extensions.
+   * Extensions provide opt-in features beyond standard MJML.
+   *
+   * Available extensions:
+   * - `conditionalBlocks`: Enable `sc-if` attribute for server-side conditional rendering
+   *
+   * @example
+   * ```tsx
+   * <MjmlEditor
+   *   extensions={{ conditionalBlocks: true }}
+   *   // ...
+   * />
+   * ```
+   */
+  extensions?: EditorExtensions;
   /**
    * Whether to apply the theme class to document.documentElement.
    * This is needed for Radix UI portals (popovers, menus, etc.) which
@@ -229,6 +246,7 @@ export function MjmlEditor({
   className,
   defaultTheme = 'system',
   liquidSchema,
+  extensions,
   applyThemeToDocument = true,
   showThemeToggle = true,
   defaultLeftPanelOpen = true,
@@ -263,18 +281,20 @@ export function MjmlEditor({
       defaultTheme={defaultTheme}
       applyToDocument={applyThemeToDocument}
     >
-      <LiquidSchemaProvider schema={liquidSchema}>
-        <ThemedEditorWrapper className={className}>
-          <EditorProvider initialDocument={initialDocument}>
-            <EditorContent
-              onChange={handleChange}
-              showThemeToggle={showThemeToggle}
-              defaultLeftPanelOpen={defaultLeftPanelOpen}
-              defaultRightPanelOpen={defaultRightPanelOpen}
-            />
-          </EditorProvider>
-        </ThemedEditorWrapper>
-      </LiquidSchemaProvider>
+      <ExtensionsProvider extensions={extensions}>
+        <LiquidSchemaProvider schema={liquidSchema}>
+          <ThemedEditorWrapper className={className}>
+            <EditorProvider initialDocument={initialDocument}>
+              <EditorContent
+                onChange={handleChange}
+                showThemeToggle={showThemeToggle}
+                defaultLeftPanelOpen={defaultLeftPanelOpen}
+                defaultRightPanelOpen={defaultRightPanelOpen}
+              />
+            </EditorProvider>
+          </ThemedEditorWrapper>
+        </LiquidSchemaProvider>
+      </ExtensionsProvider>
     </ThemeProvider>
   );
 }

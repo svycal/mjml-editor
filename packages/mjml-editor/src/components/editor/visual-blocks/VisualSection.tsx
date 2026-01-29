@@ -1,4 +1,5 @@
 import { useEditor } from '@/context/EditorContext';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { VisualColumn } from './VisualColumn';
 import { ConditionalIndicator } from './ConditionalIndicator';
 import { cn } from '@/lib/utils';
@@ -12,8 +13,12 @@ interface VisualSectionProps {
 
 export function VisualSection({ node }: VisualSectionProps) {
   const { state, selectBlock } = useEditor();
+  const extensions = useExtensions();
   const isSelected = state.selectedBlockId === node._id;
   const attrs = useResolvedAttributes(node);
+
+  // Only show condition indicator if extension is enabled
+  const condition = extensions.conditionalBlocks ? attrs['sc-if'] : undefined;
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -90,7 +95,7 @@ export function VisualSection({ node }: VisualSectionProps) {
         style={wrapperStyle}
         onClick={handleClick}
       >
-        <ConditionalIndicator condition={attrs['sc-if']} />
+        <ConditionalIndicator condition={condition} />
         <div style={innerStyle}>
           {node.children?.map((child) => (
             <VisualSection key={child._id} node={child} />
@@ -167,7 +172,7 @@ export function VisualSection({ node }: VisualSectionProps) {
         style={sectionStyle}
         onClick={handleClick}
       >
-        <ConditionalIndicator condition={attrs['sc-if']} />
+        <ConditionalIndicator condition={condition} />
         {/* Columns container */}
         <div
           className="flex"
@@ -204,7 +209,7 @@ export function VisualSection({ node }: VisualSectionProps) {
         )}
         onClick={handleClick}
       >
-        <ConditionalIndicator condition={attrs['sc-if']} />
+        <ConditionalIndicator condition={condition} />
         {columns.map((column) => (
           <VisualColumn
             key={column._id}

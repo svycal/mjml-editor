@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronRight, X, PanelRightClose } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getSchemaForTag } from '@/lib/mjml/schema';
+import { getSchemaForTag, filterSchemaByExtensions } from '@/lib/mjml/schema';
 import {
   parseClassNames,
   addClassToNode,
@@ -131,6 +132,7 @@ interface BlockInspectorProps {
 export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
   const { selectedBlock, updateAttributes, getInheritedValue, definedClasses } =
     useEditor();
+  const extensions = useExtensions();
 
   if (!selectedBlock) {
     return (
@@ -162,7 +164,10 @@ export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
     );
   }
 
-  const schema = getSchemaForTag(selectedBlock.tagName);
+  const schema = filterSchemaByExtensions(
+    getSchemaForTag(selectedBlock.tagName),
+    extensions
+  );
   const tagLabel =
     selectedBlock.tagName.replace('mj-', '').charAt(0).toUpperCase() +
     selectedBlock.tagName.replace('mj-', '').slice(1);

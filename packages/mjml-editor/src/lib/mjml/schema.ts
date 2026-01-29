@@ -1,4 +1,8 @@
-import type { ComponentSchema, ContentBlockType } from '@/types/mjml';
+import type {
+  ComponentSchema,
+  ContentBlockType,
+  EditorExtensions,
+} from '@/types/mjml';
 
 // Section attributes - organized by group for inspector UI
 export const sectionSchema: ComponentSchema = {
@@ -178,6 +182,7 @@ export const sectionSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -356,6 +361,7 @@ export const wrapperSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -519,6 +525,7 @@ export const columnSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -675,6 +682,7 @@ export const textSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -884,6 +892,7 @@ export const imageSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1155,6 +1164,7 @@ export const buttonSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1251,6 +1261,7 @@ export const dividerSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1308,6 +1319,7 @@ export const spacerSchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1339,6 +1351,7 @@ export const bodySchema: ComponentSchema = {
     label: 'Condition (Liquid)',
     placeholder: 'event.is_recurring',
     group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1366,6 +1379,26 @@ export function getSchemaForTag(tagName: string): ComponentSchema | null {
     default:
       return null;
   }
+}
+
+/**
+ * Filter a component schema to only include attributes for enabled extensions.
+ * Attributes without an extension field are always included.
+ */
+export function filterSchemaByExtensions(
+  schema: ComponentSchema | null,
+  extensions: EditorExtensions
+): ComponentSchema | null {
+  if (!schema) return null;
+
+  return Object.fromEntries(
+    Object.entries(schema).filter(([, attr]) => {
+      // Always include attributes that don't belong to an extension
+      if (!attr.extension) return true;
+      // Only include extension attributes if that extension is enabled
+      return extensions[attr.extension] === true;
+    })
+  );
 }
 
 // Content block definitions for the add block picker

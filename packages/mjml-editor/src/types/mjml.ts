@@ -8,6 +8,21 @@ export interface MjmlNode {
   _id?: string;
 }
 
+/**
+ * Editor extensions configuration.
+ * Extensions provide opt-in features beyond standard MJML.
+ */
+export interface EditorExtensions {
+  /**
+   * Enable conditional blocks with the `sc-if` attribute.
+   * When enabled, blocks can have a Liquid condition that controls
+   * server-side rendering. The attribute is preserved in MJML output
+   * but stripped from preview rendering.
+   * @default false
+   */
+  conditionalBlocks?: boolean;
+}
+
 // mj-font configuration
 export interface MjmlFont {
   name: string;
@@ -70,6 +85,11 @@ export interface AttributeSchema {
   options?: { value: string; label: string }[]; // For select type
   placeholder?: string;
   group?: AttributeGroup; // For grouping in inspector UI
+  /**
+   * If set, this attribute is only available when the specified extension is enabled.
+   * Extension attributes are filtered out when their extension is disabled.
+   */
+  extension?: keyof EditorExtensions;
 }
 
 export type ComponentSchema = Record<string, AttributeSchema>;

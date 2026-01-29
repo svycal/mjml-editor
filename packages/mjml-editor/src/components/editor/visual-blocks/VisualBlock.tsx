@@ -1,4 +1,5 @@
 import type { MjmlNode } from '@/types/mjml';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { VisualText } from './VisualText';
 import { VisualImage } from './VisualImage';
 import { VisualButton } from './VisualButton';
@@ -38,7 +39,10 @@ function renderBlock(node: MjmlNode) {
 }
 
 export function VisualBlock({ node }: VisualBlockProps) {
-  const condition = node.attributes['sc-if'];
+  const extensions = useExtensions();
+  const condition = extensions.conditionalBlocks
+    ? node.attributes['sc-if']
+    : undefined;
 
   return (
     <div className="relative">

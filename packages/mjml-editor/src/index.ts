@@ -12,6 +12,7 @@ export type {
   ContentBlockType,
   EditorState,
   EditorAction,
+  EditorExtensions,
 } from './types/mjml';
 
 export type { LiquidSchema, LiquidSchemaItem } from './types/liquid';
