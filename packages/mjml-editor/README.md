@@ -92,6 +92,7 @@ function App() {
 | `className` | `string` | Optional CSS class for the container |
 | `defaultTheme` | `'light' \| 'dark' \| 'system'` | Theme preference (default: `'system'`) |
 | `liquidSchema` | `LiquidSchema` | Optional schema for Liquid template autocomplete |
+| `extensions` | `EditorExtensions` | Optional extensions for custom features beyond standard MJML |
 | `applyThemeToDocument` | `boolean` | Whether to apply theme class to `document.documentElement`. Needed for dropdown/popover theming. Set to `false` if your app manages document-level theme classes. (default: `true`) |
 
 ## Liquid Template Support
@@ -129,6 +130,65 @@ function App() {
 
 When editing text content, typing `{{` will trigger variable autocomplete and `{%` will trigger tag autocomplete.
 
+## Extensions
+
+Extensions provide opt-in features beyond standard MJML. All extensions are disabled by default to maintain compatibility with stock MJML.
+
+```tsx
+import { MjmlEditor, type EditorExtensions } from '@savvycal/mjml-editor';
+
+function App() {
+  const [mjml, setMjml] = useState(initialMjml);
+
+  return (
+    <MjmlEditor
+      value={mjml}
+      onChange={setMjml}
+      extensions={{
+        conditionalBlocks: true,
+      }}
+    />
+  );
+}
+```
+
+### Available Extensions
+
+#### `conditionalBlocks`
+
+Enables the `sc-if` attribute for server-side conditional rendering using Liquid expressions.
+
+When enabled:
+- A "Condition (Liquid)" field appears in the Advanced section of the inspector for all block types
+- Blocks with conditions display an "if" badge indicator in both the canvas and outline tree
+- The Advanced section auto-expands when a block has a condition
+
+**How it works:**
+- The `sc-if` attribute is preserved in the MJML output for server-side processing
+- The attribute is stripped from preview rendering to avoid MJML validation warnings
+- Your server processes the Liquid condition and conditionally renders the block
+
+**Example MJML output:**
+
+```xml
+<mj-section sc-if="event.is_recurring">
+  <mj-column>
+    <mj-text>This section only appears for recurring events.</mj-text>
+  </mj-column>
+</mj-section>
+```
+
+**Server-side processing example (Ruby/Liquid):**
+
+```ruby
+# Before sending, wrap sc-if blocks with Liquid conditionals
+mjml = mjml.gsub(/<(mj-\w+)([^>]*)\ssc-if="([^"]+)"([^>]*)>/) do
+  tag, before, condition, after = $1, $2, $3, $4
+  "{% if #{condition} %}<#{tag}#{before}#{after}>"
+end
+# Don't forget to add closing {% endif %} tags as well
+```
+
 ## Exported Types
 
 The library exports TypeScript types for integration:
@@ -138,9 +198,18 @@ import type {
   MjmlNode,          // MJML document node structure
   MjmlTagName,       // Union of supported MJML tag names
   ContentBlockType,  // Union of content block types
+  EditorExtensions,  // Extensions configuration
   LiquidSchema,      // Schema for Liquid autocomplete
   LiquidSchemaItem,  // Individual variable/tag definition
 } from '@savvycal/mjml-editor';
+```
+
+### EditorExtensions
+
+```typescript
+interface EditorExtensions {
+  conditionalBlocks?: boolean; // Enable sc-if attribute for conditional rendering
+}
 ```
 
 ### LiquidSchema
