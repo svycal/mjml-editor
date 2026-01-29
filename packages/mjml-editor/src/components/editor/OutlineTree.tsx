@@ -174,6 +174,16 @@ function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
         {getDisplayName(data.tagName)}
       </span>
 
+      {/* Conditional indicator */}
+      {data.attributes['sc-if'] && (
+        <span
+          className="text-[10px] px-1 py-0.5 bg-amber-500 text-white rounded font-mono mr-1"
+          title={`Condition: ${data.attributes['sc-if']}`}
+        >
+          if
+        </span>
+      )}
+
       {/* Action buttons - visible on hover */}
       <div
         className={cn(

@@ -1,5 +1,6 @@
 import { useEditor } from '@/context/EditorContext';
 import { VisualColumn } from './VisualColumn';
+import { ConditionalIndicator } from './ConditionalIndicator';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
@@ -89,6 +90,7 @@ export function VisualSection({ node }: VisualSectionProps) {
         style={wrapperStyle}
         onClick={handleClick}
       >
+        <ConditionalIndicator condition={attrs['sc-if']} />
         <div style={innerStyle}>
           {node.children?.map((child) => (
             <VisualSection key={child._id} node={child} />
@@ -165,6 +167,7 @@ export function VisualSection({ node }: VisualSectionProps) {
         style={sectionStyle}
         onClick={handleClick}
       >
+        <ConditionalIndicator condition={attrs['sc-if']} />
         {/* Columns container */}
         <div
           className="flex"
@@ -201,6 +204,7 @@ export function VisualSection({ node }: VisualSectionProps) {
         )}
         onClick={handleClick}
       >
+        <ConditionalIndicator condition={attrs['sc-if']} />
         {columns.map((column) => (
           <VisualColumn
             key={column._id}

@@ -1,5 +1,6 @@
 import { useEditor } from '@/context/EditorContext';
 import { VisualBlock } from './VisualBlock';
+import { ConditionalIndicator } from './ConditionalIndicator';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
@@ -113,6 +114,7 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
       style={columnStyle}
       onClick={handleClick}
     >
+      <ConditionalIndicator condition={attrs['sc-if']} />
       {hasInnerStyling ? (
         <div style={innerStyle}>
           {contentBlocks.map((block) => (

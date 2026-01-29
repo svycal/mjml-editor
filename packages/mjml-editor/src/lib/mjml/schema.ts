@@ -173,6 +173,12 @@ export const sectionSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+  },
 };
 
 // Wrapper attributes - organized by group for inspector UI
@@ -345,6 +351,12 @@ export const wrapperSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+  },
 };
 
 // Column attributes - organized by group for inspector UI
@@ -502,6 +514,12 @@ export const columnSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+  },
 };
 
 // Text attributes - organized by group for inspector UI
@@ -650,6 +668,12 @@ export const textSchema: ComponentSchema = {
     type: 'text',
     label: 'CSS Class',
     placeholder: 'custom-class',
+    group: 'advanced',
+  },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
     group: 'advanced',
   },
 };
@@ -853,6 +877,12 @@ export const imageSchema: ComponentSchema = {
     type: 'text',
     label: 'CSS Class',
     placeholder: 'custom-class',
+    group: 'advanced',
+  },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
     group: 'advanced',
   },
 };
@@ -1120,6 +1150,12 @@ export const buttonSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+  },
 };
 
 // Divider attributes - organized by group for inspector UI
@@ -1210,6 +1246,12 @@ export const dividerSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+  },
 };
 
 // Spacer attributes - organized by group for inspector UI
@@ -1261,6 +1303,12 @@ export const spacerSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+  },
 };
 
 // Body attributes - organized by group for inspector UI
@@ -1284,6 +1332,12 @@ export const bodySchema: ComponentSchema = {
     type: 'text',
     label: 'CSS Class',
     placeholder: 'custom-class',
+    group: 'advanced',
+  },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
     group: 'advanced',
   },
 };

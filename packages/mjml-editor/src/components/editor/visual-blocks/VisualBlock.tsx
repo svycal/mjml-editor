@@ -6,12 +6,13 @@ import { VisualDivider } from './VisualDivider';
 import { VisualSpacer } from './VisualSpacer';
 import { VisualSocial } from './VisualSocial';
 import { VisualRaw } from './VisualRaw';
+import { ConditionalIndicator } from './ConditionalIndicator';
 
 interface VisualBlockProps {
   node: MjmlNode;
 }
 
-export function VisualBlock({ node }: VisualBlockProps) {
+function renderBlock(node: MjmlNode) {
   switch (node.tagName) {
     case 'mj-text':
       return <VisualText node={node} />;
@@ -34,4 +35,15 @@ export function VisualBlock({ node }: VisualBlockProps) {
         </div>
       );
   }
+}
+
+export function VisualBlock({ node }: VisualBlockProps) {
+  const condition = node.attributes['sc-if'];
+
+  return (
+    <div className="relative">
+      <ConditionalIndicator condition={condition} />
+      {renderBlock(node)}
+    </div>
+  );
 }
