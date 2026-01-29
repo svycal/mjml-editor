@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.4.0
+
+### Minor Changes
+
+- [#6](https://github.com/svycal/mjml-editor/pull/6) [`2351829`](https://github.com/svycal/mjml-editor/commit/235182992ff865c7246d666fd67c46590473066a) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Add conditional blocks extension
+
 ## 0.3.0
 
 ### Minor Changes
