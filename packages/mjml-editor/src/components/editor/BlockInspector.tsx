@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, X, PanelRightClose } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { useExtensions } from '@/context/ExtensionsContext';
@@ -228,6 +228,12 @@ export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
                 groupedAttributes={groupedAttributes}
                 selectedBlock={selectedBlock}
                 handleAttributeChange={handleAttributeChange}
+                defaultOpenGroups={
+                  extensions.conditionalBlocks &&
+                  selectedBlock.attributes['sc-if']
+                    ? { advanced: true }
+                    : {}
+                }
               />
             ) : (
               <div className="space-y-5">
@@ -258,15 +264,24 @@ interface GroupedAttributeEditorProps {
   groupedAttributes: Record<string, { key: string; schema: AttributeSchema }[]>;
   selectedBlock: MjmlNode;
   handleAttributeChange: (key: string, value: string) => void;
+  defaultOpenGroups?: Record<string, boolean>;
 }
 
 function GroupedAttributeEditor({
   groupedAttributes,
   selectedBlock,
   handleAttributeChange,
+  defaultOpenGroups = {},
 }: GroupedAttributeEditorProps) {
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openGroups, setOpenGroups] =
+    useState<Record<string, boolean>>(defaultOpenGroups);
   const { getInheritedValue } = useEditor();
+
+  // Reset open groups when selected block changes
+  useEffect(() => {
+    setOpenGroups(defaultOpenGroups);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Reset only when block changes
+  }, [selectedBlock._id]);
 
   const toggleGroup = (group: string) => {
     setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));
