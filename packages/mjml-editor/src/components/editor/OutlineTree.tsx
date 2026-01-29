@@ -22,6 +22,7 @@ import {
   PanelLeftClose,
 } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -94,12 +95,18 @@ function canAddColumns(tagName: string): boolean {
 // Custom node renderer for the tree
 function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
   const { state, selectBlock, deleteBlock, addBlock, addColumn } = useEditor();
+  const extensions = useExtensions();
   const [isAddOpen, setIsAddOpen] = useState(false);
 
   const data = node.data;
   const isSelected = state.selectedBlockId === data._id;
   const hasChildren = node.children && node.children.length > 0;
   const showExpandButton = canHaveChildren(data.tagName);
+
+  // Only show condition indicator if extension is enabled
+  const condition = extensions.conditionalBlocks
+    ? data.attributes['sc-if']
+    : undefined;
 
   const handleSelect = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -173,6 +180,16 @@ function TreeNode({ node, style, dragHandle }: NodeRendererProps<MjmlNode>) {
       <span className="flex-1 ml-2 text-sm truncate text-foreground">
         {getDisplayName(data.tagName)}
       </span>
+
+      {/* Conditional indicator */}
+      {condition && (
+        <span
+          className="text-[10px] px-1 py-0.5 bg-amber-500 text-white rounded font-mono mr-1"
+          title={`Condition: ${condition}`}
+        >
+          if
+        </span>
+      )}
 
       {/* Action buttons - visible on hover */}
       <div

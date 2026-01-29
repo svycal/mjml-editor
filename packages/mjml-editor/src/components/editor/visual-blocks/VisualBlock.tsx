@@ -1,4 +1,5 @@
 import type { MjmlNode } from '@/types/mjml';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { VisualText } from './VisualText';
 import { VisualImage } from './VisualImage';
 import { VisualButton } from './VisualButton';
@@ -6,12 +7,13 @@ import { VisualDivider } from './VisualDivider';
 import { VisualSpacer } from './VisualSpacer';
 import { VisualSocial } from './VisualSocial';
 import { VisualRaw } from './VisualRaw';
+import { ConditionalIndicator } from './ConditionalIndicator';
 
 interface VisualBlockProps {
   node: MjmlNode;
 }
 
-export function VisualBlock({ node }: VisualBlockProps) {
+function renderBlock(node: MjmlNode) {
   switch (node.tagName) {
     case 'mj-text':
       return <VisualText node={node} />;
@@ -34,4 +36,18 @@ export function VisualBlock({ node }: VisualBlockProps) {
         </div>
       );
   }
+}
+
+export function VisualBlock({ node }: VisualBlockProps) {
+  const extensions = useExtensions();
+  const condition = extensions.conditionalBlocks
+    ? node.attributes['sc-if']
+    : undefined;
+
+  return (
+    <div className="relative">
+      <ConditionalIndicator condition={condition} />
+      {renderBlock(node)}
+    </div>
+  );
 }

@@ -1,4 +1,8 @@
-import type { ComponentSchema, ContentBlockType } from '@/types/mjml';
+import type {
+  ComponentSchema,
+  ContentBlockType,
+  EditorExtensions,
+} from '@/types/mjml';
 
 // Section attributes - organized by group for inspector UI
 export const sectionSchema: ComponentSchema = {
@@ -173,6 +177,13 @@ export const sectionSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
+  },
 };
 
 // Wrapper attributes - organized by group for inspector UI
@@ -345,6 +356,13 @@ export const wrapperSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
+  },
 };
 
 // Column attributes - organized by group for inspector UI
@@ -502,6 +520,13 @@ export const columnSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
+  },
 };
 
 // Text attributes - organized by group for inspector UI
@@ -651,6 +676,13 @@ export const textSchema: ComponentSchema = {
     label: 'CSS Class',
     placeholder: 'custom-class',
     group: 'advanced',
+  },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -854,6 +886,13 @@ export const imageSchema: ComponentSchema = {
     label: 'CSS Class',
     placeholder: 'custom-class',
     group: 'advanced',
+  },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1120,6 +1159,13 @@ export const buttonSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
+  },
 };
 
 // Divider attributes - organized by group for inspector UI
@@ -1210,6 +1256,13 @@ export const dividerSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
+  },
 };
 
 // Spacer attributes - organized by group for inspector UI
@@ -1261,6 +1314,13 @@ export const spacerSchema: ComponentSchema = {
     placeholder: 'custom-class',
     group: 'advanced',
   },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
+  },
 };
 
 // Body attributes - organized by group for inspector UI
@@ -1285,6 +1345,13 @@ export const bodySchema: ComponentSchema = {
     label: 'CSS Class',
     placeholder: 'custom-class',
     group: 'advanced',
+  },
+  'sc-if': {
+    type: 'text',
+    label: 'Condition (Liquid)',
+    placeholder: 'event.is_recurring',
+    group: 'advanced',
+    extension: 'conditionalBlocks',
   },
 };
 
@@ -1312,6 +1379,26 @@ export function getSchemaForTag(tagName: string): ComponentSchema | null {
     default:
       return null;
   }
+}
+
+/**
+ * Filter a component schema to only include attributes for enabled extensions.
+ * Attributes without an extension field are always included.
+ */
+export function filterSchemaByExtensions(
+  schema: ComponentSchema | null,
+  extensions: EditorExtensions
+): ComponentSchema | null {
+  if (!schema) return null;
+
+  return Object.fromEntries(
+    Object.entries(schema).filter(([, attr]) => {
+      // Always include attributes that don't belong to an extension
+      if (!attr.extension) return true;
+      // Only include extension attributes if that extension is enabled
+      return extensions[attr.extension] === true;
+    })
+  );
 }
 
 // Content block definitions for the add block picker

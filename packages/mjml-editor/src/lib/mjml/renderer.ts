@@ -6,6 +6,30 @@ export interface RenderResult {
   errors: { line: number; message: string; tagName: string }[];
 }
 
+/**
+ * List of custom attributes that should be stripped before MJML rendering.
+ * These are processed server-side and not recognized by mjml-browser.
+ */
+const CUSTOM_ATTRIBUTES = ['sc-if'];
+
+/**
+ * Strip custom attributes from node tree for preview rendering.
+ * This prevents "Attribute sc-if is illegal" warnings from mjml-browser.
+ */
+function stripCustomAttributes(node: MjmlNode): MjmlNode {
+  const filteredAttributes = Object.fromEntries(
+    Object.entries(node.attributes || {}).filter(
+      ([key]) => !CUSTOM_ATTRIBUTES.includes(key)
+    )
+  );
+
+  return {
+    ...node,
+    attributes: filteredAttributes,
+    children: node.children?.map(stripCustomAttributes),
+  };
+}
+
 // Lazy-load mjml-browser to avoid SSR issues (it accesses `window` on import)
 let mjml2html: typeof import('mjml-browser').default | null = null;
 
@@ -98,12 +122,15 @@ function escapeAttr(value: string): string {
 }
 
 /**
- * Render MJML JSON to HTML
+ * Render MJML JSON to HTML.
+ * Custom attributes (like sc-if) are stripped to prevent mjml-browser warnings.
  */
 export async function renderMjml(document: MjmlNode): Promise<RenderResult> {
   try {
     const mjml = await getMjml2Html();
-    const mjmlString = serializeMjml(document);
+    // Strip custom attributes before rendering to avoid "illegal attribute" warnings
+    const strippedDocument = stripCustomAttributes(document);
+    const mjmlString = serializeMjml(strippedDocument);
     const result = mjml(mjmlString, {
       validationLevel: 'soft',
     });
@@ -122,14 +149,33 @@ export async function renderMjml(document: MjmlNode): Promise<RenderResult> {
 }
 
 /**
- * Render MJML string to HTML
+ * Strip custom attributes from an MJML string using regex.
+ * This handles cases where we only have a string, not a parsed node tree.
+ */
+function stripCustomAttributesFromString(mjmlString: string): string {
+  // Create a regex pattern that matches any custom attribute
+  // Pattern matches: attribute="value" or attribute='value'
+  for (const attr of CUSTOM_ATTRIBUTES) {
+    const pattern = new RegExp(`\\s+${attr}="[^"]*"`, 'g');
+    mjmlString = mjmlString.replace(pattern, '');
+    const patternSingleQuote = new RegExp(`\\s+${attr}='[^']*'`, 'g');
+    mjmlString = mjmlString.replace(patternSingleQuote, '');
+  }
+  return mjmlString;
+}
+
+/**
+ * Render MJML string to HTML.
+ * Custom attributes (like sc-if) are stripped to prevent mjml-browser warnings.
  */
 export async function renderMjmlString(
   mjmlString: string
 ): Promise<RenderResult> {
   try {
     const mjml = await getMjml2Html();
-    const result = mjml(mjmlString, {
+    // Strip custom attributes before rendering to avoid "illegal attribute" warnings
+    const strippedMjml = stripCustomAttributesFromString(mjmlString);
+    const result = mjml(strippedMjml, {
       validationLevel: 'soft',
     });
 
@@ -147,16 +193,18 @@ export async function renderMjmlString(
 }
 
 /**
- * Render MJML JSON to HTML with block IDs preserved as CSS classes
- * This allows clicking elements in the preview to identify the source block
+ * Render MJML JSON to HTML with block IDs preserved as CSS classes.
+ * This allows clicking elements in the preview to identify the source block.
+ * Custom attributes (like sc-if) are stripped to prevent mjml-browser warnings.
  */
 export async function renderMjmlInteractive(
   document: MjmlNode
 ): Promise<RenderResult> {
   try {
     const mjml = await getMjml2Html();
-    // Add mj-class attributes with block IDs
-    const withClasses = addBlockClasses(document);
+    // Strip custom attributes first, then add mj-class attributes with block IDs
+    const strippedDocument = stripCustomAttributes(document);
+    const withClasses = addBlockClasses(strippedDocument);
     const mjmlString = serializeMjmlWithClasses(withClasses);
 
     const result = mjml(mjmlString, {

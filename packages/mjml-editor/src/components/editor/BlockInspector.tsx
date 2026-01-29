@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, X, PanelRightClose } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getSchemaForTag } from '@/lib/mjml/schema';
+import { getSchemaForTag, filterSchemaByExtensions } from '@/lib/mjml/schema';
 import {
   parseClassNames,
   addClassToNode,
@@ -131,6 +132,7 @@ interface BlockInspectorProps {
 export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
   const { selectedBlock, updateAttributes, getInheritedValue, definedClasses } =
     useEditor();
+  const extensions = useExtensions();
 
   if (!selectedBlock) {
     return (
@@ -162,7 +164,10 @@ export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
     );
   }
 
-  const schema = getSchemaForTag(selectedBlock.tagName);
+  const schema = filterSchemaByExtensions(
+    getSchemaForTag(selectedBlock.tagName),
+    extensions
+  );
   const tagLabel =
     selectedBlock.tagName.replace('mj-', '').charAt(0).toUpperCase() +
     selectedBlock.tagName.replace('mj-', '').slice(1);
@@ -223,6 +228,12 @@ export function BlockInspector({ onTogglePanel }: BlockInspectorProps) {
                 groupedAttributes={groupedAttributes}
                 selectedBlock={selectedBlock}
                 handleAttributeChange={handleAttributeChange}
+                defaultOpenGroups={
+                  extensions.conditionalBlocks &&
+                  selectedBlock.attributes['sc-if']
+                    ? { advanced: true }
+                    : {}
+                }
               />
             ) : (
               <div className="space-y-5">
@@ -253,15 +264,24 @@ interface GroupedAttributeEditorProps {
   groupedAttributes: Record<string, { key: string; schema: AttributeSchema }[]>;
   selectedBlock: MjmlNode;
   handleAttributeChange: (key: string, value: string) => void;
+  defaultOpenGroups?: Record<string, boolean>;
 }
 
 function GroupedAttributeEditor({
   groupedAttributes,
   selectedBlock,
   handleAttributeChange,
+  defaultOpenGroups = {},
 }: GroupedAttributeEditorProps) {
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openGroups, setOpenGroups] =
+    useState<Record<string, boolean>>(defaultOpenGroups);
   const { getInheritedValue } = useEditor();
+
+  // Reset open groups when selected block changes
+  useEffect(() => {
+    setOpenGroups(defaultOpenGroups);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Reset only when block changes
+  }, [selectedBlock._id]);
 
   const toggleGroup = (group: string) => {
     setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));

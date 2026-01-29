@@ -1,5 +1,7 @@
 import { useEditor } from '@/context/EditorContext';
+import { useExtensions } from '@/context/ExtensionsContext';
 import { VisualBlock } from './VisualBlock';
+import { ConditionalIndicator } from './ConditionalIndicator';
 import { cn } from '@/lib/utils';
 import type { MjmlNode } from '@/types/mjml';
 import { buildPadding } from './helpers';
@@ -12,8 +14,12 @@ interface VisualColumnProps {
 
 export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
   const { state, selectBlock } = useEditor();
+  const extensions = useExtensions();
   const isSelected = state.selectedBlockId === node._id;
   const attrs = useResolvedAttributes(node);
+
+  // Only show condition indicator if extension is enabled
+  const condition = extensions.conditionalBlocks ? attrs['sc-if'] : undefined;
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -113,6 +119,7 @@ export function VisualColumn({ node, totalColumns }: VisualColumnProps) {
       style={columnStyle}
       onClick={handleClick}
     >
+      <ConditionalIndicator condition={condition} />
       {hasInnerStyling ? (
         <div style={innerStyle}>
           {contentBlocks.map((block) => (
