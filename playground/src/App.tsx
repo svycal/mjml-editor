@@ -149,6 +149,7 @@ function App() {
           console.log(mjml);
         }}
         liquidSchema={liquidSchema}
+        extensions={{ conditionalBlocks: true }}
       />
     </div>
   );
