@@ -180,7 +180,7 @@ export const sectionSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -359,7 +359,7 @@ export const wrapperSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -523,7 +523,7 @@ export const columnSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -680,7 +680,7 @@ export const textSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -890,7 +890,7 @@ export const imageSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -1162,7 +1162,7 @@ export const buttonSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -1259,7 +1259,7 @@ export const dividerSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -1317,7 +1317,7 @@ export const spacerSchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
@@ -1349,7 +1349,7 @@ export const bodySchema: ComponentSchema = {
   'sc-if': {
     type: 'text',
     label: 'Condition (Liquid)',
-    placeholder: 'event.is_recurring',
+    placeholder: '',
     group: 'advanced',
     extension: 'conditionalBlocks',
   },
