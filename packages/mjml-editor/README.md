@@ -89,6 +89,7 @@ function App() {
 |------|------|-------------|
 | `value` | `string` | MJML markup string (required) |
 | `onChange` | `(mjml: string) => void` | Called when the document changes (required) |
+| `onSourceApply` | `(mjml: string) => void` | Called when Source tab **Apply** succeeds with valid MJML (optional) |
 | `className` | `string` | Optional CSS class for the container |
 | `defaultTheme` | `'light' \| 'dark' \| 'system'` | Theme preference (default: `'system'`) |
 | `liquidSchema` | `LiquidSchema` | Optional schema for Liquid template autocomplete |

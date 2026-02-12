@@ -5,6 +5,7 @@
 ### Minor Changes
 
 - Fix liquid link highlighting in visual editor
+- Add `onSourceApply` callback so embedding apps can react when Source tab Apply succeeds
 
 ## 0.4.0
 

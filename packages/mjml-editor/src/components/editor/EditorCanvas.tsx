@@ -19,6 +19,7 @@ interface EditorCanvasProps {
   leftPanelOpen?: boolean;
   rightPanelOpen?: boolean;
   showThemeToggle?: boolean;
+  onSourceApply?: (mjml: string) => void;
 }
 
 export function EditorCanvas({
@@ -27,6 +28,7 @@ export function EditorCanvas({
   leftPanelOpen,
   rightPanelOpen,
   showThemeToggle = true,
+  onSourceApply,
 }: EditorCanvasProps) {
   const { undo, redo, canUndo, canRedo } = useEditor();
   const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
@@ -129,7 +131,7 @@ export function EditorCanvas({
         {activeTab === 'preview' && (
           <InteractivePreview showHeader={false} previewMode={previewMode} />
         )}
-        {activeTab === 'source' && <SourceEditor />}
+        {activeTab === 'source' && <SourceEditor onApply={onSourceApply} />}
       </div>
     </div>
   );

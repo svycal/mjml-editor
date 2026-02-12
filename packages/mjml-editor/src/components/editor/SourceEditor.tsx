@@ -1,11 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useEditor } from '@/context/EditorContext';
 import { serializeMjml, parseMjml } from '@/lib/mjml/parser';
 import { ResizableSplitPane } from '@/components/ui/resizable-split-pane';
 import { SourcePreview } from './SourcePreview';
 
-export function SourceEditor() {
+interface SourceEditorProps {
+  onApply?: (mjml: string) => void;
+}
+
+export function SourceEditor({ onApply }: SourceEditorProps) {
   const { state, setDocument } = useEditor();
   const [source, setSource] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -20,26 +24,28 @@ export function SourceEditor() {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [state.document]);
 
-  const handleApply = () => {
+  const handleApply = useCallback(() => {
     try {
       const parsed = parseMjml(source);
       if (parsed.tagName !== 'mjml') {
         setError('Invalid MJML: Document must have an <mjml> root element');
         return;
       }
+      const appliedMjml = serializeMjml(parsed);
       setDocument(parsed);
+      onApply?.(appliedMjml);
       setError(null);
       setIsDirty(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to parse MJML');
     }
-  };
+  }, [source, setDocument, onApply]);
 
-  const handleChange = (value: string) => {
+  const handleChange = useCallback((value: string) => {
     setSource(value);
     setIsDirty(true);
     setError(null);
-  };
+  }, []);
 
   return (
     <ResizableSplitPane
