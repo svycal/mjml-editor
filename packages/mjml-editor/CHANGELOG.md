@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.5.0
+
+### Minor Changes
+
+- Fix liquid link highlighting in visual editor
+
 ## 0.4.0
 
 ### Minor Changes

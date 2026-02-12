@@ -57,17 +57,73 @@ export function mjmlToTiptapHtml(content: string): string {
 export function highlightLiquidTags(html: string): string {
   if (!html) return html;
 
-  // Match {{ ... }} patterns (variables)
-  let result = html.replace(
-    /(\{\{[^{}]*\}\})/g,
-    '<span class="liquid-highlight">$1</span>'
-  );
+  if (typeof document === 'undefined') {
+    return html;
+  }
 
-  // Match {% ... %} patterns (tags)
-  result = result.replace(
-    /(\{%[^{}]*%\})/g,
-    '<span class="liquid-highlight">$1</span>'
-  );
+  try {
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    const liquidPattern = /(\{\{[^{}]*\}\}|\{%[^{}]*%\})/g;
+    const textNodes: Text[] = [];
+    const walker = document.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
 
-  return result;
+    let node = walker.nextNode();
+    while (node) {
+      textNodes.push(node as Text);
+      node = walker.nextNode();
+    }
+
+    for (const textNode of textNodes) {
+      const parentElement = textNode.parentElement;
+      if (!parentElement) continue;
+
+      // Never mutate script/style text or already-highlighted content
+      const parentTag = parentElement.tagName.toLowerCase();
+      if (parentTag === 'script' || parentTag === 'style') continue;
+      if (parentElement.closest('.liquid-highlight')) continue;
+
+      const text = textNode.textContent || '';
+      liquidPattern.lastIndex = 0;
+
+      const matches = Array.from(text.matchAll(liquidPattern));
+      if (matches.length === 0) continue;
+
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+
+      for (const match of matches) {
+        const token = match[0];
+        const index = match.index ?? -1;
+        if (index < 0) continue;
+
+        if (index > lastIndex) {
+          fragment.appendChild(
+            document.createTextNode(text.slice(lastIndex, index))
+          );
+        }
+
+        const span = document.createElement('span');
+        span.className = 'liquid-highlight';
+        span.textContent = token;
+        fragment.appendChild(span);
+
+        lastIndex = index + token.length;
+      }
+
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+
+      textNode.parentNode?.replaceChild(fragment, textNode);
+    }
+
+    return container.innerHTML;
+  } catch {
+    return html;
+  }
 }
