@@ -70,8 +70,16 @@
 
   /* Block states */
   --block-hover: oklch(0.97 0.02 250);
-  --block-selected: oklch(0.40 0.15 250);
+  --block-selected: oklch(0.4 0.15 250);
   --block-selected-bg: oklch(0.96 0.02 250);
+
+  /* Source editor syntax colors */
+  --cm-tag: oklch(0.56 0.11 158);
+  --cm-attribute-name: oklch(0.53 0.11 78);
+  --cm-attribute-value: oklch(0.53 0.11 255);
+  --cm-punctuation: oklch(0.46 0.02 250);
+  --cm-comment: oklch(0.57 0.01 250);
+  --cm-invalid: oklch(0.56 0.2 25);
 
   /* Chart colors */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -92,10 +100,11 @@
 }
 
 /* Dark mode at root level (for Radix UI portals that render outside .mjml-editor) */
-:root.dark, .dark {
+:root.dark,
+.dark {
   --background: var(--color-zinc-950);
   --background-subtle: var(--color-zinc-900);
-  --canvas: oklch(0.10 0.005 250);
+  --canvas: oklch(0.1 0.005 250);
   --surface: var(--color-zinc-800);
   --foreground: var(--color-zinc-50);
   --foreground-muted: var(--color-zinc-400);
@@ -115,22 +124,28 @@
   --border: var(--color-zinc-700);
   --border-subtle: var(--color-zinc-800);
   --border-strong: var(--color-zinc-600);
-  --ring: oklch(0.60 0.15 250);
+  --ring: oklch(0.6 0.15 250);
   --selection: oklch(0.25 0.06 250);
   --selection-foreground: oklch(0.75 0.12 250);
   --input: var(--color-zinc-800);
-  --destructive: oklch(0.60 0.22 25);
+  --destructive: oklch(0.6 0.22 25);
   --inspector: var(--color-zinc-950);
   --inspector-header: var(--color-zinc-900);
   --toolbar: var(--color-zinc-950);
   --toolbar-border: var(--color-zinc-800);
-  --block-hover: oklch(0.20 0.03 250);
-  --block-selected: oklch(0.50 0.15 250);
+  --block-hover: oklch(0.2 0.03 250);
+  --block-selected: oklch(0.5 0.15 250);
   --block-selected-bg: oklch(0.22 0.04 250);
-  --chart-1: oklch(0.70 0.20 41);
+  --cm-tag: oklch(0.78 0.11 158);
+  --cm-attribute-name: oklch(0.81 0.1 80);
+  --cm-attribute-value: oklch(0.79 0.11 255);
+  --cm-punctuation: oklch(0.72 0.02 250);
+  --cm-comment: oklch(0.64 0.01 250);
+  --cm-invalid: oklch(0.72 0.17 25);
+  --chart-1: oklch(0.7 0.2 41);
   --chart-2: oklch(0.65 0.12 185);
-  --chart-3: oklch(0.50 0.08 227);
-  --chart-4: oklch(0.80 0.17 84);
+  --chart-3: oklch(0.5 0.08 227);
+  --chart-4: oklch(0.8 0.17 84);
   --chart-5: oklch(0.75 0.17 70);
   --sidebar: var(--color-zinc-950);
   --sidebar-foreground: var(--color-zinc-50);
@@ -139,7 +154,7 @@
   --sidebar-accent: var(--color-zinc-800);
   --sidebar-accent-foreground: var(--color-zinc-200);
   --sidebar-border: var(--color-zinc-800);
-  --sidebar-ring: oklch(0.60 0.15 250);
+  --sidebar-ring: oklch(0.6 0.15 250);
 }
 
 /* Scoped CSS variable defaults - applied to .mjml-editor container */
@@ -203,8 +218,16 @@
 
   /* Block states */
   --block-hover: oklch(0.97 0.02 250);
-  --block-selected: oklch(0.40 0.15 250);
+  --block-selected: oklch(0.4 0.15 250);
   --block-selected-bg: oklch(0.96 0.02 250);
+
+  /* Source editor syntax colors */
+  --cm-tag: oklch(0.56 0.11 158);
+  --cm-attribute-name: oklch(0.53 0.11 78);
+  --cm-attribute-value: oklch(0.53 0.11 255);
+  --cm-punctuation: oklch(0.46 0.02 250);
+  --cm-comment: oklch(0.57 0.01 250);
+  --cm-invalid: oklch(0.56 0.2 25);
 
   /* Chart colors */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -230,7 +253,7 @@
   /* Core backgrounds */
   --background: var(--color-zinc-950);
   --background-subtle: var(--color-zinc-900);
-  --canvas: oklch(0.10 0.005 250);
+  --canvas: oklch(0.1 0.005 250);
   --surface: var(--color-zinc-800);
 
   /* Foregrounds */
@@ -266,13 +289,13 @@
   --border-strong: var(--color-zinc-600);
 
   /* Focus/Selection */
-  --ring: oklch(0.60 0.15 250);
+  --ring: oklch(0.6 0.15 250);
   --selection: oklch(0.25 0.06 250);
   --selection-foreground: oklch(0.75 0.12 250);
   --input: var(--color-zinc-800);
 
   /* Destructive */
-  --destructive: oklch(0.60 0.22 25);
+  --destructive: oklch(0.6 0.22 25);
 
   /* Inspector */
   --inspector: var(--color-zinc-950);
@@ -283,15 +306,23 @@
   --toolbar-border: var(--color-zinc-800);
 
   /* Block states */
-  --block-hover: oklch(0.20 0.03 250);
-  --block-selected: oklch(0.50 0.15 250);
+  --block-hover: oklch(0.2 0.03 250);
+  --block-selected: oklch(0.5 0.15 250);
   --block-selected-bg: oklch(0.22 0.04 250);
 
+  /* Source editor syntax colors */
+  --cm-tag: oklch(0.78 0.11 158);
+  --cm-attribute-name: oklch(0.81 0.1 80);
+  --cm-attribute-value: oklch(0.79 0.11 255);
+  --cm-punctuation: oklch(0.72 0.02 250);
+  --cm-comment: oklch(0.64 0.01 250);
+  --cm-invalid: oklch(0.72 0.17 25);
+
   /* Chart colors - adjusted for dark bg */
-  --chart-1: oklch(0.70 0.20 41);
+  --chart-1: oklch(0.7 0.2 41);
   --chart-2: oklch(0.65 0.12 185);
-  --chart-3: oklch(0.50 0.08 227);
-  --chart-4: oklch(0.80 0.17 84);
+  --chart-3: oklch(0.5 0.08 227);
+  --chart-4: oklch(0.8 0.17 84);
   --chart-5: oklch(0.75 0.17 70);
 
   /* Sidebar */
@@ -302,7 +333,7 @@
   --sidebar-accent: var(--color-zinc-800);
   --sidebar-accent-foreground: var(--color-zinc-200);
   --sidebar-border: var(--color-zinc-800);
-  --sidebar-ring: oklch(0.60 0.15 250);
+  --sidebar-ring: oklch(0.6 0.15 250);
 }
 
 /* Force light mode within .light scope (e.g., email canvas preview) */
@@ -336,23 +367,38 @@
   --input: var(--color-zinc-300);
   --destructive: oklch(0.55 0.22 25);
   --block-hover: oklch(0.97 0.02 250);
-  --block-selected: oklch(0.40 0.15 250);
+  --block-selected: oklch(0.4 0.15 250);
   --block-selected-bg: oklch(0.96 0.02 250);
 }
 
 /* Source editor (CodeMirror) */
 .mjml-editor .source-editor .cm-editor {
   height: 100%;
-  background: var(--muted);
+  background: color-mix(in oklab, var(--muted) 78%, var(--background) 22%);
   color: var(--foreground);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
-  font-size: 0.875rem;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .mjml-editor .source-editor .cm-scroller {
   font-family: inherit;
-  line-height: 1.5;
+  line-height: inherit;
+}
+
+.mjml-editor .source-editor .cm-content,
+.mjml-editor .source-editor .cm-gutterElement {
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: normal;
+  font-variant-ligatures: none;
+}
+
+.mjml-editor .source-editor .cm-line {
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .mjml-editor .source-editor .cm-focused {

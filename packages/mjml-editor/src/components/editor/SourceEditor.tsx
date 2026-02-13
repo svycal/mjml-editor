@@ -11,8 +11,8 @@ import { EditorState } from '@codemirror/state';
 import {
   bracketMatching,
   indentUnit,
+  HighlightStyle,
   syntaxHighlighting,
-  defaultHighlightStyle,
 } from '@codemirror/language';
 import {
   EditorView,
@@ -29,6 +29,7 @@ import {
 } from '@codemirror/commands';
 import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
 import { xml } from '@codemirror/lang-xml';
+import { tags } from '@lezer/highlight';
 import { useEditor } from '@/context/EditorContext';
 import { serializeMjml, parseMjml } from '@/lib/mjml/parser';
 import { ResizableSplitPane } from '@/components/ui/resizable-split-pane';
@@ -38,6 +39,32 @@ interface SourceEditorProps {
   onApply?: (mjml: string) => void;
   onDirtyChange?: (isDirty: boolean) => void;
 }
+
+const mjmlHighlightStyle = HighlightStyle.define([
+  {
+    tag: tags.tagName,
+    color: 'var(--cm-tag, oklch(0.74 0.1 158))',
+    fontWeight: '600',
+  },
+  {
+    tag: tags.attributeName,
+    color: 'var(--cm-attribute-name, oklch(0.76 0.09 80))',
+  },
+  {
+    tag: [tags.attributeValue, tags.string],
+    color: 'var(--cm-attribute-value, oklch(0.77 0.1 255))',
+  },
+  {
+    tag: [tags.angleBracket, tags.bracket],
+    color: 'var(--cm-punctuation, oklch(0.7 0.02 250))',
+  },
+  { tag: tags.comment, color: 'var(--cm-comment, oklch(0.63 0.01 250))' },
+  {
+    tag: tags.invalid,
+    color: 'var(--cm-invalid, oklch(0.7 0.16 25))',
+    textDecoration: 'underline',
+  },
+]);
 
 export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
   const { state, setDocument } = useEditor();
@@ -81,7 +108,7 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
       indentUnit.of('  '),
       bracketMatching(),
       highlightSelectionMatches(),
-      syntaxHighlighting(defaultHighlightStyle),
+      syntaxHighlighting(mjmlHighlightStyle),
       EditorView.lineWrapping,
       keymap.of([
         indentWithTab,

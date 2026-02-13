@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## Unreleased
+
+### Patch Changes
+
+- Improve Source tab CodeMirror readability and host-app consistency by introducing theme-aware MJML syntax colors with resilient fallbacks, and by hardening editor typography/wrapping defaults against external CSS overrides.
+
 ## 0.5.0
 
 ### Minor Changes
