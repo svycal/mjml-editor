@@ -1,6 +1,6 @@
 # @savvycal/mjml-editor
 
-## Unreleased
+## 0.6.0
 
 ### Patch Changes
 
