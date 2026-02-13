@@ -80,6 +80,10 @@
   --cm-punctuation: oklch(0.46 0.02 250);
   --cm-comment: oklch(0.57 0.01 250);
   --cm-invalid: oklch(0.56 0.2 25);
+  --cm-caret: oklch(0.48 0.14 250);
+  --cm-selection-bg: color-mix(in oklab, var(--ring) 24%, transparent);
+  --cm-selection-fg: var(--foreground);
+  --cm-active-line-bg: color-mix(in oklab, var(--ring) 12%, transparent);
 
   /* Chart colors */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -142,6 +146,10 @@
   --cm-punctuation: oklch(0.72 0.02 250);
   --cm-comment: oklch(0.64 0.01 250);
   --cm-invalid: oklch(0.72 0.17 25);
+  --cm-caret: oklch(0.82 0.11 250);
+  --cm-selection-bg: color-mix(in oklab, var(--ring) 44%, transparent);
+  --cm-selection-fg: var(--foreground);
+  --cm-active-line-bg: color-mix(in oklab, var(--ring) 24%, transparent);
   --chart-1: oklch(0.7 0.2 41);
   --chart-2: oklch(0.65 0.12 185);
   --chart-3: oklch(0.5 0.08 227);
@@ -228,6 +236,10 @@
   --cm-punctuation: oklch(0.46 0.02 250);
   --cm-comment: oklch(0.57 0.01 250);
   --cm-invalid: oklch(0.56 0.2 25);
+  --cm-caret: oklch(0.48 0.14 250);
+  --cm-selection-bg: color-mix(in oklab, var(--ring) 24%, transparent);
+  --cm-selection-fg: var(--foreground);
+  --cm-active-line-bg: color-mix(in oklab, var(--ring) 12%, transparent);
 
   /* Chart colors */
   --chart-1: oklch(0.646 0.222 41.116);
@@ -317,6 +329,10 @@
   --cm-punctuation: oklch(0.72 0.02 250);
   --cm-comment: oklch(0.64 0.01 250);
   --cm-invalid: oklch(0.72 0.17 25);
+  --cm-caret: oklch(0.82 0.11 250);
+  --cm-selection-bg: color-mix(in oklab, var(--ring) 44%, transparent);
+  --cm-selection-fg: var(--foreground);
+  --cm-active-line-bg: color-mix(in oklab, var(--ring) 24%, transparent);
 
   /* Chart colors - adjusted for dark bg */
   --chart-1: oklch(0.7 0.2 41);
@@ -396,6 +412,10 @@
   font-variant-ligatures: none;
 }
 
+.mjml-editor .source-editor .cm-content {
+  caret-color: var(--cm-caret);
+}
+
 .mjml-editor .source-editor .cm-line {
   overflow-wrap: normal;
   word-break: normal;
@@ -413,12 +433,16 @@
 
 .mjml-editor .source-editor .cm-activeLine,
 .mjml-editor .source-editor .cm-activeLineGutter {
-  background: color-mix(in oklab, var(--accent) 80%, transparent);
+  background: var(--cm-active-line-bg);
 }
 
 .mjml-editor .source-editor .cm-selectionBackground,
 .mjml-editor .source-editor .cm-content ::selection {
-  background: var(--selection);
+  background: var(--cm-selection-bg);
+}
+
+.mjml-editor .source-editor .cm-content ::selection {
+  color: var(--cm-selection-fg);
 }
 
 .mjml-editor .source-editor .cm-searchMatch {
@@ -435,8 +459,9 @@
   outline: 1px solid var(--border-strong);
 }
 
-.mjml-editor .source-editor .cm-cursor {
-  border-left-color: var(--foreground);
+.mjml-editor .source-editor .cm-cursor,
+.mjml-editor .source-editor .cm-dropCursor {
+  border-left-color: var(--cm-caret) !important;
 }
 
 /* Tiptap Editor Styles */
