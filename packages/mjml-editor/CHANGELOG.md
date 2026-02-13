@@ -4,8 +4,10 @@
 
 ### Minor Changes
 
-- Fix liquid link highlighting in visual editor
-- Add `onSourceApply` callback so embedding apps can react when Source tab Apply succeeds
+- Fix liquid link highlighting in visual editor.
+- Add `onSourceApply` callback so embedding apps can react when Source tab Apply succeeds.
+- Add conditional blocks extension.
+- Prevent accidental loss of un-applied Source tab edits by showing a confirmation modal before switching away.
 
 ## 0.4.0
 

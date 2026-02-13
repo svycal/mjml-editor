@@ -7,9 +7,10 @@ import { SourcePreview } from './SourcePreview';
 
 interface SourceEditorProps {
   onApply?: (mjml: string) => void;
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
-export function SourceEditor({ onApply }: SourceEditorProps) {
+export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
   const { state, setDocument } = useEditor();
   const [source, setSource] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +47,17 @@ export function SourceEditor({ onApply }: SourceEditorProps) {
     setIsDirty(true);
     setError(null);
   }, []);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  useEffect(
+    () => () => {
+      onDirtyChange?.(false);
+    },
+    [onDirtyChange]
+  );
 
   return (
     <ResizableSplitPane
