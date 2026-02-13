@@ -15,15 +15,15 @@ A React-based visual editor for MJML email templates. Built for embedding in app
 
 ## Supported Components
 
-| Component | Description |
-|-----------|-------------|
-| `mj-section` | Row containers with background color/image |
-| `mj-column` | Responsive columns within sections |
-| `mj-text` | Text content with typography settings |
-| `mj-image` | Images with dimensions, alt text, and links |
-| `mj-button` | Call-to-action buttons with styling |
-| `mj-divider` | Horizontal separators |
-| `mj-spacer` | Vertical spacing |
+| Component    | Description                                 |
+| ------------ | ------------------------------------------- |
+| `mj-section` | Row containers with background color/image  |
+| `mj-column`  | Responsive columns within sections          |
+| `mj-text`    | Text content with typography settings       |
+| `mj-image`   | Images with dimensions, alt text, and links |
+| `mj-button`  | Call-to-action buttons with styling         |
+| `mj-divider` | Horizontal separators                       |
+| `mj-spacer`  | Vertical spacing                            |
 
 ## Installation
 
@@ -48,20 +48,22 @@ This library is designed to work with Tailwind CSS v4. Instead of bundling all s
 Add the following imports to your app's main CSS file:
 
 ```css
-@import "@savvycal/mjml-editor/preset.css";
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "@savvycal/mjml-editor/components.css";
+@import '@savvycal/mjml-editor/preset.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@savvycal/mjml-editor/components.css';
 ```
 
 **Note:** `preset.css` must come before `tailwindcss` so that `@theme` tokens are registered before Tailwind generates its utilities.
 
 The `preset.css` file includes:
+
 - `@source` directive that tells Tailwind to scan the library's dist files for utility classes (works with npm, yarn, and pnpm)
 - `@theme` tokens that map CSS variables to Tailwind utilities
 - Custom utilities (`bg-checkered`, `shadow-framer`, etc.)
 
 The `components.css` file includes:
+
 - Scoped CSS variables for the editor theme (light/dark mode)
 - Tiptap/ProseMirror editor styles
 
@@ -74,27 +76,23 @@ import { MjmlEditor } from '@savvycal/mjml-editor';
 function App() {
   const [mjml, setMjml] = useState(initialMjml);
 
-  return (
-    <MjmlEditor
-      value={mjml}
-      onChange={setMjml}
-    />
-  );
+  return <MjmlEditor value={mjml} onChange={setMjml} />;
 }
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `value` | `string` | MJML markup string (required) |
-| `onChange` | `(mjml: string) => void` | Called when the document changes (required) |
-| `onSourceApply` | `(mjml: string) => void` | Called when Source tab **Apply** succeeds with valid MJML (optional) |
-| `className` | `string` | Optional CSS class for the container |
-| `defaultTheme` | `'light' \| 'dark' \| 'system'` | Theme preference (default: `'system'`) |
-| `liquidSchema` | `LiquidSchema` | Optional schema for Liquid template autocomplete |
-| `extensions` | `EditorExtensions` | Optional extensions for custom features beyond standard MJML |
-| `applyThemeToDocument` | `boolean` | Whether to apply theme class to `document.documentElement`. Needed for dropdown/popover theming. Set to `false` if your app manages document-level theme classes. (default: `true`) |
+| Prop                   | Type                            | Description                                                                                                                                                                         |
+| ---------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`                | `string`                        | MJML markup string (required)                                                                                                                                                       |
+| `onChange`             | `(mjml: string) => void`        | Called when the document changes (required)                                                                                                                                         |
+| `className`            | `string`                        | Optional CSS class for the container                                                                                                                                                |
+| `defaultTheme`         | `'light' \| 'dark' \| 'system'` | Theme preference (default: `'system'`)                                                                                                                                              |
+| `liquidSchema`         | `LiquidSchema`                  | Optional schema for Liquid template autocomplete                                                                                                                                    |
+| `extensions`           | `EditorExtensions`              | Optional extensions for custom features beyond standard MJML                                                                                                                        |
+| `applyThemeToDocument` | `boolean`                       | Whether to apply theme class to `document.documentElement`. Needed for dropdown/popover theming. Set to `false` if your app manages document-level theme classes. (default: `true`) |
+
+When using the Source tab, valid MJML edits are applied automatically as you type.
 
 ## Liquid Template Support
 
@@ -120,11 +118,7 @@ function App() {
   const [mjml, setMjml] = useState(initialMjml);
 
   return (
-    <MjmlEditor
-      value={mjml}
-      onChange={setMjml}
-      liquidSchema={liquidSchema}
-    />
+    <MjmlEditor value={mjml} onChange={setMjml} liquidSchema={liquidSchema} />
   );
 }
 ```
@@ -160,11 +154,13 @@ function App() {
 Enables the `sc-if` attribute for server-side conditional rendering using Liquid expressions.
 
 When enabled:
+
 - A "Condition (Liquid)" field appears in the Advanced section of the inspector for all block types
 - Blocks with conditions display an "if" badge indicator in both the canvas and outline tree
 - The Advanced section auto-expands when a block has a condition
 
 **How it works:**
+
 - The `sc-if` attribute is preserved in the MJML output for server-side processing
 - The attribute is stripped from preview rendering to avoid MJML validation warnings
 - Your server processes the Liquid condition and conditionally renders the block
@@ -196,12 +192,12 @@ The library exports TypeScript types for integration:
 
 ```tsx
 import type {
-  MjmlNode,          // MJML document node structure
-  MjmlTagName,       // Union of supported MJML tag names
-  ContentBlockType,  // Union of content block types
-  EditorExtensions,  // Extensions configuration
-  LiquidSchema,      // Schema for Liquid autocomplete
-  LiquidSchemaItem,  // Individual variable/tag definition
+  MjmlNode, // MJML document node structure
+  MjmlTagName, // Union of supported MJML tag names
+  ContentBlockType, // Union of content block types
+  EditorExtensions, // Extensions configuration
+  LiquidSchema, // Schema for Liquid autocomplete
+  LiquidSchemaItem, // Individual variable/tag definition
 } from '@savvycal/mjml-editor';
 ```
 
@@ -217,13 +213,13 @@ interface EditorExtensions {
 
 ```typescript
 interface LiquidSchemaItem {
-  name: string;         // Variable or tag name (e.g., "user.name")
+  name: string; // Variable or tag name (e.g., "user.name")
   description?: string; // Description shown in autocomplete
 }
 
 interface LiquidSchema {
   variables: LiquidSchemaItem[]; // {{ variable }} syntax
-  tags: LiquidSchemaItem[];      // {% tag %} syntax
+  tags: LiquidSchemaItem[]; // {% tag %} syntax
 }
 ```
 
@@ -235,22 +231,22 @@ The library exports theme utilities if you need to integrate with or control the
 import { ThemeProvider, useTheme, ThemeToggle } from '@savvycal/mjml-editor';
 ```
 
-| Export | Description |
-|--------|-------------|
-| `ThemeProvider` | Context provider for theme management |
-| `useTheme()` | Hook returning `{ theme, setTheme }` |
-| `ThemeToggle` | Pre-built UI component for theme switching |
+| Export          | Description                                |
+| --------------- | ------------------------------------------ |
+| `ThemeProvider` | Context provider for theme management      |
+| `useTheme()`    | Hook returning `{ theme, setTheme }`       |
+| `ThemeToggle`   | Pre-built UI component for theme switching |
 
 Note: `MjmlEditor` includes its own `ThemeProvider`, so you don't need to wrap it. These exports are for advanced use cases where you need theme access outside the editor.
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Cmd/Ctrl + Z` | Undo |
-| `Cmd/Ctrl + Shift + Z` | Redo |
+| Shortcut               | Action                |
+| ---------------------- | --------------------- |
+| `Cmd/Ctrl + Z`         | Undo                  |
+| `Cmd/Ctrl + Shift + Z` | Redo                  |
 | `Delete` / `Backspace` | Delete selected block |
-| `Escape` | Deselect block |
+| `Escape`               | Deselect block        |
 
 ## Contributing
 

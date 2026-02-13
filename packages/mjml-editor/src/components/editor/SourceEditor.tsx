@@ -1,10 +1,4 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  type KeyboardEvent,
-} from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import { EditorState } from '@codemirror/state';
@@ -35,10 +29,7 @@ import { serializeMjml, parseMjml } from '@/lib/mjml/parser';
 import { ResizableSplitPane } from '@/components/ui/resizable-split-pane';
 import { SourcePreview } from './SourcePreview';
 
-interface SourceEditorProps {
-  onApply?: (mjml: string) => void;
-  onDirtyChange?: (isDirty: boolean) => void;
-}
+const SOURCE_SYNC_DEBOUNCE_MS = 350;
 
 const mjmlHighlightStyle = HighlightStyle.define([
   {
@@ -66,37 +57,46 @@ const mjmlHighlightStyle = HighlightStyle.define([
   },
 ]);
 
-export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
+export function SourceEditor() {
   const { state, setDocument } = useEditor();
   const [source, setSource] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isDirty, setIsDirty] = useState(false);
+  const suppressNextDocumentSyncRef = useRef(false);
+  const lastDocumentSourceRef = useRef('');
 
   useEffect(() => {
+    if (suppressNextDocumentSyncRef.current) {
+      suppressNextDocumentSyncRef.current = false;
+      return;
+    }
+
     const mjmlString = serializeMjml(state.document);
-    /* eslint-disable react-hooks/set-state-in-effect -- Intentional: sync source editor state with document state */
+    lastDocumentSourceRef.current = mjmlString;
+    /* eslint-disable react-hooks/set-state-in-effect -- Intentional: sync source editor with canonical document changes */
     setSource(mjmlString);
-    setIsDirty(false);
     setError(null);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [state.document]);
 
-  const handleApply = useCallback(() => {
-    try {
-      const parsed = parseMjml(source);
-      if (parsed.tagName !== 'mjml') {
-        setError('Invalid MJML: Document must have an <mjml> root element');
-        return;
+  const validateAndSyncSource = useCallback(
+    (value: string) => {
+      try {
+        const parsed = parseMjml(value);
+        if (parsed.tagName !== 'mjml') {
+          setError('Invalid MJML: Document must have an <mjml> root element');
+          return;
+        }
+
+        lastDocumentSourceRef.current = serializeMjml(parsed);
+        suppressNextDocumentSyncRef.current = true;
+        setDocument(parsed);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to parse MJML');
       }
-      const appliedMjml = serializeMjml(parsed);
-      setDocument(parsed);
-      onApply?.(appliedMjml);
-      setError(null);
-      setIsDirty(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to parse MJML');
-    }
-  }, [source, setDocument, onApply]);
+    },
+    [setDocument]
+  );
 
   const editorExtensions = useMemo(
     () => [
@@ -123,34 +123,20 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
 
   const handleChange = useCallback((value: string) => {
     setSource(value);
-    setIsDirty(true);
     setError(null);
   }, []);
 
-  const handleSourceKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLElement>) => {
-      if (event.defaultPrevented) {
-        return;
-      }
-
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-        event.preventDefault();
-        handleApply();
-      }
-    },
-    [handleApply]
-  );
-
   useEffect(() => {
-    onDirtyChange?.(isDirty);
-  }, [isDirty, onDirtyChange]);
+    if (source === lastDocumentSourceRef.current) {
+      return;
+    }
 
-  useEffect(
-    () => () => {
-      onDirtyChange?.(false);
-    },
-    [onDirtyChange]
-  );
+    const timeoutId = window.setTimeout(() => {
+      validateAndSyncSource(source);
+    }, SOURCE_SYNC_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [source, validateAndSyncSource]);
 
   return (
     <ResizableSplitPane
@@ -163,13 +149,13 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
           <div className="flex items-start gap-3 p-3 rounded-md bg-amber-50 border border-amber-200 text-amber-800">
             <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <p className="text-sm">
-              You are editing the raw MJML source. Changes may affect the visual
-              editor.
+              You are editing raw MJML source. Valid changes sync to the visual
+              editor automatically.
             </p>
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 p-4" onKeyDown={handleSourceKeyDown}>
+        <div className="flex-1 min-h-0 p-4">
           <CodeMirror
             value={source}
             onChange={handleChange}
@@ -183,16 +169,9 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
         </div>
 
         <div className="px-4 pb-4 flex items-center gap-3">
-          <button
-            onClick={handleApply}
-            disabled={!isDirty}
-            className="px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Apply
-          </button>
-          {isDirty && !error && (
+          {!error && (
             <span className="text-sm text-foreground-muted">
-              Unsaved changes
+              Changes sync automatically
             </span>
           )}
           {error && <span className="text-sm text-destructive">{error}</span>}

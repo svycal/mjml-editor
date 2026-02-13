@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Undo2, Redo2, Monitor, Smartphone } from 'lucide-react';
 import { VisualEditor } from './VisualEditor';
 import { InteractivePreview } from './InteractivePreview';
@@ -19,7 +19,6 @@ interface EditorCanvasProps {
   leftPanelOpen?: boolean;
   rightPanelOpen?: boolean;
   showThemeToggle?: boolean;
-  onSourceApply?: (mjml: string) => void;
 }
 
 export function EditorCanvas({
@@ -28,50 +27,16 @@ export function EditorCanvas({
   leftPanelOpen,
   rightPanelOpen,
   showThemeToggle = true,
-  onSourceApply,
 }: EditorCanvasProps) {
   const { undo, redo, canUndo, canRedo } = useEditor();
   const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
-  const [sourceDirty, setSourceDirty] = useState(false);
-  const [pendingTab, setPendingTab] = useState<EditorTabType | null>(null);
-  const [showDiscardModal, setShowDiscardModal] = useState(false);
-
-  const handleTabClick = useCallback(
-    (nextTab: EditorTabType) => {
-      if (nextTab === activeTab) return;
-
-      if (activeTab === 'source' && sourceDirty) {
-        setPendingTab(nextTab);
-        setShowDiscardModal(true);
-        return;
-      }
-
-      onTabChange(nextTab);
-    },
-    [activeTab, sourceDirty, onTabChange]
-  );
-
-  const handleCancelTabSwitch = useCallback(() => {
-    setPendingTab(null);
-    setShowDiscardModal(false);
-  }, []);
-
-  const handleConfirmTabSwitch = useCallback(() => {
-    if (pendingTab) {
-      // Source editor will unmount on tab switch, so clear dirty state now.
-      setSourceDirty(false);
-      onTabChange(pendingTab);
-    }
-    setPendingTab(null);
-    setShowDiscardModal(false);
-  }, [pendingTab, onTabChange]);
 
   return (
     <div className="relative flex flex-col h-full">
       {/* Tab header */}
       <div className="h-11 px-4 flex items-center gap-1 border-b border-border bg-background relative">
         <button
-          onClick={() => handleTabClick('edit')}
+          onClick={() => onTabChange('edit')}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
             activeTab === 'edit'
@@ -82,7 +47,7 @@ export function EditorCanvas({
           Edit
         </button>
         <button
-          onClick={() => handleTabClick('preview')}
+          onClick={() => onTabChange('preview')}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
             activeTab === 'preview'
@@ -93,7 +58,7 @@ export function EditorCanvas({
           Preview
         </button>
         <button
-          onClick={() => handleTabClick('source')}
+          onClick={() => onTabChange('source')}
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
             activeTab === 'source'
@@ -164,51 +129,8 @@ export function EditorCanvas({
         {activeTab === 'preview' && (
           <InteractivePreview showHeader={false} previewMode={previewMode} />
         )}
-        {activeTab === 'source' && (
-          <SourceEditor
-            onApply={onSourceApply}
-            onDirtyChange={setSourceDirty}
-          />
-        )}
+        {activeTab === 'source' && <SourceEditor />}
       </div>
-
-      {showDiscardModal && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="discard-source-title"
-            className="w-full max-w-md rounded-lg border border-border bg-popover p-5 shadow-lg"
-          >
-            <h2
-              id="discard-source-title"
-              className="text-base font-semibold text-foreground"
-            >
-              Discard un-applied source changes?
-            </h2>
-            <p className="mt-2 text-sm text-foreground-muted">
-              You have unsaved edits in Source. Leaving this tab will discard
-              those changes.
-            </p>
-            <div className="mt-5 flex justify-end gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCancelTabSwitch}
-              >
-                Keep Editing
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleConfirmTabSwitch}
-              >
-                Discard Changes
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

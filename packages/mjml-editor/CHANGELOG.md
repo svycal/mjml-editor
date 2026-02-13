@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - Improve Source tab CodeMirror readability and host-app consistency by introducing theme-aware MJML syntax colors with resilient fallbacks, and by hardening editor typography/wrapping defaults against external CSS overrides.
+- Switch Source tab editing to live-apply valid MJML changes (no manual Apply step), remove the source dirty/discard flow, and remove the `onSourceApply` prop from `MjmlEditor`.
 
 ## 0.5.0
 

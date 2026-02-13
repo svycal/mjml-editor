@@ -31,11 +31,6 @@ function parseInitialValue(value: string): MjmlNode {
 interface MjmlEditorProps {
   value: string;
   onChange: (mjml: string) => void;
-  /**
-   * Called when Source tab "Apply" succeeds with valid MJML.
-   * Useful for triggering explicit save/persist actions.
-   */
-  onSourceApply?: (mjml: string) => void;
   className?: string;
   defaultTheme?: 'light' | 'dark' | 'system';
   liquidSchema?: LiquidSchema;
@@ -107,7 +102,6 @@ function ThemedEditorWrapper({
 
 interface EditorContentProps {
   onChange: (mjml: string) => void;
-  onSourceApply?: (mjml: string) => void;
   showThemeToggle?: boolean;
   defaultLeftPanelOpen?: boolean;
   defaultRightPanelOpen?: boolean;
@@ -115,7 +109,6 @@ interface EditorContentProps {
 
 function EditorContent({
   onChange,
-  onSourceApply,
   showThemeToggle = true,
   defaultLeftPanelOpen = true,
   defaultRightPanelOpen = false,
@@ -210,7 +203,6 @@ function EditorContent({
           leftPanelOpen={leftPanelOpen}
           rightPanelOpen={rightPanelOpen}
           showThemeToggle={showThemeToggle}
-          onSourceApply={onSourceApply}
         />
       </div>
 
@@ -251,7 +243,6 @@ function EditorContent({
 export function MjmlEditor({
   value,
   onChange,
-  onSourceApply,
   className,
   defaultTheme = 'system',
   liquidSchema,
@@ -280,13 +271,6 @@ export function MjmlEditor({
     [onChange]
   );
 
-  const handleSourceApply = useCallback(
-    (mjml: string) => {
-      onSourceApply?.(mjml);
-    },
-    [onSourceApply]
-  );
-
   // Don't render during SSR - editor requires browser APIs (iframe, DOM, etc.)
   if (!isMounted) {
     return <div className={`h-full w-full bg-background ${className || ''}`} />;
@@ -303,7 +287,6 @@ export function MjmlEditor({
             <EditorProvider initialDocument={initialDocument}>
               <EditorContent
                 onChange={handleChange}
-                onSourceApply={handleSourceApply}
                 showThemeToggle={showThemeToggle}
                 defaultLeftPanelOpen={defaultLeftPanelOpen}
                 defaultRightPanelOpen={defaultRightPanelOpen}
