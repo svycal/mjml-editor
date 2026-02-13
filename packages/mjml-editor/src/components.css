@@ -340,6 +340,59 @@
   --block-selected-bg: oklch(0.96 0.02 250);
 }
 
+/* Source editor (CodeMirror) */
+.mjml-editor .source-editor .cm-editor {
+  height: 100%;
+  background: var(--muted);
+  color: var(--foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.875rem;
+}
+
+.mjml-editor .source-editor .cm-scroller {
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.mjml-editor .source-editor .cm-focused {
+  outline: none;
+}
+
+.mjml-editor .source-editor .cm-gutters {
+  border-right: 1px solid var(--border);
+  background: color-mix(in oklab, var(--muted) 90%, var(--background) 10%);
+  color: var(--foreground-subtle);
+}
+
+.mjml-editor .source-editor .cm-activeLine,
+.mjml-editor .source-editor .cm-activeLineGutter {
+  background: color-mix(in oklab, var(--accent) 80%, transparent);
+}
+
+.mjml-editor .source-editor .cm-selectionBackground,
+.mjml-editor .source-editor .cm-content ::selection {
+  background: var(--selection);
+}
+
+.mjml-editor .source-editor .cm-searchMatch {
+  background: color-mix(in oklab, var(--selection) 70%, var(--accent) 30%);
+  border: 1px solid var(--border-strong);
+}
+
+.mjml-editor .source-editor .cm-searchMatch.cm-searchMatch-selected {
+  background: color-mix(in oklab, var(--selection) 60%, var(--accent) 40%);
+}
+
+.mjml-editor .source-editor .cm-matchingBracket {
+  background: color-mix(in oklab, var(--accent) 70%, transparent);
+  outline: 1px solid var(--border-strong);
+}
+
+.mjml-editor .source-editor .cm-cursor {
+  border-left-color: var(--foreground);
+}
+
 /* Tiptap Editor Styles */
 .ProseMirror {
   outline: none;

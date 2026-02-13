@@ -26,9 +26,7 @@ describe('highlightLiquidTags', () => {
   });
 
   it('highlights visible text while preserving liquid href attributes', () => {
-    const result = highlightLiquidTags(
-      '<a href="{{ url }}">Hi {{ name }}</a>'
-    );
+    const result = highlightLiquidTags('<a href="{{ url }}">Hi {{ name }}</a>');
 
     expect(result).toBe(
       '<a href="{{ url }}">Hi <span class="liquid-highlight">{{ name }}</span></a>'

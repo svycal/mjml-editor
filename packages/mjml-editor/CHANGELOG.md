@@ -8,6 +8,7 @@
 - Add `onSourceApply` callback so embedding apps can react when Source tab Apply succeeds.
 - Add conditional blocks extension.
 - Prevent accidental loss of un-applied Source tab edits by showing a confirmation modal before switching away.
+- Add a proper CodeMirror-based MJML source editor with syntax highlighting, line numbers, search, and keyboard apply support.
 
 ## 0.4.0
 

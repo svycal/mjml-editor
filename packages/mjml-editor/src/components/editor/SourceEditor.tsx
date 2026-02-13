@@ -1,5 +1,34 @@
-import { useState, useEffect, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  type KeyboardEvent,
+} from 'react';
 import { AlertTriangle } from 'lucide-react';
+import CodeMirror from '@uiw/react-codemirror';
+import { EditorState } from '@codemirror/state';
+import {
+  bracketMatching,
+  indentUnit,
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from '@codemirror/language';
+import {
+  EditorView,
+  keymap,
+  lineNumbers,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+} from '@codemirror/view';
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+} from '@codemirror/commands';
+import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
+import { xml } from '@codemirror/lang-xml';
 import { useEditor } from '@/context/EditorContext';
 import { serializeMjml, parseMjml } from '@/lib/mjml/parser';
 import { ResizableSplitPane } from '@/components/ui/resizable-split-pane';
@@ -18,7 +47,7 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
 
   useEffect(() => {
     const mjmlString = serializeMjml(state.document);
-    /* eslint-disable react-hooks/set-state-in-effect -- Intentional: sync source textarea with document state */
+    /* eslint-disable react-hooks/set-state-in-effect -- Intentional: sync source editor state with document state */
     setSource(mjmlString);
     setIsDirty(false);
     setError(null);
@@ -42,11 +71,48 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
     }
   }, [source, setDocument, onApply]);
 
+  const editorExtensions = useMemo(
+    () => [
+      lineNumbers(),
+      highlightActiveLineGutter(),
+      highlightActiveLine(),
+      history(),
+      EditorState.tabSize.of(2),
+      indentUnit.of('  '),
+      bracketMatching(),
+      highlightSelectionMatches(),
+      syntaxHighlighting(defaultHighlightStyle),
+      EditorView.lineWrapping,
+      keymap.of([
+        indentWithTab,
+        ...defaultKeymap,
+        ...historyKeymap,
+        ...searchKeymap,
+      ]),
+      xml(),
+    ],
+    []
+  );
+
   const handleChange = useCallback((value: string) => {
     setSource(value);
     setIsDirty(true);
     setError(null);
   }, []);
+
+  const handleSourceKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLElement>) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        handleApply();
+      }
+    },
+    [handleApply]
+  );
 
   useEffect(() => {
     onDirtyChange?.(isDirty);
@@ -76,11 +142,15 @@ export function SourceEditor({ onApply, onDirtyChange }: SourceEditorProps) {
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 p-4">
-          <textarea
+        <div className="flex-1 min-h-0 p-4" onKeyDown={handleSourceKeyDown}>
+          <CodeMirror
             value={source}
-            onChange={(e) => handleChange(e.target.value)}
-            className="w-full h-full p-4 font-mono text-sm bg-muted text-foreground border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+            onChange={handleChange}
+            extensions={editorExtensions}
+            basicSetup={false}
+            theme="none"
+            className="source-editor h-full overflow-hidden rounded-md border border-border bg-muted text-foreground"
+            height="100%"
             spellCheck={false}
           />
         </div>
