@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.7.0
+
+### Patch Changes
+
+- Remove the Source tab warning banner to reduce visual noise and keep the editor focused on the MJML content.
+
 ## 0.6.0
 
 ### Patch Changes

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { AlertTriangle } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import { EditorState } from '@codemirror/state';
 import {
@@ -145,16 +144,6 @@ export function SourceEditor() {
       maxLeftWidth={70}
     >
       <div className="flex flex-col h-full bg-background">
-        <div className="px-4 pt-4">
-          <div className="flex items-start gap-3 p-3 rounded-md bg-amber-50 border border-amber-200 text-amber-800">
-            <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <p className="text-sm">
-              You are editing raw MJML source. Valid changes sync to the visual
-              editor automatically.
-            </p>
-          </div>
-        </div>
-
         <div className="flex-1 min-h-0 p-4">
           <CodeMirror
             value={source}
