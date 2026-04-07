@@ -8,6 +8,9 @@ export { ThemeToggle } from './components/ui/theme-toggle';
 // Nonce (CSP support)
 export { useNonce } from './context/NonceContext';
 
+// Render endpoint
+export { useRenderEndpoint } from './context/RenderEndpointContext';
+
 // Types
 export type {
   MjmlNode,

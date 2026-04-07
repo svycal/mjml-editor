@@ -148,6 +148,7 @@ function App() {
           setMjml(mjml);
           console.log(mjml);
         }}
+        renderEndpoint="/api/render"
         liquidSchema={liquidSchema}
         extensions={{ conditionalBlocks: true }}
       />

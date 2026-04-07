@@ -4,6 +4,7 @@ import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { LiquidSchemaProvider } from '@/context/LiquidSchemaContext';
 import { ExtensionsProvider } from '@/context/ExtensionsContext';
 import { NonceProvider } from '@/context/NonceContext';
+import { RenderEndpointProvider } from '@/context/RenderEndpointContext';
 import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
 import { EditorCanvas, type EditorTabType } from './EditorCanvas';
 import { BlockInspector } from './BlockInspector';
@@ -32,6 +33,12 @@ function parseInitialValue(value: string): MjmlNode {
 interface MjmlEditorProps {
   value: string;
   onChange: (mjml: string) => void;
+  /**
+   * URL to POST raw MJML content to for server-side rendering.
+   * The endpoint should accept a POST with `Content-Type: text/plain` body
+   * and return JSON: `{ html: string, errors: Array<{ line: number, message: string, tagName: string }> }`
+   */
+  renderEndpoint: string;
   className?: string;
   defaultTheme?: 'light' | 'dark' | 'system';
   liquidSchema?: LiquidSchema;
@@ -250,6 +257,7 @@ function EditorContent({
 export function MjmlEditor({
   value,
   onChange,
+  renderEndpoint,
   className,
   defaultTheme = 'system',
   liquidSchema,
@@ -289,22 +297,24 @@ export function MjmlEditor({
       defaultTheme={defaultTheme}
       applyToDocument={applyThemeToDocument}
     >
-      <NonceProvider nonce={nonce}>
-        <ExtensionsProvider extensions={extensions}>
-          <LiquidSchemaProvider schema={liquidSchema}>
-            <ThemedEditorWrapper className={className}>
-              <EditorProvider initialDocument={initialDocument}>
-                <EditorContent
-                  onChange={handleChange}
-                  showThemeToggle={showThemeToggle}
-                  defaultLeftPanelOpen={defaultLeftPanelOpen}
-                  defaultRightPanelOpen={defaultRightPanelOpen}
-                />
-              </EditorProvider>
-            </ThemedEditorWrapper>
-          </LiquidSchemaProvider>
-        </ExtensionsProvider>
-      </NonceProvider>
+      <RenderEndpointProvider renderEndpoint={renderEndpoint}>
+        <NonceProvider nonce={nonce}>
+          <ExtensionsProvider extensions={extensions}>
+            <LiquidSchemaProvider schema={liquidSchema}>
+              <ThemedEditorWrapper className={className}>
+                <EditorProvider initialDocument={initialDocument}>
+                  <EditorContent
+                    onChange={handleChange}
+                    showThemeToggle={showThemeToggle}
+                    defaultLeftPanelOpen={defaultLeftPanelOpen}
+                    defaultRightPanelOpen={defaultRightPanelOpen}
+                  />
+                </EditorProvider>
+              </ThemedEditorWrapper>
+            </LiquidSchemaProvider>
+          </ExtensionsProvider>
+        </NonceProvider>
+      </RenderEndpointProvider>
     </ThemeProvider>
   );
 }

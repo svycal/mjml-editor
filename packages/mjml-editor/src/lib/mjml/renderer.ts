@@ -8,13 +8,13 @@ export interface RenderResult {
 
 /**
  * List of custom attributes that should be stripped before MJML rendering.
- * These are processed server-side and not recognized by mjml-browser.
+ * These are processed server-side and not recognized by the MJML renderer.
  */
 const CUSTOM_ATTRIBUTES = ['sc-if'];
 
 /**
  * Strip custom attributes from node tree for preview rendering.
- * This prevents "Attribute sc-if is illegal" warnings from mjml-browser.
+ * This prevents "Attribute sc-if is illegal" warnings from the renderer.
  */
 function stripCustomAttributes(node: MjmlNode): MjmlNode {
   const filteredAttributes = Object.fromEntries(
@@ -30,15 +30,24 @@ function stripCustomAttributes(node: MjmlNode): MjmlNode {
   };
 }
 
-// Lazy-load mjml-browser to avoid SSR issues (it accesses `window` on import)
-let mjml2html: typeof import('mjml-browser').default | null = null;
+/**
+ * POST an MJML string to the render endpoint and return the result.
+ */
+async function fetchRenderedHtml(
+  renderEndpoint: string,
+  mjmlString: string
+): Promise<RenderResult> {
+  const response = await fetch(renderEndpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: mjmlString,
+  });
 
-async function getMjml2Html() {
-  if (!mjml2html) {
-    const mjmlModule = await import('mjml-browser');
-    mjml2html = mjmlModule.default;
+  if (!response.ok) {
+    throw new Error(`Render endpoint returned ${response.status}`);
   }
-  return mjml2html;
+
+  return response.json();
 }
 
 /**
@@ -66,13 +75,6 @@ function addBlockClasses(node: MjmlNode): MjmlNode {
     attributes: { ...node.attributes, 'mj-class': newClass },
     children: node.children?.map(addBlockClasses),
   };
-}
-
-/**
- * Serialize MJML node to string, preserving mj-class attributes
- */
-function serializeMjmlWithClasses(node: MjmlNode): string {
-  return jsonToMjmlWithClasses(node);
 }
 
 /**
@@ -122,23 +124,17 @@ function escapeAttr(value: string): string {
 }
 
 /**
- * Render MJML JSON to HTML.
- * Custom attributes (like sc-if) are stripped to prevent mjml-browser warnings.
+ * Render MJML JSON to HTML via the render endpoint.
+ * Custom attributes (like sc-if) are stripped to prevent warnings.
  */
-export async function renderMjml(document: MjmlNode): Promise<RenderResult> {
+export async function renderMjml(
+  document: MjmlNode,
+  renderEndpoint: string
+): Promise<RenderResult> {
   try {
-    const mjml = await getMjml2Html();
-    // Strip custom attributes before rendering to avoid "illegal attribute" warnings
     const strippedDocument = stripCustomAttributes(document);
     const mjmlString = serializeMjml(strippedDocument);
-    const result = mjml(mjmlString, {
-      validationLevel: 'soft',
-    });
-
-    return {
-      html: result.html,
-      errors: result.errors || [],
-    };
+    return await fetchRenderedHtml(renderEndpoint, mjmlString);
   } catch (error) {
     console.error('MJML render error:', error);
     return {
@@ -165,24 +161,16 @@ function stripCustomAttributesFromString(mjmlString: string): string {
 }
 
 /**
- * Render MJML string to HTML.
- * Custom attributes (like sc-if) are stripped to prevent mjml-browser warnings.
+ * Render MJML string to HTML via the render endpoint.
+ * Custom attributes (like sc-if) are stripped to prevent warnings.
  */
 export async function renderMjmlString(
-  mjmlString: string
+  mjmlString: string,
+  renderEndpoint: string
 ): Promise<RenderResult> {
   try {
-    const mjml = await getMjml2Html();
-    // Strip custom attributes before rendering to avoid "illegal attribute" warnings
     const strippedMjml = stripCustomAttributesFromString(mjmlString);
-    const result = mjml(strippedMjml, {
-      validationLevel: 'soft',
-    });
-
-    return {
-      html: result.html,
-      errors: result.errors || [],
-    };
+    return await fetchRenderedHtml(renderEndpoint, strippedMjml);
   } catch (error) {
     console.error('MJML render error:', error);
     return {
@@ -195,26 +183,17 @@ export async function renderMjmlString(
 /**
  * Render MJML JSON to HTML with block IDs preserved as CSS classes.
  * This allows clicking elements in the preview to identify the source block.
- * Custom attributes (like sc-if) are stripped to prevent mjml-browser warnings.
+ * Custom attributes (like sc-if) are stripped to prevent warnings.
  */
 export async function renderMjmlInteractive(
-  document: MjmlNode
+  document: MjmlNode,
+  renderEndpoint: string
 ): Promise<RenderResult> {
   try {
-    const mjml = await getMjml2Html();
-    // Strip custom attributes first, then add mj-class attributes with block IDs
     const strippedDocument = stripCustomAttributes(document);
     const withClasses = addBlockClasses(strippedDocument);
-    const mjmlString = serializeMjmlWithClasses(withClasses);
-
-    const result = mjml(mjmlString, {
-      validationLevel: 'soft',
-    });
-
-    return {
-      html: result.html,
-      errors: result.errors || [],
-    };
+    const mjmlString = jsonToMjmlWithClasses(withClasses);
+    return await fetchRenderedHtml(renderEndpoint, mjmlString);
   } catch (error) {
     console.error('MJML render error:', error);
     return {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useEditor } from '@/context/EditorContext';
 import { useNonce } from '@/context/NonceContext';
+import { useRenderEndpoint } from '@/context/RenderEndpointContext';
 import { renderMjmlInteractive, type RenderResult } from '@/lib/mjml/renderer';
 import type { PreviewMode } from './EditorCanvas';
 
@@ -17,6 +18,7 @@ export function InteractivePreview({
 }: InteractivePreviewProps) {
   const { state, selectBlock } = useEditor();
   const nonce = useNonce();
+  const renderEndpoint = useRenderEndpoint();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedDocument, setDebouncedDocument] = useState(state.document);
   const [renderResult, setRenderResult] = useState<RenderResult>({
@@ -35,7 +37,7 @@ export function InteractivePreview({
   // Render MJML to HTML with block IDs as CSS classes
   useEffect(() => {
     let cancelled = false;
-    renderMjmlInteractive(debouncedDocument).then((result) => {
+    renderMjmlInteractive(debouncedDocument, renderEndpoint).then((result) => {
       if (!cancelled) {
         setRenderResult(result);
       }
@@ -43,7 +45,7 @@ export function InteractivePreview({
     return () => {
       cancelled = true;
     };
-  }, [debouncedDocument]);
+  }, [debouncedDocument, renderEndpoint]);
 
   const { html, errors } = renderResult;
 

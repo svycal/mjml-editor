@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { mjmlRenderPlugin } from './vite-mjml-plugin';
 import path from 'path';
 
 const libRoot = path.resolve(__dirname, '../packages/mjml-editor');
@@ -10,7 +11,7 @@ export default defineConfig(({ mode }) => {
   const isDev = mode === 'development';
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), mjmlRenderPlugin()],
     resolve: {
       alias: isDev
         ? {

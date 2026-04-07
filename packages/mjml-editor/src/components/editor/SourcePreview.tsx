@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { renderMjmlString, type RenderResult } from '@/lib/mjml/renderer';
+import { useRenderEndpoint } from '@/context/RenderEndpointContext';
 
 interface SourcePreviewProps {
   mjmlSource: string;
@@ -10,6 +11,7 @@ export function SourcePreview({
   mjmlSource,
   debounceMs = 300,
 }: SourcePreviewProps) {
+  const renderEndpoint = useRenderEndpoint();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedSource, setDebouncedSource] = useState(mjmlSource);
   const [renderResult, setRenderResult] = useState<RenderResult>({
@@ -31,7 +33,7 @@ export function SourcePreview({
       return;
     }
     let cancelled = false;
-    renderMjmlString(debouncedSource).then((result) => {
+    renderMjmlString(debouncedSource, renderEndpoint).then((result) => {
       if (!cancelled) {
         setRenderResult(result);
       }
@@ -39,7 +41,7 @@ export function SourcePreview({
     return () => {
       cancelled = true;
     };
-  }, [debouncedSource]);
+  }, [debouncedSource, renderEndpoint]);
 
   const { html, errors } = renderResult;
 
