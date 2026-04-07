@@ -5,6 +5,9 @@ export { MjmlEditor } from './components/editor/MjmlEditor';
 export { ThemeProvider, useTheme } from './context/ThemeContext';
 export { ThemeToggle } from './components/ui/theme-toggle';
 
+// Nonce (CSP support)
+export { useNonce } from './context/NonceContext';
+
 // Types
 export type {
   MjmlNode,

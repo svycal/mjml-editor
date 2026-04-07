@@ -3,6 +3,7 @@ import { EditorProvider, useEditor } from '@/context/EditorContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { LiquidSchemaProvider } from '@/context/LiquidSchemaContext';
 import { ExtensionsProvider } from '@/context/ExtensionsContext';
+import { NonceProvider } from '@/context/NonceContext';
 import { OutlineTree, GLOBAL_STYLES_ID } from './OutlineTree';
 import { EditorCanvas, type EditorTabType } from './EditorCanvas';
 import { BlockInspector } from './BlockInspector';
@@ -76,6 +77,12 @@ interface MjmlEditorProps {
    * @default false
    */
   defaultRightPanelOpen?: boolean;
+  /**
+   * CSP nonce to apply to dynamically injected script tags.
+   * Required when the host application uses a Content Security Policy
+   * with `script-src 'nonce-...'`.
+   */
+  nonce?: string;
 }
 
 /**
@@ -251,6 +258,7 @@ export function MjmlEditor({
   showThemeToggle = true,
   defaultLeftPanelOpen = true,
   defaultRightPanelOpen = false,
+  nonce,
 }: MjmlEditorProps) {
   // Track if we're mounted (client-side) - editor requires browser APIs
   const [isMounted, setIsMounted] = useState(false);
@@ -281,20 +289,22 @@ export function MjmlEditor({
       defaultTheme={defaultTheme}
       applyToDocument={applyThemeToDocument}
     >
-      <ExtensionsProvider extensions={extensions}>
-        <LiquidSchemaProvider schema={liquidSchema}>
-          <ThemedEditorWrapper className={className}>
-            <EditorProvider initialDocument={initialDocument}>
-              <EditorContent
-                onChange={handleChange}
-                showThemeToggle={showThemeToggle}
-                defaultLeftPanelOpen={defaultLeftPanelOpen}
-                defaultRightPanelOpen={defaultRightPanelOpen}
-              />
-            </EditorProvider>
-          </ThemedEditorWrapper>
-        </LiquidSchemaProvider>
-      </ExtensionsProvider>
+      <NonceProvider nonce={nonce}>
+        <ExtensionsProvider extensions={extensions}>
+          <LiquidSchemaProvider schema={liquidSchema}>
+            <ThemedEditorWrapper className={className}>
+              <EditorProvider initialDocument={initialDocument}>
+                <EditorContent
+                  onChange={handleChange}
+                  showThemeToggle={showThemeToggle}
+                  defaultLeftPanelOpen={defaultLeftPanelOpen}
+                  defaultRightPanelOpen={defaultRightPanelOpen}
+                />
+              </EditorProvider>
+            </ThemedEditorWrapper>
+          </LiquidSchemaProvider>
+        </ExtensionsProvider>
+      </NonceProvider>
     </ThemeProvider>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useEditor } from '@/context/EditorContext';
+import { useNonce } from '@/context/NonceContext';
 import { renderMjmlInteractive, type RenderResult } from '@/lib/mjml/renderer';
 import type { PreviewMode } from './EditorCanvas';
 
@@ -15,6 +16,7 @@ export function InteractivePreview({
   previewMode = 'desktop',
 }: InteractivePreviewProps) {
   const { state, selectBlock } = useEditor();
+  const nonce = useNonce();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [debouncedDocument, setDebouncedDocument] = useState(state.document);
   const [renderResult, setRenderResult] = useState<RenderResult>({
@@ -107,6 +109,7 @@ export function InteractivePreview({
 
         // Inject the click handler script
         const script = doc.createElement('script');
+        if (nonce) script.nonce = nonce;
         script.textContent = clickHandlerScript;
         doc.body.appendChild(script);
 
@@ -126,7 +129,7 @@ export function InteractivePreview({
         doc.head.appendChild(style);
       }
     }
-  }, [html, highlightStyle, clickHandlerScript]);
+  }, [html, highlightStyle, clickHandlerScript, nonce]);
 
   // Update just the selection highlight without re-rendering the whole iframe
   useEffect(() => {
