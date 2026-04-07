@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.9.0
+
+### Minor Changes
+
+- [`560ca4a`](https://github.com/svycal/mjml-editor/commit/560ca4aeef5300ca121bf22f862603cff7e99dd3) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Move mjml preview rendering to server-side calls
+
 ## 0.8.0
 
 ### Minor Changes
