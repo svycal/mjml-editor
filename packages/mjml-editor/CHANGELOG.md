@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.8.0
+
+### Minor Changes
+
+- [`ef5a611`](https://github.com/svycal/mjml-editor/commit/ef5a61137cecb4844bc8a0daa6202265e617f19c) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Add nonce prop for dynamic script tags
+
 ## 0.7.0
 
 ### Patch Changes
