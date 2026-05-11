@@ -71,7 +71,7 @@
     "lucide-react": "^0.562.0",
     "react-arborist": "^3.4.3",
     "tailwind-merge": "^3.4.0",
-    "uuid": "^13.0.1"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
