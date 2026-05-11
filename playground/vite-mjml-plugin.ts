@@ -31,7 +31,7 @@ export function mjmlRenderPlugin(): Plugin {
         try {
           const mjmlString = await readBody(req);
           const mjml2html = (await import('mjml')).default;
-          const result = mjml2html(mjmlString, {
+          const result = await mjml2html(mjmlString, {
             validationLevel: 'soft',
           });
 
