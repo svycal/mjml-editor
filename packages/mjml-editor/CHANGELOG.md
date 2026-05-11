@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.9.1
+
+### Patch Changes
+
+- [#10](https://github.com/svycal/mjml-editor/pull/10) [`17a1e9e`](https://github.com/svycal/mjml-editor/commit/17a1e9eac7ccdc519375c39de330fa92acfde7da) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Bump `uuid` floor to `^13.0.1` to pick up the upstream fix for the missing buffer bounds check in `v3`/`v5`/`v6` (GHSA-w5hq-g745-h8pq).
+
 ## 0.9.0
 
 ### Minor Changes
