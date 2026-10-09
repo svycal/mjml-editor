@@ -1,5 +1,11 @@
 # @savvycal/mjml-editor
 
+## 0.9.2
+
+### Patch Changes
+
+- [#19](https://github.com/svycal/mjml-editor/pull/19) [`b0ffb85`](https://github.com/svycal/mjml-editor/commit/b0ffb85d594bfcb5c87730db229ecf92b24c4b17) Thanks [@derrickreimer](https://github.com/derrickreimer)! - Upgrade Tiptap to `^3.31.4` to pick up the upstream fix for prototype pollution in `mergeAttributes()` (patched in `@tiptap/core` 3.30.4).
+
 ## 0.9.1
 
 ### Patch Changes
