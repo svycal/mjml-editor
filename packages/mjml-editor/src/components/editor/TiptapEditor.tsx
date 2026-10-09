@@ -131,6 +131,11 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
           italic: {},
           strike: {},
           hardBreak: {},
+          // Link and Underline are configured separately below
+          link: false,
+          underline: false,
+          // Don't append an empty paragraph to the document
+          trailingNode: false,
         }),
         Underline,
         Link.configure({
@@ -241,6 +246,8 @@ export const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
       content: initialContent,
       autofocus: false,
       immediatelyRender: false,
+      // Re-render on every transaction so toolbar active states stay current
+      shouldRerenderOnTransaction: true,
       editorProps: {
         attributes: {
           class: 'outline-none',
